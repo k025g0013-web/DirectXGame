@@ -5,6 +5,7 @@
 
 using namespace KamataEngine;
 
+ // コンストラクタ
 GameScene::GameScene() {}
 
 // デストラクタ
