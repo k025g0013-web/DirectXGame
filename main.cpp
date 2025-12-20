@@ -1,11 +1,13 @@
-#include "GameScene.h"
-#include "KamataEngine.h"
 #include <Windows.h>
+#include "KamataEngine.h"
+#include "GameScene.h"
+#include "Player.h"
 
 using namespace KamataEngine;
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
+
 	// インスタンス生成
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();   // DirectXCommon
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance(); // ImGuiManager
