@@ -5,10 +5,10 @@
 using namespace KamataEngine;
 
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// インスタンス生成
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();   // DirectXCommon
+	ImGuiManager* imguiManager = ImGuiManager::GetInstance(); // ImGuiManager
 	GameScene* gameScene = new GameScene();                   // ゲームシーン
 
 	// エンジンの初期化
@@ -26,9 +26,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 更新処理
 		//=========================
+		imguiManager->Begin(); // ImGui:開始
 
 		// ゲームシーン
 		gameScene->Update();
+
+		imguiManager->End(); // ImGui:終了
 
 		// 描画処理
 		//=========================
@@ -36,6 +39,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// ゲームシーン
 		gameScene->Draw();
+
+		// ImGui
+		imguiManager->Draw();
+
+		// 軸方向表示
+		AxisIndicator::GetInstance()->Draw();
 
 		dxCommon->PostDraw(); // DirectX:終了
 
