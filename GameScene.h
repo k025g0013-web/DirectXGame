@@ -1,6 +1,9 @@
 #pragma once
 #include "KamataEngine.h"
 #include <vector>
+#include "UpdateWorldTransform.h"
+#include "Player.h"
+#include "Skydome.h"
 
 class GameScene {
 public:
@@ -26,4 +29,12 @@ private:
 
 	// デバッグカメラ
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;
+
+	// プレイヤー
+	Player* player_ = nullptr;
+	KamataEngine::Model* modelPlayer_ = nullptr;
+
+	// スカイドーム
+	Skydome* skydome_ = nullptr;
+	KamataEngine::Model* modelSkydome_ = nullptr;
 };

@@ -16,10 +16,14 @@ GameScene::~GameScene() {
 	worldTransformBlocks_.clear();
 
 	delete debugCamera_;
+
+	delete player_;
+	delete skydome_;
 }
 
 void GameScene::Initialize() {
 	// カメラの初期化
+	camera_.farZ = 2000.0f; 
 	camera_.Initialize();
 
 	// デバッグカメラの生成
@@ -57,6 +61,16 @@ void GameScene::Initialize() {
 			worldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
 		}
 	}
+
+	// プレイヤー
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
+	player_ = new Player;
+	player_->Initialize(modelPlayer_, &camera_); 
+
+	// スカイドーム
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	skydome_ = new Skydome; 
+	skydome_->Initialize(modelSkydome_, &camera_); 
 }
 
 void GameScene::Update() {
@@ -90,41 +104,16 @@ void GameScene::Update() {
 			if (!worldTransformBlock)
 				continue;
 
-			// アフィン変換行列の作成
-			Matrix4x4 affineMatrix = {};
-
-			for (int i = 0; i < 4; i++) {
-				affineMatrix.m[i][i] = 1.0f;
-			}
-
-			// アフィン変換行列
-			affineMatrix.m[0][0] = worldTransformBlock->scale_.x * cosf(worldTransformBlock->rotation_.y) * cosf(worldTransformBlock->rotation_.z);
-			affineMatrix.m[0][1] = worldTransformBlock->scale_.x * cosf(worldTransformBlock->rotation_.y) * sinf(worldTransformBlock->rotation_.z);
-			affineMatrix.m[0][2] = worldTransformBlock->scale_.x * -sinf(worldTransformBlock->rotation_.y);
-
-			affineMatrix.m[1][0] = worldTransformBlock->scale_.y * sinf(worldTransformBlock->rotation_.x) * sinf(worldTransformBlock->rotation_.y) * cosf(worldTransformBlock->rotation_.z) -
-			                       cosf(worldTransformBlock->rotation_.y) * sinf(worldTransformBlock->rotation_.z);
-			affineMatrix.m[1][1] = worldTransformBlock->scale_.y * sinf(worldTransformBlock->rotation_.x) * sinf(worldTransformBlock->rotation_.y) * sinf(worldTransformBlock->rotation_.z) +
-			                       cosf(worldTransformBlock->rotation_.y) * cosf(worldTransformBlock->rotation_.z);
-			affineMatrix.m[1][2] = worldTransformBlock->scale_.y * sinf(worldTransformBlock->rotation_.x) * cosf(worldTransformBlock->rotation_.y);
-
-			affineMatrix.m[2][0] = worldTransformBlock->scale_.z * cosf(worldTransformBlock->rotation_.y) * sinf(worldTransformBlock->rotation_.y) * cosf(worldTransformBlock->rotation_.z) +
-			                       sinf(worldTransformBlock->rotation_.x) * sinf(worldTransformBlock->rotation_.z);
-			affineMatrix.m[2][1] = worldTransformBlock->scale_.z * cosf(worldTransformBlock->rotation_.y) * sinf(worldTransformBlock->rotation_.y) * sinf(worldTransformBlock->rotation_.z) -
-			                       sinf(worldTransformBlock->rotation_.x) * cosf(worldTransformBlock->rotation_.z);
-			affineMatrix.m[2][2] = worldTransformBlock->scale_.z * cosf(worldTransformBlock->rotation_.y) * cosf(worldTransformBlock->rotation_.y);
-
-			affineMatrix.m[3][0] = worldTransformBlock->translation_.x;
-			affineMatrix.m[3][1] = worldTransformBlock->translation_.y;
-			affineMatrix.m[3][2] = worldTransformBlock->translation_.z;
-
-			// アフィン変換行列の代入
-			worldTransformBlock->matWorld_ = affineMatrix;
-
-			// 定数バッファに転送する
-			worldTransformBlock->TransferMatrix();
+			// ワールド行列更新
+			UpdateWorldTransform(*worldTransformBlock);
 		}
 	}
+
+	// プレイヤー
+	player_->Update();
+
+	// スカイドーム
+	skydome_->Update();
 }
 
 void GameScene::Draw() {
@@ -139,6 +128,12 @@ void GameScene::Draw() {
 			modelBlock_->Draw(*worldTransformBlock, camera_);
 		}
 	}
+
+	// プレイヤー
+	player_->Draw();
+
+	// スカイドーム
+	skydome_->Draw();
 
 	Model::PostDraw(); // 終了
 }
