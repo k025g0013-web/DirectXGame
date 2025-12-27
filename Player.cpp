@@ -25,7 +25,7 @@ void Player::Initialize(Model* model, Camera* camera) {
 	camera_ = camera;
 
 	// 初期位置設定
-	worldTransform_.translation_ = {0.0f, 2.0f, 0.0f};
+	worldTransform_.translation_ = {2.0f, 2.0f, 0.0f};
 };
 
 void Player::Update() {

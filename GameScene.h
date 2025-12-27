@@ -1,7 +1,10 @@
 #pragma once
 #include "KamataEngine.h"
 #include <vector>
+
 #include "UpdateWorldTransform.h"
+#include "MapChipField.h"
+
 #include "Player.h"
 #include "Skydome.h"
 
@@ -13,6 +16,9 @@ public:
 	void Initialize(); // 初期化
 	void Update();     // 更新
 	void Draw();       // 描画
+
+	// 表示ブロックの生成
+	void GenerateBlocks();
 
 private:
 	// カメラ
@@ -37,4 +43,7 @@ private:
 	// スカイドーム
 	Skydome* skydome_ = nullptr;
 	KamataEngine::Model* modelSkydome_ = nullptr;
+
+	// マップチップフィールド
+	MapChipField* mapChipField_;
 };
