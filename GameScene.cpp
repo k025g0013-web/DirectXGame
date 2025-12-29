@@ -25,7 +25,6 @@ GameScene::~GameScene() {
 
 void GameScene::Initialize() {
 	// カメラの初期化
-	camera_.translation_ = {20.35f, 11.0f, -30.0f};
 	camera_.farZ = 2000.0f;
 	camera_.Initialize();
 
@@ -45,7 +44,9 @@ void GameScene::Initialize() {
 	// プレイヤー
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
 	player_ = new Player;
-	player_->Initialize(modelPlayer_, &camera_);
+	// 座標をマップチップ番号で指定
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 
 	// スカイドーム
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
