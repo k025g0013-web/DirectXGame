@@ -11,17 +11,17 @@ Matrix4x4 MakeAffineMatrix(Vector3& scale, Vector3& rotation, Vector3& translati
 	}
 
 	// アフィン変換行列
-	affineMatrix.m[0][0] = scale.x * cosf(rotation.y) * cosf(rotation.z);
-	affineMatrix.m[0][1] = scale.x * cosf(rotation.y) * sinf(rotation.z);
-	affineMatrix.m[0][2] = scale.x * -sinf(rotation.y);
+	affineMatrix.m[0][0] = scale.x * (cos(rotation.y) * cos(rotation.z));
+	affineMatrix.m[0][1] = scale.x * (cos(rotation.y) * sin(rotation.z));
+	affineMatrix.m[0][2] = scale.x * (-sin(rotation.y));
 
-	affineMatrix.m[1][0] = scale.y * sinf(rotation.x) * sinf(rotation.y) * cosf(rotation.z) - cosf(rotation.y) * sinf(rotation.z);
-	affineMatrix.m[1][1] = scale.y * sinf(rotation.x) * sinf(rotation.y) * sinf(rotation.z) + cosf(rotation.y) * cosf(rotation.z);
-	affineMatrix.m[1][2] = scale.y * sinf(rotation.x) * cosf(rotation.y);
+	affineMatrix.m[1][0] = scale.y * (sin(rotation.x) * sin(rotation.y) * cos(rotation.z) - cos(rotation.x) * sin(rotation.z));
+	affineMatrix.m[1][1] = scale.y * (sin(rotation.x) * sin(rotation.y) * sin(rotation.z) + cos(rotation.x) * cos(rotation.z));
+	affineMatrix.m[1][2] = scale.y * (sin(rotation.x) * cos(rotation.y));
 
-	affineMatrix.m[2][0] = scale.z * cosf(rotation.y) * sinf(rotation.y) * cosf(rotation.z) + sinf(rotation.x) * sinf(rotation.z);
-	affineMatrix.m[2][1] = scale.z * cosf(rotation.y) * sinf(rotation.y) * sinf(rotation.z) - sinf(rotation.x) * cosf(rotation.z);
-	affineMatrix.m[2][2] = scale.z * cosf(rotation.y) * cosf(rotation.y);
+	affineMatrix.m[2][0] = scale.z * (cos(rotation.x) * sin(rotation.y) * cos(rotation.z) + sin(rotation.x) * sin(rotation.z));
+	affineMatrix.m[2][1] = scale.z * (cos(rotation.x) * sin(rotation.y) * sin(rotation.z) - sin(rotation.x) * cos(rotation.z));
+	affineMatrix.m[2][2] = scale.z * (cos(rotation.x) * cos(rotation.y));
 
 	affineMatrix.m[3][0] = translation.x;
 	affineMatrix.m[3][1] = translation.y;
