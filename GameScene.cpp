@@ -21,6 +21,8 @@ GameScene::~GameScene() {
 	delete skydome_;
 
 	delete mapChipField_;
+
+	delete cameraController_;
 }
 
 void GameScene::Initialize() {
@@ -52,6 +54,13 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_ = new Skydome;
 	skydome_->Initialize(modelSkydome_, &camera_);
+
+	// カメラコントローラー
+	cameraController_ = new CameraController;
+	cameraController_->Initialize();
+	cameraController_->SetTarget(player_);
+	cameraController_->Reset();
+	cameraController_->SetMovableArea({20.35f, 177.6f, 11.0f, 100.0f});
 }
 
 void GameScene::Update() {
@@ -65,19 +74,14 @@ void GameScene::Update() {
 	}
 #endif
 
-	if (isDebugCameraActive_) {
-		// デバッグカメラの更新
-		const Camera& debugCamera = debugCamera_->GetCamera();
+	// プレイヤー
+	player_->Update();
 
-		camera_.matView = debugCamera.matView;             // デバッグカメラのビュー行列
-		camera_.matProjection = debugCamera.matProjection; // デバッグカメラのプロジェクション行列
+	// カメラコントローラー
+	cameraController_->Update();
 
-		// ビュープロジェクション行列の転送
-		camera_.TransferMatrix();
-	} else {
-		// ビュープロジェクション行列の更新と転送
-		camera_.UpdateMatrix();
-	}
+	// スカイドーム
+	skydome_->Update();
 
 	// ブロックの更新
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
@@ -90,11 +94,22 @@ void GameScene::Update() {
 		}
 	}
 
-	// プレイヤー
-	player_->Update();
+	if (isDebugCameraActive_) {
+		// デバッグカメラの更新
+		const Camera& debugCamera = debugCamera_->GetCamera();
 
-	// スカイドーム
-	skydome_->Update();
+		camera_.matView = debugCamera.matView;             // デバッグカメラのビュー行列
+		camera_.matProjection = debugCamera.matProjection; // デバッグカメラのプロジェクション行列
+
+		// ビュープロジェクション行列の転送
+		camera_.TransferMatrix();
+	} else {
+		// カメラコントローラーのトランスフォームを参照
+		camera_.translation_ = cameraController_->GetCameraTranslation();
+
+		// ビュープロジェクション行列の更新と転送
+		camera_.UpdateMatrix();
+	}
 }
 
 void GameScene::Draw() {

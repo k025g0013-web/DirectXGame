@@ -17,6 +17,12 @@ public:
 	void Update();																									  // 更新
 	void Draw();																									  // 描画
 
+	// ワールド変換データを取得
+	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
+	// 速度を取得
+	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
+
 private:
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
