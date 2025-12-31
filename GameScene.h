@@ -4,6 +4,7 @@
 
 #include "UpdateWorldTransform.h"
 #include "MapChipField.h"
+#include "CameraController.h"
 
 #include "Player.h"
 #include "Skydome.h"
@@ -46,4 +47,7 @@ private:
 
 	// マップチップフィールド
 	MapChipField* mapChipField_;
+
+	// カメラコントローラー
+	CameraController* cameraController_;
 };
