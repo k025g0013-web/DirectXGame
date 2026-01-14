@@ -49,6 +49,7 @@ void GameScene::Initialize() {
 	// 座標をマップチップ番号で指定
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
+	player_->SetMapChipField(mapChipField_);
 
 	// スカイドーム
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
