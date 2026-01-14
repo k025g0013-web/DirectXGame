@@ -24,6 +24,21 @@ std::map<std::string, MapChipType> mapChipTable = {
 
 class MapChipField {
 public:
+	// 座標からマップチップ番号を計算
+	struct IndexSet {
+		uint32_t xIndex;
+		uint32_t yIndex;
+	};
+
+	// 範囲矩形
+	struct Rect {
+		float left;   // 左端
+		float right;  // 右端
+		float bottom; // 下端
+		float top;    // 上端
+	};
+
+
 	MapChipField();  // コンストラクタ
 	~MapChipField(); // デストラクタ
 
@@ -44,6 +59,12 @@ public:
 
 	// 横方向の個数を取得
 	uint32_t GetNumBlockHorizontal();
+
+	// 座標からマップチップ番号を計算
+	IndexSet GetMapChipIndexSetByPosition(const KamataEngine::Vector3& position);
+
+	// ブロックの範囲取得
+	Rect GetRectByIndex(uint32_t xIndex, uint32_t yIndex);
 
 private:
 	// 1ブロックのサイズ
