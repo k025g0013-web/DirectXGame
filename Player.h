@@ -40,7 +40,8 @@ public:
 
 	void MoveInput();																								  // 移動入力
 	void MoveOnResult(const CollisionMapInfo& info);																  // 判定結果を反映して移動させる 
-	void IsHitChecker(const CollisionMapInfo& info);																  // 天井に接触している場合の処理
+	void IsHitCeilingChecker(const CollisionMapInfo& info);															  // 天井に接触している場合の処理
+	void IsHitWallChecker(const CollisionMapInfo& info);															  // 壁に接触している場合の処理
 
 	// ワールド変換データを取得
 	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
@@ -55,11 +56,12 @@ public:
 	void CollisionMap(CollisionMapInfo& info);
 
 	void CollisionMapTop(CollisionMapInfo& info);
-	/*
 	void CollisionMapBottom(CollisionMapInfo& info);
 	void CollisionMapRight(CollisionMapInfo& info);
 	void CollisionMapLeft(CollisionMapInfo& info);
-	*/
+
+	// 設置状態の切り替え処理
+	void InstallationStateSwitching(CollisionMapInfo& info);
 
 	// 指定した角の座標計算
 	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
@@ -111,9 +113,15 @@ private:
 	MapChipField* mapChipField_ = nullptr;
 
 	// キャラクターの当たり判定のサイズ
-	static inline const float kWidth = 1.0f;
-	static inline const float kHeight = 1.0f;
+	static inline const float kWidth = 1.9f;
+	static inline const float kHeight = 1.9f;
 
 	// 微小な余白
-	static inline const float kBlank = 0.01f;
+	static inline const float kBlank = 0.0001f;
+
+	// 着地時の速度減衰率
+	static inline const float kAttenuationLanding = 0.1f;
+
+	// 着地時の速度減衰率
+	static inline const float kAttenuationWall = 0.75f;
 };
