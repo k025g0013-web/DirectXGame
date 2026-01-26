@@ -78,6 +78,15 @@ void GameScene::Update() {
 	// プレイヤー
 	player_->Update();
 
+
+	// プレイヤーの位置：初期化
+	if (Input::GetInstance()->TriggerKey(DIK_R)) {
+		// 座標をマップチップ番号で指定
+		Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+		player_->Initialize(modelPlayer_, &camera_, playerPosition);
+		player_->SetMapChipField(mapChipField_);
+	}
+
 	// カメラコントローラー
 	cameraController_->Update();
 
