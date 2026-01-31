@@ -7,6 +7,7 @@
 #include "CameraController.h"
 
 #include "Player.h"
+#include "Enemy.h"
 #include "Skydome.h"
 
 class GameScene {
@@ -40,6 +41,10 @@ private:
 	// プレイヤー
 	Player* player_ = nullptr;
 	KamataEngine::Model* modelPlayer_ = nullptr;
+
+	// エネミー
+	Enemy* enemy_ = nullptr;
+	KamataEngine::Model* modelEnemy_ = nullptr;
 
 	// スカイドーム
 	Skydome* skydome_ = nullptr;

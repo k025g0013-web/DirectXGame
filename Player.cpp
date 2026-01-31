@@ -23,7 +23,7 @@ void Player::Initialize(Model* model, Camera* camera, const Vector3& position) {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = position; 
+	worldTransform_.translation_ = position;
 
 	// 引数の内容をメンバ変数に記録
 	camera_ = camera;
@@ -151,7 +151,7 @@ void Player::MoveInput() {
 		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
 	}
 };
- 
+
 // 移動量を加味して衝突判定する
 void Player::CollisionMap(CollisionMapInfo& info) {
 	CollisionMapTop(info);
@@ -195,27 +195,12 @@ void Player::InstallationStateSwitching(CollisionMapInfo& info) {
 
 			for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 				positionsNew[i] =
-				    CornerPosition(
-						{
-							worldTransform_.translation_.x + info.move.x, 
-							worldTransform_.translation_.y + info.move.y,
-							worldTransform_.translation_.z + info.move.z
-						},
-						static_cast<Corner>(i)
-					);
+				    CornerPosition({worldTransform_.translation_.x + info.move.x, worldTransform_.translation_.y + info.move.y, worldTransform_.translation_.z + info.move.z}, static_cast<Corner>(i));
 			}
 
-			Vector3 leftBottom = {
-				positionsNew[kLeftBottom].x,
-				positionsNew[kLeftBottom].y - kBlank, 
-				positionsNew[kLeftBottom].z
-			};
+			Vector3 leftBottom = {positionsNew[kLeftBottom].x, positionsNew[kLeftBottom].y - kBlank, positionsNew[kLeftBottom].z};
 
-			Vector3 rightBottom = {
-				positionsNew[kRightBottom].x, 
-				positionsNew[kRightBottom].y - kBlank, 
-				positionsNew[kRightBottom].z
-			};
+			Vector3 rightBottom = {positionsNew[kRightBottom].x, positionsNew[kRightBottom].y - kBlank, positionsNew[kRightBottom].z};
 
 			// 真下の当たり判定を行う
 			bool hit = false;
@@ -282,14 +267,7 @@ void Player::CollisionMapTop(CollisionMapInfo& info) {
 
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] =
-		    CornerPosition(
-				{
-					worldTransform_.translation_.x + info.move.x, 
-					worldTransform_.translation_.y + info.move.y, 
-					worldTransform_.translation_.z + info.move.z
-				},
-				static_cast<Corner>(i)
-			);
+		    CornerPosition({worldTransform_.translation_.x + info.move.x, worldTransform_.translation_.y + info.move.y, worldTransform_.translation_.z + info.move.z}, static_cast<Corner>(i));
 	}
 
 	MapChipType mapChipType;
@@ -313,11 +291,7 @@ void Player::CollisionMapTop(CollisionMapInfo& info) {
 	if (hit) {
 		// めり込みを排除する方向に移動量を設定する
 		indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftTop]);
-		Vector3 topBefore = {
-			worldTransform_.translation_.x, 
-			worldTransform_.translation_.y + kHeight / 2.0f - kBlank, 
-			worldTransform_.translation_.z
-		};
+		Vector3 topBefore = {worldTransform_.translation_.x, worldTransform_.translation_.y + kHeight / 2.0f - kBlank, worldTransform_.translation_.z};
 
 		// 現在座標が壁の外か判定
 		MapChipField::IndexSet indexSetNow;
@@ -325,11 +299,7 @@ void Player::CollisionMapTop(CollisionMapInfo& info) {
 		if (indexSetNow.yIndex != indexSet.yIndex) {
 			// めり込み先ブロックの範囲矩形
 			MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-			info.move.y = std::max(
-				0.0f, 
-				(rect.bottom - worldTransform_.translation_.y) - 
-				(kHeight / 2.0f - kBlank)
-			);
+			info.move.y = std::max(0.0f, (rect.bottom - worldTransform_.translation_.y) - (kHeight / 2.0f - kBlank));
 
 			// 天井に当たったことを記録する
 			info.ceiling = true;
@@ -349,14 +319,7 @@ void Player::CollisionMapBottom(CollisionMapInfo& info) {
 
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] =
-		    CornerPosition(
-				{
-					worldTransform_.translation_.x + info.move.x,
-					worldTransform_.translation_.y + info.move.y,
-					worldTransform_.translation_.z + info.move.z
-				},
-				static_cast<Corner>(i)
-			);
+		    CornerPosition({worldTransform_.translation_.x + info.move.x, worldTransform_.translation_.y + info.move.y, worldTransform_.translation_.z + info.move.z}, static_cast<Corner>(i));
 	}
 
 	MapChipType mapChipType;
@@ -386,11 +349,7 @@ void Player::CollisionMapBottom(CollisionMapInfo& info) {
 	if (hit) {
 		// めり込みを排除する方向に移動量を設定する
 		indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftBottom]);
-		Vector3 bottomBefore = {
-		    worldTransform_.translation_.x,
-		    worldTransform_.translation_.y - kHeight / 2.0f + kBlank,
-		    worldTransform_.translation_.z
-		};
+		Vector3 bottomBefore = {worldTransform_.translation_.x, worldTransform_.translation_.y - kHeight / 2.0f + kBlank, worldTransform_.translation_.z};
 
 		// 現在座標が壁の外か判定
 		MapChipField::IndexSet indexSetNow;
@@ -398,11 +357,7 @@ void Player::CollisionMapBottom(CollisionMapInfo& info) {
 		if (indexSetNow.yIndex != indexSet.yIndex) {
 			// めり込み先ブロックの範囲矩形
 			MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-			info.move.y = std::min(
-				0.0f,
-				(rect.top - worldTransform_.translation_.y) +
-				(kHeight / 2.0f + kBlank)
-			);
+			info.move.y = std::min(0.0f, (rect.top - worldTransform_.translation_.y) + (kHeight / 2.0f + kBlank));
 
 			// 地面に当たったことを記録する
 			info.landing = true;
@@ -422,14 +377,7 @@ void Player::CollisionMapRight(CollisionMapInfo& info) {
 
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] =
-		    CornerPosition(
-				{
-					worldTransform_.translation_.x + info.move.x, 
-					worldTransform_.translation_.y + info.move.y,
-					worldTransform_.translation_.z + info.move.z
-				},
-				static_cast<Corner>(i)
-			);
+		    CornerPosition({worldTransform_.translation_.x + info.move.x, worldTransform_.translation_.y + info.move.y, worldTransform_.translation_.z + info.move.z}, static_cast<Corner>(i));
 	}
 
 	MapChipType mapChipType;
@@ -453,11 +401,7 @@ void Player::CollisionMapRight(CollisionMapInfo& info) {
 	if (hit) {
 		// めり込みを排除する方向に移動量を設定する
 		indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kRightTop]);
-		Vector3 rightBefore = {
-			worldTransform_.translation_.x + kWidth / 2.0f, 
-			worldTransform_.translation_.y, 
-			worldTransform_.translation_.z
-		};
+		Vector3 rightBefore = {worldTransform_.translation_.x + kWidth / 2.0f, worldTransform_.translation_.y, worldTransform_.translation_.z};
 
 		// 現在座標が壁の外か判定
 		MapChipField::IndexSet indexSetNow;
@@ -465,11 +409,7 @@ void Player::CollisionMapRight(CollisionMapInfo& info) {
 		if (indexSetNow.xIndex != indexSet.xIndex) {
 			// めり込み先ブロックの範囲矩形
 			MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-			info.move.x = std::min(
-				info.move.x, 
-				(rect.left - worldTransform_.translation_.x) -
-				(kWidth / 2.0f + kBlank)
-			);
+			info.move.x = std::min(info.move.x, (rect.left - worldTransform_.translation_.x) - (kWidth / 2.0f + kBlank));
 
 			// 壁に当たったことを判定結果に記録する
 			info.wall = true;
@@ -489,14 +429,7 @@ void Player::CollisionMapLeft(CollisionMapInfo& info) {
 
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] =
-		    CornerPosition(
-				{
-					worldTransform_.translation_.x + info.move.x,
-					worldTransform_.translation_.y + info.move.y,
-					worldTransform_.translation_.z + info.move.z
-				},
-				static_cast<Corner>(i)
-			);
+		    CornerPosition({worldTransform_.translation_.x + info.move.x, worldTransform_.translation_.y + info.move.y, worldTransform_.translation_.z + info.move.z}, static_cast<Corner>(i));
 	}
 
 	MapChipType mapChipType;
@@ -520,11 +453,7 @@ void Player::CollisionMapLeft(CollisionMapInfo& info) {
 	if (hit) {
 		// めり込みを排除する方向に移動量を設定する
 		indexSet = mapChipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftTop]);
-		Vector3 leftBefore = {
-			worldTransform_.translation_.x - kWidth / 2.0f,
-			worldTransform_.translation_.y, 
-			worldTransform_.translation_.z
-		};
+		Vector3 leftBefore = {worldTransform_.translation_.x - kWidth / 2.0f, worldTransform_.translation_.y, worldTransform_.translation_.z};
 
 		// 現在座標が壁の外か判定
 		MapChipField::IndexSet indexSetNow;
@@ -532,11 +461,7 @@ void Player::CollisionMapLeft(CollisionMapInfo& info) {
 		if (indexSetNow.xIndex != indexSet.xIndex) {
 			// めり込み先ブロックの範囲矩形
 			MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-			info.move.x = std::max(
-				info.move.x - 1.0f,
-				(rect.right - worldTransform_.translation_.x) +
-				(kWidth / 2.0f + kBlank)
-			);
+			info.move.x = std::max(info.move.x - 1.0f, (rect.right - worldTransform_.translation_.x) + (kWidth / 2.0f + kBlank));
 
 			// 地面に当たったことを記録する
 			info.wall = true;

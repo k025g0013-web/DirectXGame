@@ -18,6 +18,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 
 	delete player_;
+	delete enemy_;
 	delete skydome_;
 
 	delete mapChipField_;
@@ -51,6 +52,14 @@ void GameScene::Initialize() {
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 	player_->SetMapChipField(mapChipField_);
 
+	// エネミー
+	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+	enemy_ = new Enemy;
+	// 座標をマップチップ番号で指定
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(20, 18);
+	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
+	enemy_->SetMapChipField(mapChipField_);
+
 	// スカイドーム
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_ = new Skydome;
@@ -78,7 +87,6 @@ void GameScene::Update() {
 	// プレイヤー
 	player_->Update();
 
-
 	// プレイヤーの位置：初期化
 	if (Input::GetInstance()->TriggerKey(DIK_R)) {
 		// 座標をマップチップ番号で指定
@@ -86,6 +94,9 @@ void GameScene::Update() {
 		player_->Initialize(modelPlayer_, &camera_, playerPosition);
 		player_->SetMapChipField(mapChipField_);
 	}
+
+	// エネミー
+	enemy_->Update();
 
 	// カメラコントローラー
 	cameraController_->Update();
@@ -138,6 +149,9 @@ void GameScene::Draw() {
 	// プレイヤー
 	player_->Draw();
 
+	// エネミー
+	enemy_->Draw();
+	
 	// スカイドーム
 	skydome_->Draw();
 
