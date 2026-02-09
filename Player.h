@@ -3,6 +3,7 @@
 #include <3d\Model.h>
 #include "UpdateWorldTransform.h"
 #include "MapChipField.h"
+#include "AABB.h"
 
 enum class LRDirection {
 	kRight,
@@ -14,7 +15,7 @@ struct CollisionMapInfo {
 	bool ceiling = false;
 	bool landing = false;
 	bool wall = false;
-	KamataEngine::Vector3 move;
+	KamataEngine::Vector3 move = {};
 };
 
 // 角
@@ -27,6 +28,7 @@ enum Corner {
 	kNumCorner		// 要素数
 };
 
+class Enemy;
 class MapChipField;
 
 class Player {
@@ -65,6 +67,15 @@ public:
 
 	// 指定した角の座標計算
 	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
+
+	// ワールド座標を取得
+	KamataEngine::Vector3 GetWorldPosition();
+
+	// AABBを取得
+	AABB GetAABB();
+
+	// 衝突応答
+	void OnCollision(const Enemy* enemy);
 
 private:
 	// ワールド変換データ

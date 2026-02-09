@@ -22,6 +22,9 @@ public:
 	// 表示ブロックの生成
 	void GenerateBlocks();
 
+	// 全ての当たり判定を行う
+	void CheckAllCollision();
+
 private:
 	// カメラ
 	KamataEngine::Camera camera_;
@@ -43,7 +46,7 @@ private:
 	KamataEngine::Model* modelPlayer_ = nullptr;
 
 	// エネミー
-	Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemies_;
 	KamataEngine::Model* modelEnemy_ = nullptr;
 
 	// スカイドーム

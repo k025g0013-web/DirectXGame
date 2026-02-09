@@ -3,6 +3,9 @@
 #include <3d\Model.h>
 #include "UpdateWorldTransform.h"
 #include "MapChipField.h"
+#include "AABB.h"
+
+class Player;
 
 class Enemy {
 public:
@@ -15,6 +18,15 @@ public:
 
 	// マップチップの配置データを取得
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+
+	// ワールド座標を取得
+	KamataEngine::Vector3 GetWorldPosition();
+
+	// AABBを取得
+	AABB GetAABB();
+
+	// 衝突応答
+	void OnCollision(const Player* player);
 
 private:
 	// ワールド変換データ
