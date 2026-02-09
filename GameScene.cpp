@@ -18,13 +18,17 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 
 	delete player_;
-
+	
 	for (Enemy* enemy: enemies_) {
 		delete enemy;
 	}
 	enemies_.clear();
-
+	
 	delete skydome_;
+
+	if (deathParticles_ != nullptr) {
+		delete deathParticles_;
+	}
 
 	delete mapChipField_;
 
@@ -78,6 +82,11 @@ void GameScene::Initialize() {
 	cameraController_->SetTarget(player_);
 	cameraController_->Reset();
 	cameraController_->SetMovableArea({20.35f, 177.6f, 11.0f, 100.0f});
+
+	// 仮の生成処理(DeathParticles)
+	modelDeathParticles_ = Model::CreateFromOBJ("deathParticle", true);
+	deathParticles_ = new DeathParticles;
+	deathParticles_->Initialize(modelDeathParticles_, &camera_, playerPosition);
 }
 
 void GameScene::Update() {
@@ -112,6 +121,11 @@ void GameScene::Update() {
 
 	// スカイドーム
 	skydome_->Update();
+
+	// 死亡時パーティクル
+	if (deathParticles_ != nullptr) {
+		deathParticles_->Update();
+	}
 
 	// ブロックの更新
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
@@ -169,6 +183,10 @@ void GameScene::Draw() {
 	// スカイドーム
 	skydome_->Draw();
 
+	// 死亡時パーティクル
+	if (deathParticles_ != nullptr) {
+		deathParticles_->Draw();
+	}
 	Model::PostDraw(); // 終了
 }
 

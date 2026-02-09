@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Skydome.h"
+#include "DeathParticles.h"
 
 class GameScene {
 public:
@@ -58,4 +59,7 @@ private:
 
 	// カメラコントローラー
 	CameraController* cameraController_;
+
+	DeathParticles* deathParticles_ = nullptr;
+	KamataEngine::Model* modelDeathParticles_ = nullptr;
 };

@@ -8,3 +8,7 @@ KamataEngine::Matrix4x4 MakeAffineMatrix(
 );
 
 void UpdateWorldTransform(KamataEngine::WorldTransform& worldTransform);
+
+KamataEngine::Matrix4x4 MakeRotateZMatrix(float angle);
+
+KamataEngine::Vector3 Transform(const KamataEngine::Vector3& vector, const KamataEngine::Matrix4x4& matrix);
