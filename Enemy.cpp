@@ -5,10 +5,12 @@
 using namespace KamataEngine;
 
 // コンストラクタ
-Enemy::Enemy() {};
+Enemy::Enemy() {
+};
 
 // デストラクタ
-Enemy::~Enemy() { delete model_; };
+Enemy::~Enemy() {
+};
 
 // 初期化処理
 void Enemy::Initialize(Model* model, Camera* camera, const Vector3& position) {
@@ -56,4 +58,30 @@ void Enemy::Update() {
 void Enemy::Draw() {
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, *camera_);
+};
+
+Vector3 Enemy::GetWorldPosition() {
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の並行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+};
+
+AABB Enemy::GetAABB() {
+	Vector3 worldPos = worldTransform_.translation_;
+
+	AABB aabb;
+
+	aabb.min = {worldPos.x - 1.9f / 2.0f, worldPos.y - 1.9f / 2.0f, worldPos.z - 1.9f / 2.0f};
+	aabb.max = {worldPos.x + 1.9f / 2.0f, worldPos.y + 1.9f / 2.0f, worldPos.z + 1.9f / 2.0f};
+
+	return aabb;
+};
+
+void Enemy::OnCollision(const Player* player) {
+	(void)player;
 };

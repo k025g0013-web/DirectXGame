@@ -18,7 +18,12 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 
 	delete player_;
-	delete enemy_;
+
+	for (Enemy* enemy: enemies_) {
+		delete enemy;
+	}
+	enemies_.clear();
+
 	delete skydome_;
 
 	delete mapChipField_;
@@ -54,11 +59,13 @@ void GameScene::Initialize() {
 
 	// エネミー
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
-	enemy_ = new Enemy;
-	// 座標をマップチップ番号で指定
-	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(20, 18);
-	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
-	enemy_->SetMapChipField(mapChipField_);
+	for (int32_t i = 0; i < 3; ++i) {
+		Enemy* newEnemy = new Enemy();
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(20, 18 - i);
+		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
+
+		enemies_.push_back(newEnemy);
+	}
 
 	// スカイドーム
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -96,7 +103,9 @@ void GameScene::Update() {
 	}
 
 	// エネミー
-	enemy_->Update();
+	for (Enemy* enemy : enemies_) {
+		enemy->Update();
+	}
 
 	// カメラコントローラー
 	cameraController_->Update();
@@ -131,6 +140,9 @@ void GameScene::Update() {
 		// ビュープロジェクション行列の更新と転送
 		camera_.UpdateMatrix();
 	}
+
+	// 全ての当たり判定を行う
+	CheckAllCollision();
 }
 
 void GameScene::Draw() {
@@ -150,8 +162,10 @@ void GameScene::Draw() {
 	player_->Draw();
 
 	// エネミー
-	enemy_->Draw();
-	
+	for (Enemy* enemy : enemies_) {
+		enemy->Draw();
+	}
+
 	// スカイドーム
 	skydome_->Draw();
 
@@ -183,3 +197,30 @@ void GameScene::GenerateBlocks() {
 		}
 	}
 }
+
+void GameScene::CheckAllCollision() {
+#pragma region 自キャラと敵キャラの当たり判定
+	// 判定対象1と2の座標
+	AABB aabb1, aabb2;
+
+	// 自キャラの座標
+	aabb1 = player_->GetAABB();
+
+	// 自キャラと敵弾全ての当たり判定
+	for (Enemy* enemy: enemies_) {
+		// 敵弾の座標
+		aabb2 = enemy->GetAABB();
+		
+		// AABB同士の交差判定
+		if ( (aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) &&
+			 (aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) &&
+			 (aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z) ){
+			// 自キャラの衝突時関数を呼び出す
+			player_->OnCollision(enemy);
+			// 敵の衝突時関数を呼び出す
+			enemy->OnCollision(player_);
+		}
+	}
+#pragma endregion
+
+};
