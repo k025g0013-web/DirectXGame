@@ -26,6 +26,21 @@ public:
 	// 全ての当たり判定を行う
 	void CheckAllCollision();
 
+	// ゲームのフェーズ(型)
+	enum class Phase {
+		kPlay,  // ゲームプレイ
+		kDeath, // デス演出
+	};
+
+	// ゲームの現在フェーズ(変数)
+	Phase phase_;
+
+	// フェーズの切り替え
+	void ChangePhase();
+
+	// 終了フラグのgetter
+	bool IsFinished() const { return finished_; };
+
 private:
 	// カメラ
 	KamataEngine::Camera camera_;
@@ -60,6 +75,10 @@ private:
 	// カメラコントローラー
 	CameraController* cameraController_;
 
+	// デス演出
 	DeathParticles* deathParticles_ = nullptr;
 	KamataEngine::Model* modelDeathParticles_ = nullptr;
+
+	// 終了フラグ
+	bool finished_ = false;
 };
