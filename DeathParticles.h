@@ -13,6 +13,8 @@ public:
 	void Update();                                                                                                    // 更新
 	void Draw();                                                                                                      // 描画
 
+	bool IsFinished() const { return finished_; };
+
 private:
 	// モデル
 	KamataEngine::Model* model_ = nullptr;
@@ -33,7 +35,7 @@ private:
 	static inline const float kAngleUint = 2.0f * std::numbers::pi_v<float> / 8.0f;
 
 	// 終了フラグ
-	bool isFinished_ = false;
+	bool finished_ = false;
 	// 経過時間カウント
 	float counter_ = 0.0f;
 

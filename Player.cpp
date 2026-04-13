@@ -4,7 +4,6 @@
 #include <cassert>
 #include <numbers>
 
-
 using namespace KamataEngine;
 
 // コンストラクタ
@@ -496,7 +495,7 @@ AABB Player::GetAABB() {
 
 void Player::OnCollision(const Enemy* enemy) { 
 	(void)enemy;
-	// ジャンプ開始(仮処理)
-	velocity_.y += kJumpAcceleration * 2;
+	// デスフラグを立てる
+	isDead_ = true;
 };
 #pragma endregion
