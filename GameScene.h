@@ -33,7 +33,7 @@ public:
 	};
 
 	// ゲームの現在フェーズ(変数)
-	Phase phase_;
+	Phase phase_ = Phase::kPlay;
 
 	// フェーズの切り替え
 	void ChangePhase();
@@ -70,10 +70,10 @@ private:
 	KamataEngine::Model* modelSkydome_ = nullptr;
 
 	// マップチップフィールド
-	MapChipField* mapChipField_;
+	MapChipField* mapChipField_ = nullptr;
 
 	// カメラコントローラー
-	CameraController* cameraController_;
+	CameraController* cameraController_ = nullptr;
 
 	// デス演出
 	DeathParticles* deathParticles_ = nullptr;

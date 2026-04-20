@@ -3,6 +3,9 @@
 
 using namespace KamataEngine;
 
+// コンストラクタ
+CameraController::CameraController() {};
+
 // デストラクタ
 CameraController::~CameraController() {};
 

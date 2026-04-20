@@ -11,6 +11,7 @@ GameScene::~GameScene() {
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
+			delete modelBlock_;
 		}
 	}
 	worldTransformBlocks_.clear();
@@ -18,21 +19,26 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 
 	delete player_;
+	delete modelPlayer_;
 
 	for (Enemy* enemy : enemies_) {
 		delete enemy;
+		delete modelEnemy_;
 	}
 	enemies_.clear();
 
 	delete skydome_;
+	delete modelSkydome_;
 
 	if (deathParticles_ != nullptr) {
 		delete deathParticles_;
+		delete modelDeathParticles_;
 	}
 
 	delete mapChipField_;
 
 	delete cameraController_;
+
 }
 
 void GameScene::Initialize() {
@@ -201,7 +207,7 @@ void GameScene::Update() {
 		}
 
 		// ゲームシーンの終了
-		if (deathParticles_->IsFinished()) {
+		if (deathParticles_ && deathParticles_->IsFinished()) {
 			finished_ = true;
 		}
 #pragma endregion

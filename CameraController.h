@@ -13,7 +13,7 @@ class Player;
 
 class CameraController {
 public:
-	CameraController() {}; // コンストラクタ
+	CameraController(); // コンストラクタ
 	~CameraController(); // デストラクタ
 
 	void Initialize(); // 初期化
