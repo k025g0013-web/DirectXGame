@@ -11,7 +11,6 @@ GameScene::~GameScene() {
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
-			delete modelBlock_;
 		}
 	}
 	worldTransformBlocks_.clear();
@@ -23,7 +22,6 @@ GameScene::~GameScene() {
 
 	for (Enemy* enemy : enemies_) {
 		delete enemy;
-		delete modelEnemy_;
 	}
 	enemies_.clear();
 
