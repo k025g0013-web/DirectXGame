@@ -18,6 +18,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 
 	delete player_;
+	delete modelPlayer_;
 
 	for (Enemy* enemy : enemies_) {
 		delete enemy;
@@ -25,14 +26,17 @@ GameScene::~GameScene() {
 	enemies_.clear();
 
 	delete skydome_;
+	delete modelSkydome_;
 
 	if (deathParticles_ != nullptr) {
 		delete deathParticles_;
+		delete modelDeathParticles_;
 	}
 
 	delete mapChipField_;
 
 	delete cameraController_;
+
 }
 
 void GameScene::Initialize() {
@@ -201,7 +205,7 @@ void GameScene::Update() {
 		}
 
 		// ゲームシーンの終了
-		if (deathParticles_->IsFinished()) {
+		if (deathParticles_ && deathParticles_->IsFinished()) {
 			finished_ = true;
 		}
 #pragma endregion
