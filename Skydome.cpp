@@ -7,9 +7,7 @@ using namespace KamataEngine;
 Skydome::Skydome() {}
 
 // デストラクタ
-Skydome::~Skydome() { 
-	delete model_;
-}
+Skydome::~Skydome() { delete model_; }
 
 void Skydome::Initialize(Model* model, Camera* camera) {
 	// nullポインタチェック

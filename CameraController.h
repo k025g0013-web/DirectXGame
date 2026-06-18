@@ -12,6 +12,11 @@ struct Rect {
 class Player;
 
 class CameraController {
+	enum class Mode {
+		kFollow,		// プレイヤー追従
+		kForcedScroll,	// 強制スクロール
+	};
+
 public:
 	CameraController(); // コンストラクタ
 	~CameraController(); // デストラクタ
@@ -33,9 +38,19 @@ public:
 	// ワールドトランスフォームを取得
 	const KamataEngine::Vector3& GetCameraTranslation() const { return camera_.translation_; }
 
+	// カメラモード
+	void SetMode(Mode mode) { mode_ = mode; }
+	Mode GetMode() const { return mode_; }
+
 private:
 	// カメラ
 	KamataEngine::Camera camera_;
+
+	// モード
+	Mode mode_ = Mode::kForcedScroll;
+
+	// 強制スクロール速度
+	KamataEngine::Vector3 scrollSpeed_ = {0.05f, 0.0f, 0.0f};
 
 	// 追尾対象
 	Player* target_ = nullptr;
