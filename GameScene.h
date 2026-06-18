@@ -10,6 +10,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "DeathParticles.h"
+#include "Fade.h"
 
 class GameScene {
 public:
@@ -28,12 +29,14 @@ public:
 
 	// ゲームのフェーズ(型)
 	enum class Phase {
-		kPlay,  // ゲームプレイ
-		kDeath, // デス演出
+		kFadeIn,	// フェードイン
+		kPlay,		// ゲームプレイ
+		kDeath,		// デス演出
+		kFadeOut,	// フェードアウト
 	};
 
 	// ゲームの現在フェーズ(変数)
-	Phase phase_;
+	Phase phase_ = Phase::kFadeIn;
 
 	// フェーズの切り替え
 	void ChangePhase();
@@ -70,7 +73,7 @@ private:
 	KamataEngine::Model* modelSkydome_ = nullptr;
 
 	// マップチップフィールド
-	MapChipField* mapChipField_;
+	MapChipField* mapChipField_ = nullptr;
 
 	// カメラコントローラー
 	CameraController* cameraController_;
@@ -78,6 +81,10 @@ private:
 	// デス演出
 	DeathParticles* deathParticles_ = nullptr;
 	KamataEngine::Model* modelDeathParticles_ = nullptr;
+
+	// フェード
+	Fade* fade_ = nullptr;
+	float duration_ = 1.0f;
 
 	// 終了フラグ
 	bool finished_ = false;

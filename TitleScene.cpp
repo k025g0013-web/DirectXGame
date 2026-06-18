@@ -2,14 +2,12 @@
 
 using namespace KamataEngine;
 
-// コンストラクタ
-TitleScene::TitleScene() {};
-
-// デストラクタ
+TitleScene::TitleScene() {}
 TitleScene::~TitleScene() {
 	delete titleLogo_;
 	delete skydome_;
-};
+	delete fade_;
+}
 
 // 初期化
 void TitleScene::Initialize() {
@@ -26,18 +24,43 @@ void TitleScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_ = new Skydome;
 	skydome_->Initialize(modelSkydome_, &camera_);
-};
+
+	// フェード
+	fade_ = new Fade;
+	fade_->Initialize();
+	fade_->Start(Fade::Status::FadeIn, duration_);
+}
 
 // 更新
 void TitleScene::Update() {
-	// スカイドーム
-	skydome_->Update();
+	skydome_->Update();   // スカイドーム
+	titleLogo_->Update(); // タイトルロゴ
 
-	// タイトルロゴ
-	titleLogo_->Update();
+	// フェード
+	fade_->Update();
 
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		finished_ = true;
+	switch (phase_) {
+	case Phase::kFadeIn:
+		// メイン状態へ
+		if (fade_->IsFinished()) {
+			phase_ = Phase::kMain;
+		}
+		break;
+
+	case Phase::kMain:
+		// スペースキーが押されたらフェードアウト
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+			phase_ = Phase::kFadeOut;
+			fade_->Start(Fade::Status::FadeOut, duration_);
+		}
+		break;
+
+	case Phase::kFadeOut:
+		// シーン終了フラグ
+		if (fade_->IsFinished()) {
+			finished_ = true;
+		}
+		break;
 	}
 };
 
@@ -50,6 +73,9 @@ void TitleScene::Draw() {
 
 	// タイトルロゴ
 	titleLogo_->Draw();
+
+	// フェード
+	fade_->Draw();
 
 	Model::PostDraw(); // 終了
 };

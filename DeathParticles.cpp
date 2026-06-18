@@ -6,9 +6,7 @@
 using namespace KamataEngine;
 
 // コンストラクタ
-DeathParticles::DeathParticles() {};
-
-// デストラクタ
+DeathParticles::DeathParticles() {}
 DeathParticles::~DeathParticles() { 
 	delete model_; 
 };
