@@ -76,7 +76,7 @@ private:
 	MapChipField* mapChipField_ = nullptr;
 
 	// カメラコントローラー
-	CameraController* cameraController_;
+	CameraController* cameraController_ = nullptr;
 
 	// デス演出
 	DeathParticles* deathParticles_ = nullptr;

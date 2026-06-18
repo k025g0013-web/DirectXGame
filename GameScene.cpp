@@ -18,6 +18,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 
 	delete player_;
+	delete modelPlayer_;
 
 	for (Enemy* enemy : enemies_) {
 		delete enemy;
@@ -25,9 +26,11 @@ GameScene::~GameScene() {
 	enemies_.clear();
 
 	delete skydome_;
+	delete modelSkydome_;
 
 	if (deathParticles_ != nullptr) {
 		delete deathParticles_;
+		delete modelDeathParticles_;
 	}
 
 	delete mapChipField_;
