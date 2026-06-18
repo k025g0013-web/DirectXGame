@@ -6,10 +6,7 @@
 
 using namespace KamataEngine;
 
-// コンストラクタ
 Player::Player() {};
-
-// デストラクタ
 Player::~Player() { delete model_; };
 
 #pragma region 初期化・更新・描画
@@ -42,11 +39,47 @@ void Player::Update() {
 	// 移動量に速度の値をコピー
 	collisionMapInfo.move = velocity_;
 
+	if (camera_) {
+		float screenMarginX = 21.0f;
+
+		// カメラの現在のX座標基準の可動限界
+		float minX = camera_->translation_.x - screenMarginX + (kWidth / 2.0f);
+		float maxX = camera_->translation_.x + screenMarginX - (kWidth / 2.0f);
+
+		// 次のフレームでの予測座標
+		float nextX = worldTransform_.translation_.x + collisionMapInfo.move.x;
+
+		// 左画面端に押し出される移動量を計算
+		if (nextX < minX) {
+			// 画面左端に引っかかるための移動量に上書き
+			collisionMapInfo.move.x = minX - worldTransform_.translation_.x;
+			if (velocity_.x < 0.0f) {
+				velocity_.x = 0.0f;
+			}
+		}
+		// 右画面端に引っかかる移動量を計算
+		else if (nextX > maxX) {
+			collisionMapInfo.move.x = maxX - worldTransform_.translation_.x;
+			if (velocity_.x > 0.0f) {
+				velocity_.x = 0.0f;
+			}
+		}
+	}
+
 	// 移動量を加味して衝突判定する
 	CollisionMap(collisionMapInfo);
 
 	// 判定結果を反映して移動させる
 	MoveOnResult(collisionMapInfo);
+
+	if (camera_) {
+		float screenMarginX = 21.0f;
+		float minX = camera_->translation_.x - screenMarginX + (kWidth / 2.0f);
+		float maxX = camera_->translation_.x + screenMarginX - (kWidth / 2.0f);
+
+		// 壁との挟まれ判定を呼び出す
+		CheckScreenAndWallSandwich(collisionMapInfo, minX, maxX);
+	}
 
 	// 天井に接触している場合の処理
 	IsHitCeilingChecker(collisionMapInfo);
@@ -499,3 +532,29 @@ void Player::OnCollision(const Enemy* enemy) {
 	isDead_ = true;
 };
 #pragma endregion
+
+// 画面端と壁に挟まれたかどうかの判定
+void Player::CheckScreenAndWallSandwich(const CollisionMapInfo& info, float minX, float maxX) {
+	// プレイヤーが画面左端に接触しているか？
+	bool isAtLeftScreenEdge = (worldTransform_.translation_.x <= minX);
+
+	// マップチップ右側の壁に衝突しているか？
+	bool isHitRightWall = info.wall && 
+		(lrDirection_ == LRDirection::kRight || velocity_.x >= 0.0f);
+
+	// 左画面端と右の壁に挟まれたら即死
+	if (isAtLeftScreenEdge && isHitRightWall) {
+		isDead_ = true;
+		return;
+	}
+
+	// 逆方向（画面右端と左の壁に挟まれたケース
+	bool isAtRightScreenEdge = (worldTransform_.translation_.x >= maxX);
+	bool isHitLeftWall = info.wall && 
+		(lrDirection_ == LRDirection::kLift || velocity_.x <= 0.0f);
+
+	if (isAtRightScreenEdge && isHitLeftWall) {
+		isDead_ = true;
+		return;
+	}
+}

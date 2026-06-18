@@ -77,6 +77,9 @@ public:
 	// 衝突応答
 	void OnCollision(const Enemy* enemy);
 
+	// 【追加】画面端と壁の挟まれ判定
+	void CheckScreenAndWallSandwich(const CollisionMapInfo& info, float minX, float maxX);
+
 	// デスフラグのgetter
 	bool IsDead() const { return isDead_; };
 

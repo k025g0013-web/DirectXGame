@@ -3,7 +3,7 @@
 
 using namespace KamataEngine;
 
-// デストラクタ
+CameraController::CameraController() {};
 CameraController::~CameraController() {};
 
 void CameraController::Initialize() {
@@ -12,21 +12,31 @@ void CameraController::Initialize() {
 }
 
 void CameraController::Update() {
-	// 追従対象のワールドトランスフォームを参照
-	const WorldTransform& targetWorldTransform = target_->GetWorldTransform();
-	// 追従対象の速度を参照
-	const Vector3& targetVelocity = target_->GetVelocity();
-	// 追従対象とオフセットと追尾対象の速度からカメラの目標座標を計算
-	targetPosition_.x = targetWorldTransform.translation_.x + targetOffset_.x + targetVelocity.x * kVelocityBias;
-	targetPosition_.y = targetWorldTransform.translation_.y + targetOffset_.y + targetVelocity.y * kVelocityBias;
-	targetPosition_.z = targetWorldTransform.translation_.z + targetOffset_.z + targetVelocity.z * kVelocityBias;
+	if (!target_) return;
 
-	// 座標補間によりゆったり追従
-	camera_.translation_ = Lerp(camera_.translation_, targetPosition_, kInterpolationRate);
+	if (mode_ == Mode::kFollow) {	// プレイヤー追従
+		// 追従対象のワールドトランスフォームを参照
+		const WorldTransform& targetWorldTransform = target_->GetWorldTransform();
+		// 追従対象の速度を参照
+		const Vector3& targetVelocity = target_->GetVelocity();
+		// 追従対象とオフセットと追尾対象の速度からカメラの目標座標を計算
+		targetPosition_.x = targetWorldTransform.translation_.x + targetOffset_.x + targetVelocity.x * kVelocityBias;
+		targetPosition_.y = targetWorldTransform.translation_.y + targetOffset_.y + targetVelocity.y * kVelocityBias;
+		targetPosition_.z = targetWorldTransform.translation_.z + targetOffset_.z + targetVelocity.z * kVelocityBias;
 
-	// 追従対象が画面外に出ないように補正
-	camera_.translation_.x = std::clamp(camera_.translation_.x, targetWorldTransform.translation_.x + margin_.left,  targetWorldTransform.translation_.x + margin_.right);
-	camera_.translation_.y = std::clamp(camera_.translation_.y, targetWorldTransform.translation_.y + margin_.bottom,targetWorldTransform.translation_.y + margin_.top);
+		// 座標補間によりゆったり追従
+		camera_.translation_ = Lerp(camera_.translation_, targetPosition_, kInterpolationRate);
+
+		// 追従対象が画面外に出ないように補正
+		camera_.translation_.x = std::clamp(camera_.translation_.x, targetWorldTransform.translation_.x + margin_.left, targetWorldTransform.translation_.x + margin_.right);
+		camera_.translation_.y = std::clamp(camera_.translation_.y, targetWorldTransform.translation_.y + margin_.bottom, targetWorldTransform.translation_.y + margin_.top);
+
+	} else if (mode_ == Mode::kForcedScroll) {	// 強制スクロール処理
+		// 毎フレーム、スクロール速度分だけカメラを移動させる
+		camera_.translation_.x += scrollSpeed_.x;
+		camera_.translation_.y += scrollSpeed_.y;
+		camera_.translation_.z += scrollSpeed_.z;
+	}
 
 	// 移動範囲制限
 	camera_.translation_.x = std::clamp(camera_.translation_.x, movableArea_.left, movableArea_.right);
