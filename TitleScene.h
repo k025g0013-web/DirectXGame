@@ -3,15 +3,23 @@
 #include "UpdateWorldTransform.h"
 #include "TitleLogo.h"
 #include "Skydome.h"
+#include "Fade.h"
 
 class TitleScene {
 public:
-	TitleScene();	// コンストラクタ
-	~TitleScene();	// デストラクタ
+	enum class Phase {
+		kFadeIn,
+		kMain,
+		kFadeOut,
+	};
 
-	void Initialize(); // 初期化
-	void Update();     // 更新
-	void Draw();       // 描画
+public:
+	TitleScene();
+	~TitleScene();
+
+	void Initialize();
+	void Update();
+	void Draw();
 
 	// 終了フラグのgetter
 	bool IsFinished() const { return finished_; };
@@ -27,6 +35,11 @@ private:
 	// スカイドーム
 	Skydome* skydome_ = nullptr;
 	KamataEngine::Model* modelSkydome_ = nullptr;
+
+	// フェード
+	Fade* fade_ = nullptr;
+	float duration_ = 1.0f;
+	Phase phase_ = Phase::kFadeIn;
 	
 	// 終了フラグ
 	bool finished_ = false;
