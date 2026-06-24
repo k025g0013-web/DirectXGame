@@ -18,7 +18,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 
 	delete player_;
-	delete modelPlayer_;
+	delete playerAttack_;
 
 	for (Enemy* enemy : enemies_) {
 		delete enemy;
@@ -60,10 +60,13 @@ void GameScene::Initialize() {
 
 	// プレイヤー
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
+	modelPlayerAttack_ = Model::CreateFromOBJ("attack", true);
+
 	player_ = new Player;
+
 	// 座標をマップチップ番号で指定
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	player_->Initialize(modelPlayer_, &camera_, playerPosition);
+	player_->Initialize(modelPlayer_, modelPlayerAttack_, &camera_, playerPosition);
 	player_->SetMapChipField(mapChipField_);
 
 	// エネミー
@@ -125,7 +128,7 @@ void GameScene::Update() {
 		if (Input::GetInstance()->TriggerKey(DIK_R)) {
 			// 座標をマップチップ番号で指定
 			Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-			player_->Initialize(modelPlayer_, &camera_, playerPosition);
+			player_->Initialize(modelPlayer_, modelPlayerAttack_, &camera_, playerPosition);
 			player_->SetMapChipField(mapChipField_);
 		}
 
@@ -183,7 +186,7 @@ void GameScene::Update() {
 		if (Input::GetInstance()->TriggerKey(DIK_R)) {
 			// 座標をマップチップ番号で指定
 			Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-			player_->Initialize(modelPlayer_, &camera_, playerPosition);
+			player_->Initialize(modelPlayer_, modelPlayerAttack_, &camera_, playerPosition);
 			player_->SetMapChipField(mapChipField_);
 		}
 
