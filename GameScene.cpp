@@ -26,9 +26,11 @@ GameScene::~GameScene() {
 	enemies_.clear();
 
 	delete skydome_;
+	delete modelSkydome_;
 
 	if (deathParticles_ != nullptr) {
 		delete deathParticles_;
+		delete modelDeathParticles_;
 	}
 
 	delete mapChipField_;
