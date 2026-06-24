@@ -340,6 +340,14 @@ void GameScene::Update() {
 #pragma endregion
 		break;
 	}
+
+	enemies_.remove_if([](Enemy* enemy) {
+		if (enemy->GetIsDead()) {
+			delete enemy;
+			return true;
+		}
+		return false;
+	});
 }
 
 void GameScene::Draw() {
@@ -421,6 +429,10 @@ void GameScene::CheckAllCollision() {
 
 	// 自キャラと敵弾全ての当たり判定
 	for (Enemy* enemy : enemies_) {
+		if (enemy->GetIsCollisionDisabled()) {
+			continue;
+		}
+
 		// 敵弾の座標
 		aabb2 = enemy->GetAABB();
 

@@ -9,6 +9,13 @@ class Player;
 
 class Enemy {
 public:
+	enum class Behavior {
+		kUnknown,
+		kWalk,
+		kDeath,
+	};
+
+public:
 	Enemy();  // コンストラクタ
 	~Enemy(); // デストラクタ
 
@@ -22,13 +29,26 @@ public:
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition();
 
+	void BehaviorWalkInitialize();
+	void BehaviorWalkUpdate();
+	void BehaviorDeathInitialize();
+	void BehaviorDeathUpdate();
+
 	// AABBを取得
 	AABB GetAABB();
 
 	// 衝突応答
 	void OnCollision(const Player* player);
 
+	const bool GetIsDead() const { return isDead_; }
+	
+	const bool GetIsCollisionDisabled() const { return (behavior_ == Behavior::kDeath || isDead_); }
+
 private:
+	// 振る舞い
+	Behavior behavior_ = Behavior::kWalk;
+	Behavior behaviorRequest_ = Behavior::kUnknown;
+
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
 
@@ -56,4 +76,14 @@ private:
 
 	// 経過時間
 	float walkTimer_ = 0.0f;
+
+	// 死亡（Death）用の演出パラメータ
+	uint32_t deathTimer_ = 0;
+	static inline const uint32_t kDeathTime = 60; // 60フレームで消滅
+
+	// デスフラグ
+	bool isDead_ = false;
+
+	// 衝突判定スキップ
+	bool IsCollisionDisabled_ = false;
 };

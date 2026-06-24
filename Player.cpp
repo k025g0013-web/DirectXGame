@@ -130,6 +130,7 @@ void Player::Draw() {
 };
 #pragma endregion
 
+#pragma region 各Behaviorの処理
 void Player::BehaviorRootInitialize() {}	
 
 void Player::BehaviorRootUpdate() {
@@ -288,6 +289,7 @@ void Player::BehaviorAttackUpdate() {
 	IsHitWallChecker(attackCollisionInfo);
 	InstallationStateSwitching(attackCollisionInfo);
 }
+#pragma endregion
 
 #pragma region 更新処理全体の流れ
 // 移動入力
@@ -700,6 +702,10 @@ AABB Player::GetAABB() {
 };
 
 void Player::OnCollision(const Enemy* enemy) { 
+	if (behavior_ == Behavior::kAttack) {
+		return;
+	}
+
 	(void)enemy;
 	// デスフラグを立てる
 	isDead_ = true;

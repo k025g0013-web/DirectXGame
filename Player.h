@@ -104,6 +104,9 @@ public:
 	// デスフラグのgetter
 	bool IsDead() const { return isDead_; };
 
+	// 攻撃状態チェック
+	bool IsAttack() const { return behavior_ == Behavior::kAttack; };
+
 private:
 	// 振る舞い
 	Behavior behavior_ = Behavior::kRoot;
