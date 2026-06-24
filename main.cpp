@@ -12,7 +12,6 @@ GameScene* gameScene = nullptr;   // ゲームシーン
 // シーン (型)
 enum class Scene {
 	kUnknown = 0,
-
 	kTitle,
 	kGame,
 };
