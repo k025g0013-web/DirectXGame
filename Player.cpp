@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "Player.h"
+#include "Easing.h"
 #include <algorithm>
 #include <cassert>
 #include <numbers>
@@ -7,62 +8,63 @@
 using namespace KamataEngine;
 
 Player::Player() {};
-Player::~Player() { delete model_; };
+Player::~Player() {
+	delete model_;
+	delete modelAttack_;
+};
 
 #pragma region 初期化・更新・描画
 // 初期化処理
-void Player::Initialize(Model* model, Camera* camera, const Vector3& position) {
+void Player::Initialize(Model* model, Model* modelAttack, Camera* camera, const Vector3& position) {
 	// nullポインタチェック
 	assert(model);
 
 	// 引数の内容をメンバ変数に記録する
 	model_ = model;
+	modelAttack_ = modelAttack;
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 
+	// ワールド変換の初期化
+	worldTransformAttack_.Initialize();
+	worldTransformAttack_.translation_ = position;
+
 	// 引数の内容をメンバ変数に記録
 	camera_ = camera;
 
 	// 初期回転
-	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
+	lrDirection_ = LRDirection::kRight;
+	float destinationRotationYTable[] = {std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> * 3.0f / 2.0f};
+	worldTransform_.rotation_.y = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+	worldTransformAttack_.rotation_.y = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+
+	turnTimer_ = 0.0f;
 };
 
 // 更新処理
 void Player::Update() {
-	// 移動入力
-	MoveInput();
-
 	// 衝突情報を初期化
 	CollisionMapInfo collisionMapInfo;
 	// 移動量に速度の値をコピー
 	collisionMapInfo.move = velocity_;
 
+	// 画面端による移動量の制限
 	if (camera_) {
 		float screenMarginX = 21.0f;
-
-		// カメラの現在のX座標基準の可動限界
 		float minX = camera_->translation_.x - screenMarginX + (kWidth / 2.0f);
 		float maxX = camera_->translation_.x + screenMarginX - (kWidth / 2.0f);
-
-		// 次のフレームでの予測座標
 		float nextX = worldTransform_.translation_.x + collisionMapInfo.move.x;
 
-		// 左画面端に押し出される移動量を計算
 		if (nextX < minX) {
-			// 画面左端に引っかかるための移動量に上書き
 			collisionMapInfo.move.x = minX - worldTransform_.translation_.x;
-			if (velocity_.x < 0.0f) {
+			if (velocity_.x < 0.0f)
 				velocity_.x = 0.0f;
-			}
-		}
-		// 右画面端に引っかかる移動量を計算
-		else if (nextX > maxX) {
+		} else if (nextX > maxX) {
 			collisionMapInfo.move.x = maxX - worldTransform_.translation_.x;
-			if (velocity_.x > 0.0f) {
+			if (velocity_.x > 0.0f)
 				velocity_.x = 0.0f;
-			}
 		}
 	}
 
@@ -72,24 +74,68 @@ void Player::Update() {
 	// 判定結果を反映して移動させる
 	MoveOnResult(collisionMapInfo);
 
+	// 壁との挟まれ判定
 	if (camera_) {
 		float screenMarginX = 21.0f;
 		float minX = camera_->translation_.x - screenMarginX + (kWidth / 2.0f);
 		float maxX = camera_->translation_.x + screenMarginX - (kWidth / 2.0f);
-
-		// 壁との挟まれ判定を呼び出す
 		CheckScreenAndWallSandwich(collisionMapInfo, minX, maxX);
 	}
 
-	// 天井に接触している場合の処理
+	// 各種チェッカーと接地切り替え
 	IsHitCeilingChecker(collisionMapInfo);
-
-	// 壁に接触している場合の処理
 	IsHitWallChecker(collisionMapInfo);
-
-	// 接地状態の切り替え
 	InstallationStateSwitching(collisionMapInfo);
 
+	if (behaviorRequest_ != Behavior::kUnknown) {
+		// 振る舞いを変更
+		behavior_ = behaviorRequest_;
+		// 各振る舞いごとの初期化を実行
+		switch (behavior_) {
+		case Player::Behavior::kRoot:
+			BehaviorRootInitialize();
+			break;
+		case Player::Behavior::kAttack:
+			BehaviorAttackInitialize();
+			break;
+		}
+		// 振る舞いリクエストをリセット
+		behaviorRequest_ = Behavior::kUnknown;
+	}
+
+	// Behaviorの実行
+	switch (behavior_) {
+	case Player::Behavior::kRoot:
+		BehaviorRootUpdate();
+		break;
+	case Player::Behavior::kAttack:
+		BehaviorAttackUpdate();
+		break;
+	}
+
+	// 行列更新
+	UpdateWorldTransform(worldTransform_);
+	UpdateWorldTransform(worldTransformAttack_);
+};
+
+// 描画処理
+void Player::Draw() {
+	// 3Dモデルを描画
+	model_->Draw(worldTransform_, *camera_);
+	
+	// 攻撃時にのみエフェクトを描画
+	if (behavior_ == Behavior::kAttack) {
+		modelAttack_->Draw(worldTransformAttack_, *camera_);
+	}
+};
+#pragma endregion
+
+void Player::BehaviorRootInitialize() {}	
+
+void Player::BehaviorRootUpdate() {
+	// 移動入力
+	MoveInput();
+	
 	// 旋回制御
 	if (turnTimer_ > 0.0f) {
 		// 旋回タイマーを1/60秒だけカウントダウンする
@@ -105,16 +151,143 @@ void Player::Update() {
 		worldTransform_.rotation_.y = turnFirstRotationY_ + (destinationRotation - turnFirstRotationY_) * t;
 	}
 
-	// 行列更新
-	UpdateWorldTransform(worldTransform_);
-};
+	if (turnTimer_ <= 0.0f) {
+		if (Input::GetInstance()->TriggerKey(DIK_Z)) {
+			behaviorRequest_ = Behavior::kAttack;
+		}
+	}
+}
 
-// 描画処理
-void Player::Draw() {
-	// 3Dモデルを描画
-	model_->Draw(worldTransform_, *camera_);
-};
-#pragma endregion
+void Player::BehaviorAttackInitialize() { 
+	attackParameter_ = 0;
+
+	//	攻撃エフェクト用worldTransform初期化
+    worldTransformAttack_.translation_ = worldTransform_.translation_;
+	worldTransformAttack_.rotation_ = worldTransform_.rotation_;
+	worldTransformAttack_.scale_ = {1.0f, 1.0f, 1.0f};
+}	
+
+void Player::BehaviorAttackUpdate() {
+	// 自機とエフェクトのworldTransform同期
+	worldTransformAttack_.translation_ = worldTransform_.translation_;
+	worldTransformAttack_.rotation_ = worldTransform_.rotation_;
+	
+	// 予備動作
+	attackParameter_++;
+
+	// 移動速度の計算
+	float currentMoveSpeed = 0.0f;
+	if (attackPhase_ == AttackPhase::kMove) {
+		currentMoveSpeed = 1.0f;
+	}
+
+	// カメラへの影響を防ぐため、メンバ変数の速度はゼロクリア
+	velocity_ = {};
+
+	// 攻撃中の移動量を計算するためのローカル変数
+	Vector3 velocity = {};
+
+	switch (attackPhase_) {
+		// 溜め動作
+	case AttackPhase::kCharge:
+	default: {
+		// 時間
+		float t = static_cast<float>(attackParameter_) / chargeTime_;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// 速度
+		float speed = easeInQuad(t);
+
+		// 変形
+		worldTransform_.scale_.z = Lerp(1.0f, 0.3f, speed);
+		worldTransform_.scale_.y = Lerp(1.0f, 1.6f, speed);
+
+		worldTransformAttack_.scale_.y = Lerp(0.0f, 0.5f, speed);
+		worldTransformAttack_.scale_.z = Lerp(0.0f, 0.5f, speed);
+
+		// 突進動作へ移行
+		if (attackParameter_ >= chargeTime_) {
+			attackPhase_ = AttackPhase::kMove;
+			attackParameter_ = 0; // カウンターをリセット
+		}
+		break;
+	}
+
+		// 突進動作
+	case AttackPhase::kMove: {
+		// 向き
+		if (lrDirection_ == LRDirection::kLeft) {
+			velocity.x = -currentMoveSpeed;
+		} else if (lrDirection_ == LRDirection::kRight) {
+			velocity.x = currentMoveSpeed;
+		}
+
+		// 時間
+		float t = static_cast<float>(attackParameter_) / attackTime_;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// 速度
+		float speed = easeOutQuad(t);
+
+		// 変形
+		worldTransform_.scale_.z = Lerp(0.3f, 1.4f, speed);
+		worldTransform_.scale_.y = Lerp(1.6f, 0.6f, speed);
+
+		worldTransformAttack_.scale_.x = Lerp(0.5f, 4.0f, speed);
+		worldTransformAttack_.scale_.y = Lerp(0.5f, 1.0f, speed);
+		worldTransformAttack_.scale_.z = Lerp(0.5f, 1.0f, speed);
+
+		float offset = 2.0f;
+		if (lrDirection_ == LRDirection::kRight) {
+			worldTransformAttack_.translation_.x = worldTransform_.translation_.x + offset;
+		} else {
+			worldTransformAttack_.translation_.x = worldTransform_.translation_.x - offset;
+		}
+
+		// 余韻動作へ移行
+		if (attackParameter_ >= attackTime_) {
+			attackPhase_ = AttackPhase::kCoolTime;
+			attackParameter_ = 0; // カウンターをリセット
+		}
+		break;
+	}
+
+	// 余韻動作
+	case AttackPhase::kCoolTime: {
+		// 時間
+		float t = static_cast<float>(attackParameter_) / coolTime_;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// 速度
+		float speed = easeOutQuad(t);
+
+		// 変形
+		worldTransform_.scale_.z = Lerp(1.3f, 1.0f, speed);
+		worldTransform_.scale_.y = Lerp(0.7f, 1.0f, speed);
+
+		worldTransformAttack_.scale_.y = Lerp(1.0f, 0.0f, speed);
+		worldTransformAttack_.scale_.z = Lerp(1.0f, 0.0f, speed);
+
+		// 通常状態に戻す
+		if (attackParameter_ >= coolTime_) {
+			attackPhase_ = AttackPhase::kCharge; // 初期化
+			behaviorRequest_ = Behavior::kRoot;  // 通常状態へ
+		}
+		break;
+	}
+	}
+
+	// 攻撃用の衝突判定情報を初期化して用意
+	CollisionMapInfo attackCollisionInfo;
+	attackCollisionInfo.move = velocity; // 計算したローカル移動量を設定
+
+	CollisionMap(attackCollisionInfo);
+
+	MoveOnResult(attackCollisionInfo);
+
+	IsHitWallChecker(attackCollisionInfo);
+	InstallationStateSwitching(attackCollisionInfo);
+}
 
 #pragma region 更新処理全体の流れ
 // 移動入力
@@ -149,8 +322,8 @@ void Player::MoveInput() {
 				}
 				acceleration.x -= kAcceleration;
 
-				if (lrDirection_ != LRDirection::kLift) {
-					lrDirection_ = LRDirection::kLift;
+				if (lrDirection_ != LRDirection::kLeft) {
+					lrDirection_ = LRDirection::kLeft;
 
 					// 旋回開始時の角度を記録する
 					turnFirstRotationY_ = std::numbers::pi_v<float> / 2.0f;
@@ -551,7 +724,7 @@ void Player::CheckScreenAndWallSandwich(const CollisionMapInfo& info, float minX
 	// 逆方向（画面右端と左の壁に挟まれたケース
 	bool isAtRightScreenEdge = (worldTransform_.translation_.x >= maxX);
 	bool isHitLeftWall = info.wall && 
-		(lrDirection_ == LRDirection::kLift || velocity_.x <= 0.0f);
+		(lrDirection_ == LRDirection::kLeft || velocity_.x <= 0.0f);
 
 	if (isAtRightScreenEdge && isHitLeftWall) {
 		isDead_ = true;

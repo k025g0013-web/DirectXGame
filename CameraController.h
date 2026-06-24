@@ -47,7 +47,7 @@ private:
 	KamataEngine::Camera camera_;
 
 	// モード
-	Mode mode_ = Mode::kForcedScroll;
+	Mode mode_ = Mode::kFollow;
 
 	// 強制スクロール速度
 	KamataEngine::Vector3 scrollSpeed_ = {0.05f, 0.0f, 0.0f};

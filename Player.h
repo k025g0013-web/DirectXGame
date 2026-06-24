@@ -7,7 +7,7 @@
 
 enum class LRDirection {
 	kRight,
-	kLift,
+	kLeft,
 };
 
 // マップとの当たり判定情報
@@ -33,12 +33,33 @@ class MapChipField;
 
 class Player {
 public:
+	enum class Behavior {
+		kUnknown,
+		kRoot,
+		kAttack,
+	};
+
+	enum class AttackPhase {
+		kCharge,
+		kMove,     
+		kCoolTime, 
+	};
+
+public:
 	Player();  // コンストラクタ
 	~Player(); // デストラクタ
 
-	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const KamataEngine::Vector3& position); // 初期化
+	void Initialize(KamataEngine::Model* model, KamataEngine::Model* modelAttack, KamataEngine::Camera* camera, const KamataEngine::Vector3& position); // 初期化
 	void Update();																									  // 更新
 	void Draw();																									  // 描画
+
+	// 通常行動
+	void BehaviorRootInitialize();	
+	void BehaviorRootUpdate();
+
+	// 攻撃行動
+	void BehaviorAttackInitialize();
+	void BehaviorAttackUpdate();
 
 	void MoveInput();																								  // 移動入力
 	void MoveOnResult(const CollisionMapInfo& info);																  // 判定結果を反映して移動させる 
@@ -84,11 +105,24 @@ public:
 	bool IsDead() const { return isDead_; };
 
 private:
+	// 振る舞い
+	Behavior behavior_ = Behavior::kRoot;
+	Behavior behaviorRequest_ = Behavior::kUnknown;
+
+	// 攻撃行動
+	uint32_t attackParameter_ = 0;
+	AttackPhase attackPhase_ = AttackPhase::kCharge;
+	float chargeTime_ = 7.0f;
+	float attackTime_ = 10.0f;
+	float coolTime_ = 5.0f;
+
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
+	KamataEngine::WorldTransform worldTransformAttack_;
 
 	// モデル
 	KamataEngine::Model* model_ = nullptr;
+	KamataEngine::Model* modelAttack_ = nullptr;
 
 	// カメラ
 	KamataEngine::Camera* camera_ = nullptr;
