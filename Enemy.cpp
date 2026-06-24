@@ -1,44 +1,81 @@
 #include "Enemy.h"
+#include "Player.h"
 #include <numbers>
 #include <cmath>
 
 using namespace KamataEngine;
 
-// コンストラクタ
-Enemy::Enemy() {
-};
+Enemy::Enemy() {};
+Enemy::~Enemy() {};
 
-// デストラクタ
-Enemy::~Enemy() {
-};
-
-// 初期化処理
 void Enemy::Initialize(Model* model, Camera* camera, const Vector3& position) {
 	// nullポインタチェック
 	assert(model);
-
-	// 引数の内容をメンバ変数に記録する
-	model_ = model;
+	model_ = model;		// 引数の内容をメンバ変数に記録する
+	camera_ = camera;	// 引数の内容をメンバ変数に記録
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 
-	// 引数の内容をメンバ変数に記録
-	camera_ = camera;
-
 	// 初期回転
 	worldTransform_.rotation_.y = 3.0f * std::numbers::pi_v<float> / 2.0f;
 
-	// 速度を設定する
-	velocity_ = { -kWalkSpeed, 0.0f, 0.0f };
+	// 初期状態を設定
+	behavior_ = Behavior::kWalk;
+	behaviorRequest_ = Behavior::kUnknown;
 
-	// 経過時間
-	walkTimer_ = 0.0f;
+	// 歩行状態初期化
+	BehaviorWalkInitialize();
+
 };
 
-// 更新処理
 void Enemy::Update() {
+	if (behaviorRequest_ != Behavior::kUnknown) {
+		// 振る舞いを変更
+		behavior_ = behaviorRequest_;
+		// 各振る舞いごとの初期化を実行
+		switch (behavior_) {
+		case Behavior::kWalk:
+			BehaviorWalkInitialize();
+			break;
+		case Behavior::kDeath:
+			BehaviorDeathInitialize();
+			break;
+		}
+		// 振る舞いリクエストをリセット
+		behaviorRequest_ = Behavior::kUnknown;
+	}
+
+	// Behaviorの実行
+	switch (behavior_) {
+	case Behavior::kWalk:
+		BehaviorWalkUpdate();
+		break;
+	case Behavior::kDeath:
+		BehaviorDeathUpdate();
+		break;
+	}
+
+	// 行列更新
+	UpdateWorldTransform(worldTransform_);
+};
+
+void Enemy::Draw() {
+	// 3Dモデルを描画
+	model_->Draw(worldTransform_, *camera_);
+};
+
+#pragma region 各Behaviorの処理
+void Enemy::BehaviorWalkInitialize() {
+	// 経過時間
+	walkTimer_ = 0.0f;
+
+	// 速度を設定する
+	velocity_ = {-kWalkSpeed, 0.0f, 0.0f};
+}
+
+void Enemy::BehaviorWalkUpdate() {
 	// 移動
 	worldTransform_.translation_.x += velocity_.x;
 
@@ -49,16 +86,35 @@ void Enemy::Update() {
 	float param = std::sin(walkTimer_ / kWalkMotionTime * (2.0f * std::numbers::pi_v<float>));
 	float degree = kWalkMotionAngleStart + kWalkMotionAngleEnd * (param + 1.0f) / 2.0f;
 	worldTransform_.rotation_.x = degree * std::numbers::pi_v<float> / 180.0f;
+}
 
-	// 行列更新
-	UpdateWorldTransform(worldTransform_);
-};
+void Enemy::BehaviorDeathInitialize() {
+	deathTimer_ = 0;
 
-// 描画処理
-void Enemy::Draw() {
-	// 3Dモデルを描画
-	model_->Draw(worldTransform_, *camera_);
-};
+	velocity_.x = 0.1f;
+	velocity_.y = 0.3f;
+}
+
+void Enemy::BehaviorDeathUpdate() {
+	deathTimer_++;
+
+	// 簡易的な重力をかけて放物線を描いて落ちる
+	velocity_.y -= 0.01f;
+
+	// 座標に反映
+	worldTransform_.translation_.x += velocity_.x;
+	worldTransform_.translation_.y += velocity_.y;
+
+	// くるくる回転しながら吹き飛ぶ演出
+	worldTransform_.rotation_.z += 0.2f;
+	worldTransform_.rotation_.x += 0.1f;
+
+	// 一定時間経過したら完全に消滅フラグを立てる
+	if (deathTimer_ >= kDeathTime) {
+		isDead_ = true;
+	}
+}
+#pragma endregion
 
 Vector3 Enemy::GetWorldPosition() {
 	// ワールド座標を入れる変数
@@ -82,6 +138,13 @@ AABB Enemy::GetAABB() {
 	return aabb;
 };
 
-void Enemy::OnCollision(const Player* player) {
-	(void)player;
+void Enemy::OnCollision(const Player *player) {
+	if (GetIsCollisionDisabled()) {
+		return;
+	}
+
+	if (player->IsAttack() || player->GetWorldTransform().scale_.z > 1.0f) {
+		behaviorRequest_ = Behavior::kDeath;
+		return;
+	}
 };
