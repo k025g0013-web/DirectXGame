@@ -28,9 +28,11 @@ public:
 	static HitEffect* Create(const KamataEngine::Vector3& position);
 
 	void BehaviorSpreadInitialize();
+	
 	void BehaviorSpreadUpdate();
 
 	void BehaviorFadeInitialize();
+	
 	void BehaviorFadeUpdate();
 
 	// デスフラグの取得
