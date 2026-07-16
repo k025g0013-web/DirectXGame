@@ -29,7 +29,6 @@ void HitEffect::Initialize(const Vector3& position) {
 	circleWorldTransform_.Initialize();
 	circleWorldTransform_.scale_ = {1.0f, 1.0f, 1.0f};
 	circleWorldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
-
 	circleWorldTransform_.translation_ = position;
 
 	// 楕円エフェクト
