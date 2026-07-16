@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "HitEffect.h"
 
 using namespace KamataEngine;
 
@@ -38,6 +39,11 @@ GameScene::~GameScene() {
 	delete cameraController_;
 
 	delete fade_;
+
+	for (HitEffect* hitEffect : hitEffects_) {
+		delete hitEffect;
+	}
+	hitEffects_.clear();
 }
 
 void GameScene::Initialize() {
@@ -76,6 +82,8 @@ void GameScene::Initialize() {
 		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(20, 18 - i);
 		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
 
+		newEnemy->SetGameScene(this);
+
 		enemies_.push_back(newEnemy);
 	}
 
@@ -95,6 +103,11 @@ void GameScene::Initialize() {
 	fade_ = new Fade;
 	fade_->Initialize();
 	fade_->Start(Fade::Status::FadeIn, duration_);
+
+	// ヒットエフェクト
+	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
+	HitEffect::SetModel(modelHitEffect_);
+	HitEffect::SetCamera(&camera_);
 }
 
 void GameScene::Update() {
@@ -136,6 +149,20 @@ void GameScene::Update() {
 		for (Enemy* enemy : enemies_) {
 			enemy->Update();
 		}
+
+		// ヒットエフェクト
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
+		}
+
+		hitEffects_.remove_if([](HitEffect* effect) {
+			if (effect->IsDead()) {
+				delete effect;
+				return true;
+			}
+
+			return false;
+		});
 
 		// カメラコントローラー
 		cameraController_->Update();
@@ -195,6 +222,19 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 
+		// ヒットエフェクト
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
+		}
+
+		hitEffects_.remove_if([](HitEffect* effect) {
+			if (effect->IsDead()) {
+				delete effect;
+				return true;
+			}
+			return false;
+		});
+
 		// カメラコントローラー
 		cameraController_->Update();
 
@@ -241,6 +281,19 @@ void GameScene::Update() {
 		for (Enemy* enemy : enemies_) {
 			enemy->Update();
 		}
+
+		// ヒットエフェクト
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
+		}
+
+		hitEffects_.remove_if([](HitEffect* effect) {
+			if (effect->IsDead()) {
+				delete effect;
+				return true;
+			}
+			return false;
+		});
 
 		// 死亡時パーティクル
 		if (deathParticles_ != nullptr) {
@@ -296,6 +349,19 @@ void GameScene::Update() {
 		for (Enemy* enemy : enemies_) {
 			enemy->Update();
 		}
+
+		// ヒットエフェクト
+		for (HitEffect* hitEffect : hitEffects_) {
+			hitEffect->Update();
+		}
+
+		hitEffects_.remove_if([](HitEffect* effect) {
+			if (effect->IsDead()) {
+				delete effect;
+				return true;
+			}
+			return false;
+		});
 
 		// 死亡時パーティクル
 		if (deathParticles_ != nullptr) {
@@ -372,6 +438,11 @@ void GameScene::Draw() {
 	// エネミー
 	for (Enemy* enemy : enemies_) {
 		enemy->Draw();
+	}
+
+	// ヒットエフェクト
+	for (HitEffect* hitEffect : hitEffects_) {
+		hitEffect->Draw();
 	}
 
 	// スカイドーム
@@ -467,3 +538,8 @@ void GameScene::ChangePhase() {
 		break;
 	}
 };
+
+void GameScene::CreateHitEffect(const KamataEngine::Vector3& position) { 
+	HitEffect* newHitEffect = HitEffect::Create(position);
+	hitEffects_.push_back(newHitEffect);
+}

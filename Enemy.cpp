@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Player.h"
+#include "GameScene.h"
 #include <numbers>
 #include <cmath>
 
@@ -145,6 +146,14 @@ void Enemy::OnCollision(const Player *player) {
 
 	if (player->IsAttack() || player->GetWorldTransform().scale_.z > 1.0f) {
 		behaviorRequest_ = Behavior::kDeath;
+
+		Vector3 effectPos{
+		    (worldTransform_.translation_.x + player->GetWorldTransform().translation_.x) / 2.0f,
+		    (worldTransform_.translation_.y + player->GetWorldTransform().translation_.y) / 2.0f,
+		    (worldTransform_.translation_.z + player->GetWorldTransform().translation_.z) / 2.0f,
+		};
+
+		gameScene_->CreateHitEffect(effectPos);
 		return;
 	}
 };
