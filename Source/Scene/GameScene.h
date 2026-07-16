@@ -2,15 +2,17 @@
 #include "KamataEngine.h"
 #include <vector>
 
-#include "UpdateWorldTransform.h"
-#include "MapChipField.h"
-#include "CameraController.h"
+#include "Effect/DeathParticles.h"
+#include "Effect/Fade.h"
+#include "Effect/HitEffect.h"
 
-#include "Player.h"
-#include "Enemy.h"
-#include "Skydome.h"
-#include "DeathParticles.h"
-#include "Fade.h"
+#include "Object/CameraController.h"
+#include "Object/Enemy.h"
+#include "Object/MapChipField.h"
+#include "Object/Player.h"
+#include "Object/Skydome.h"
+
+#include "Utils/UpdateWorldTransform.h"
 
 class GameScene {
 public:
@@ -40,6 +42,9 @@ public:
 
 	// フェーズの切り替え
 	void ChangePhase();
+
+	// ヒットエフェクトを生成
+	void CreateHitEffect(const KamataEngine::Vector3& position);
 
 	// 終了フラグのgetter
 	bool IsFinished() const { return finished_; };
@@ -88,6 +93,10 @@ private:
 	// フェード
 	Fade* fade_ = nullptr;
 	float duration_ = 1.0f;
+
+	// ヒットエフェクト
+	std::list<HitEffect*> hitEffects_;
+	KamataEngine::Model* modelHitEffect_ = nullptr;
 
 	// 終了フラグ
 	bool finished_ = false;

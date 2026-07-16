@@ -1,9 +1,13 @@
 #pragma once
 #include "KamataEngine.h"
-#include "UpdateWorldTransform.h"
+
 #include "TitleLogo.h"
-#include "Skydome.h"
-#include "Fade.h"
+
+#include "Object/Skydome.h"
+
+#include "Effect/Fade.h"
+
+#include "Utils/UpdateWorldTransform.h"
 
 class TitleScene {
 public:

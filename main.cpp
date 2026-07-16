@@ -1,5 +1,5 @@
-#include "TitleScene.h"
-#include "GameScene.h"
+#include "Scene/TitleScene.h"
+#include "Scene/GameScene.h"
 #include "KamataEngine.h"
 #include <Windows.h>
 

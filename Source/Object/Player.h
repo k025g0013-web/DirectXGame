@@ -1,9 +1,11 @@
 #pragma once
 #include "KamataEngine.h"
 #include <3d\Model.h>
-#include "UpdateWorldTransform.h"
+
 #include "MapChipField.h"
-#include "AABB.h"
+
+#include "Utils/AABB.h"
+#include "Utils/UpdateWorldTransform.h"
 
 enum class LRDirection {
 	kRight,

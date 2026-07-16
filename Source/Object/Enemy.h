@@ -1,9 +1,13 @@
 #pragma once
 #include "KamataEngine.h"
 #include <3d\Model.h>
-#include "UpdateWorldTransform.h"
+
 #include "MapChipField.h"
-#include "AABB.h"
+
+#include "Utils/AABB.h"
+#include "Utils/UpdateWorldTransform.h"
+
+class GameScene;
 
 class Player;
 
@@ -43,6 +47,9 @@ public:
 	const bool GetIsDead() const { return isDead_; }
 	
 	const bool GetIsCollisionDisabled() const { return (behavior_ == Behavior::kDeath || isDead_); }
+
+	// ゲームシーンポインタを取得
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 private:
 	// 振る舞い
@@ -86,4 +93,6 @@ private:
 
 	// 衝突判定スキップ
 	bool IsCollisionDisabled_ = false;
+
+	GameScene *gameScene_ = nullptr;
 };

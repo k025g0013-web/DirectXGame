@@ -1,9 +1,11 @@
 #define NOMINMAX
-#include "Player.h"
-#include "Easing.h"
 #include <algorithm>
 #include <cassert>
 #include <numbers>
+
+#include "Player.h"
+
+#include "Utils/Easing.h"
 
 using namespace KamataEngine;
 
