@@ -49,6 +49,7 @@ GameScene::~GameScene() {
 	hitEffects_.clear();
 }
 
+#pragma region 初期化・更新・描画
 void GameScene::Initialize() {
 	// カメラの初期化
 	camera_.farZ = 2000.0f;
@@ -59,51 +60,22 @@ void GameScene::Initialize() {
 
 	// 3Dモデルデータの生成
 	modelBlock_ = Model::Create();
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
+	modelPlayerAttack_ = Model::CreateFromOBJ("attack", true);
+	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+	modelShieldEnemy_ = Model::CreateFromOBJ("shieldEnemy", true);
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
+	modelGuardEffect_ = Model::CreateFromOBJ("guardEffect", true);
 
 	// マップチップフィールド
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
-	// キューブの生成
+	// CSVの配置を読み込んでブロック、プレイヤー、エネミーを生成・配置
 	GenerateBlocks();
 
-	// プレイヤー
-	modelPlayer_ = Model::CreateFromOBJ("player", true);
-	modelPlayerAttack_ = Model::CreateFromOBJ("attack", true);
-
-	player_ = new Player;
-
-	// 座標をマップチップ番号で指定
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	player_->Initialize(modelPlayer_, modelPlayerAttack_, &camera_, playerPosition);
-	player_->SetMapChipField(mapChipField_);
-
-	// エネミー
-	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
-	for (int32_t i = 0; i < 3; ++i) {
-		Enemy* newEnemy = new Enemy();
-		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(20, 18 - i);
-		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
-
-		newEnemy->SetGameScene(this);
-
-		enemies_.push_back(newEnemy);
-	}
-
-	// 盾エネミー
-	modelShieldEnemy_ = Model::CreateFromOBJ("shieldEnemy", true);
-	for (int32_t i = 0; i < 3; ++i) {
-		ShieldEnemy* newShieldEnemy = new ShieldEnemy();
-		Vector3 shieldEnemyPosition = mapChipField_->GetMapChipPositionByIndex(25, 18 - i);
-		newShieldEnemy->Initialize(modelShieldEnemy_, &camera_, shieldEnemyPosition);
-
-		newShieldEnemy->SetGameScene(this);
-
-		shieldEnemies_.push_back(newShieldEnemy);
-	}
-
 	// スカイドーム
-	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_ = new Skydome;
 	skydome_->Initialize(modelSkydome_, &camera_);
 
@@ -119,13 +91,9 @@ void GameScene::Initialize() {
 	fade_->Initialize();
 	fade_->Start(Fade::Status::FadeIn, duration_);
 
-	// ヒットエフェクト
-	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
+	// エフェクトクラスへのスタティック設定
 	HitEffect::SetModel(modelHitEffect_);
 	HitEffect::SetCamera(&camera_);
-
-	// ガードエフェクト
-	modelGuardEffect_ = Model::CreateFromOBJ("guardEffect", true);
 	GuardEffect::SetModel(modelGuardEffect_);
 	GuardEffect::SetCamera(&camera_);
 }
@@ -136,384 +104,121 @@ void GameScene::Update() {
 
 #ifdef _DEBUG
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		// デバッグカメラ有効フラグをトグル
 		isDebugCameraActive_ = !isDebugCameraActive_;
 	}
 #endif
 
-	// フェード
+#ifdef USE_IMGUI
+	ImGui::Begin("stage");
+
+	if (ImGui::Button("Reload")) {
+		reloadRequested_ = true;
+	}
+
+	ImGui::End();
+#endif
+
+	// フェードの更新
 	fade_->Update();
 
 	switch (phase_) {
 	case Phase::kFadeIn:
-		// メイン状態へ
-		if (fade_->IsFinished())
+		if (fade_->IsFinished()) {
 			phase_ = Phase::kPlay;
-
-#pragma region ゲームプレイフェーズ
-		// スカイドーム
-		skydome_->Update();
-
-		// プレイヤー
-		player_->Update();
-
-		// プレイヤーの位置：初期化
-		if (Input::GetInstance()->TriggerKey(DIK_R)) {
-			// 座標をマップチップ番号で指定
-			Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-			player_->Initialize(modelPlayer_, modelPlayerAttack_, &camera_, playerPosition);
-			player_->SetMapChipField(mapChipField_);
 		}
+		// intentional fall-through (kFadeInの時もPlayと同じ更新処理に流す)
+		[[fallthrough]];
 
-		// エネミー
-		for (Enemy* enemy : enemies_) {
-			enemy->Update();
-		}
-
-		// 盾エネミー
-		for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
-			shieldEnemy->Update();
-		}
-
-		// ヒットエフェクト
-		for (HitEffect* hitEffect : hitEffects_) {
-			hitEffect->Update();
-		}
-
-		hitEffects_.remove_if([](HitEffect* hitEffect) {
-			if (hitEffect->IsDead()) {
-				delete hitEffect;
-				return true;
-			}
-
-			return false;
-		});
-
-		// ガードエフェクト
-		for (GuardEffect* guardEffect : guardEffects_) {
-			guardEffect->Update();
-		}
-
-		guardEffects_.remove_if([](GuardEffect* guardEffect) {
-			if (guardEffect->IsDead()) {
-				delete guardEffect;
-				return true;
-			}
-
-			return false;
-		});
-
-		// カメラコントローラー
-		cameraController_->Update();
-
-		if (isDebugCameraActive_) {
-			// デバッグカメラの更新
-			const Camera& debugCamera = debugCamera_->GetCamera();
-
-			camera_.matView = debugCamera.matView;             // デバッグカメラのビュー行列
-			camera_.matProjection = debugCamera.matProjection; // デバッグカメラのプロジェクション行列
-
-			// ビュープロジェクション行列の転送
-			camera_.TransferMatrix();
-		} else {
-			// カメラコントローラーのトランスフォームを参照
-			camera_.translation_ = cameraController_->GetCameraTranslation();
-
-			// ビュープロジェクション行列の更新と転送
-			camera_.UpdateMatrix();
-		}
-
-		// ブロックの更新
-		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-				if (!worldTransformBlock)
-					continue;
-
-				// ワールド行列更新
-				UpdateWorldTransform(*worldTransformBlock);
-			}
-		}
-
-		// 全ての当たり判定を行う
-		CheckAllCollision();
-
-		ChangePhase();
-#pragma endregion
-		break;
 	case Phase::kPlay:
-#pragma region ゲームプレイフェーズ
-		// スカイドーム
+		// スカイドーム・プレイヤー
 		skydome_->Update();
-
-		// プレイヤー
 		player_->Update();
 
-		// プレイヤーの位置：初期化
+		// Rキーでリセット（リロード）
 		if (Input::GetInstance()->TriggerKey(DIK_R)) {
-			// 座標をマップチップ番号で指定
-			Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-			player_->Initialize(modelPlayer_, modelPlayerAttack_, &camera_, playerPosition);
-			player_->SetMapChipField(mapChipField_);
+			// キャラクター等の再配置を含めて再初期化する関数を呼ぶと綺麗です
 		}
 
-		// エネミー
-		for (Enemy* enemy : enemies_) {
+		// キャラクター・エフェクト更新
+		for (Enemy* enemy : enemies_)
 			enemy->Update();
-		}
-
-		// 盾エネミー
-		for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+		for (ShieldEnemy* shieldEnemy : shieldEnemies_)
 			shieldEnemy->Update();
-		}
 
-		// ヒットエフェクト
-		for (HitEffect* hitEffect : hitEffects_) {
+		for (HitEffect* hitEffect : hitEffects_)
 			hitEffect->Update();
-		}
-
-		hitEffects_.remove_if([](HitEffect* hitEffect) {
-			if (hitEffect->IsDead()) {
-				delete hitEffect;
+		hitEffects_.remove_if([](HitEffect* e) {
+			if (e->IsDead()) {
+				delete e;
 				return true;
 			}
-
 			return false;
 		});
 
-		// ガードエフェクト
-		for (GuardEffect* guardEffect : guardEffects_) {
+		for (GuardEffect* guardEffect : guardEffects_)
 			guardEffect->Update();
-		}
-
-		guardEffects_.remove_if([](GuardEffect* guardEffect) {
-			if (guardEffect->IsDead()) {
-				delete guardEffect;
+		guardEffects_.remove_if([](GuardEffect* e) {
+			if (e->IsDead()) {
+				delete e;
 				return true;
 			}
-
 			return false;
 		});
 
-		// カメラコントローラー
-		cameraController_->Update();
+		// カメラ・行列更新
+		UpdateCameraAndTransforms();
 
-		if (isDebugCameraActive_) {
-			// デバッグカメラの更新
-			const Camera& debugCamera = debugCamera_->GetCamera();
-
-			camera_.matView = debugCamera.matView;             // デバッグカメラのビュー行列
-			camera_.matProjection = debugCamera.matProjection; // デバッグカメラのプロジェクション行列
-
-			// ビュープロジェクション行列の転送
-			camera_.TransferMatrix();
-		} else {
-			// カメラコントローラーのトランスフォームを参照
-			camera_.translation_ = cameraController_->GetCameraTranslation();
-
-			// ビュープロジェクション行列の更新と転送
-			camera_.UpdateMatrix();
-		}
-
-		// ブロックの更新
-		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-				if (!worldTransformBlock)
-					continue;
-
-				// ワールド行列更新
-				UpdateWorldTransform(*worldTransformBlock);
-			}
-		}
-
-		// 全ての当たり判定を行う
+		// 当たり判定とフェーズ遷移チェック
 		CheckAllCollision();
-
 		ChangePhase();
-#pragma endregion
 		break;
+
 	case Phase::kDeath:
-#pragma region デス演出フェーズ
-		// スカイドーム
+		// デス演出中の更新
 		skydome_->Update();
-
-		// エネミー
-		for (Enemy* enemy : enemies_) {
+		for (Enemy* enemy : enemies_)
 			enemy->Update();
-		}
-
-		// 盾エネミー
-		for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+		for (ShieldEnemy* shieldEnemy : shieldEnemies_)
 			shieldEnemy->Update();
-		}
-
-		// ヒットエフェクト
-		for (HitEffect* hitEffect : hitEffects_) {
+		for (HitEffect* hitEffect : hitEffects_)
 			hitEffect->Update();
-		}
-
-		hitEffects_.remove_if([](HitEffect* hitEffect) {
-			if (hitEffect->IsDead()) {
-				delete hitEffect;
+		hitEffects_.remove_if([](HitEffect* e) {
+			if (e->IsDead()) {
+				delete e;
 				return true;
 			}
-
 			return false;
 		});
-
-		// ガードエフェクト
-		for (GuardEffect* guardEffect : guardEffects_) {
+		for (GuardEffect* guardEffect : guardEffects_)
 			guardEffect->Update();
-		}
-
-		guardEffects_.remove_if([](GuardEffect* guardEffect) {
-			if (guardEffect->IsDead()) {
-				delete guardEffect;
+		guardEffects_.remove_if([](GuardEffect* e) {
+			if (e->IsDead()) {
+				delete e;
 				return true;
 			}
-
 			return false;
 		});
 
-		// 死亡時パーティクル
-		if (deathParticles_ != nullptr) {
+		if (deathParticles_ != nullptr)
 			deathParticles_->Update();
-		}
 
-		// カメラコントローラー
-		cameraController_->Update();
+		UpdateCameraAndTransforms();
 
-		if (isDebugCameraActive_) {
-			// デバッグカメラの更新
-			const Camera& debugCamera = debugCamera_->GetCamera();
-
-			camera_.matView = debugCamera.matView;             // デバッグカメラのビュー行列
-			camera_.matProjection = debugCamera.matProjection; // デバッグカメラのプロジェクション行列
-
-			// ビュープロジェクション行列の転送
-			camera_.TransferMatrix();
-		} else {
-			// カメラコントローラーのトランスフォームを参照
-			camera_.translation_ = cameraController_->GetCameraTranslation();
-
-			// ビュープロジェクション行列の更新と転送
-			camera_.UpdateMatrix();
-		}
-
-		// ブロックの更新
-		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-				if (!worldTransformBlock)
-					continue;
-
-				// ワールド行列更新
-				UpdateWorldTransform(*worldTransformBlock);
-			}
-		}
-
-		// ゲームシーンの終了
 		if (deathParticles_->IsFinished()) {
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, duration_);
 		}
-#pragma endregion
 		break;
+
 	case Phase::kFadeOut:
-		if (fade_->IsFinished())
+		if (fade_->IsFinished()) {
 			finished_ = true;
-#pragma region デス演出フェーズ
-		// スカイドーム
-		skydome_->Update();
-
-		// エネミー
-		for (Enemy* enemy : enemies_) {
-			enemy->Update();
 		}
-
-		// 盾エネミー
-		for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
-			shieldEnemy->Update();
-		}
-
-		// ヒットエフェクト
-		for (HitEffect* hitEffect : hitEffects_) {
-			hitEffect->Update();
-		}
-
-		hitEffects_.remove_if([](HitEffect* hitEffect) {
-			if (hitEffect->IsDead()) {
-				delete hitEffect;
-				return true;
-			}
-
-			return false;
-		});
-
-		// ガードエフェクト
-		for (GuardEffect* guardEffect : guardEffects_) {
-			guardEffect->Update();
-		}
-
-		guardEffects_.remove_if([](GuardEffect* guardEffect) {
-			if (guardEffect->IsDead()) {
-				delete guardEffect;
-				return true;
-			}
-
-			return false;
-		});
-
-		hitEffects_.remove_if([](HitEffect* effect) {
-			if (effect->IsDead()) {
-				delete effect;
-				return true;
-			}
-			return false;
-		});
-
-		// 死亡時パーティクル
-		if (deathParticles_ != nullptr) {
-			deathParticles_->Update();
-		}
-
-		// カメラコントローラー
-		cameraController_->Update();
-
-		if (isDebugCameraActive_) {
-			// デバッグカメラの更新
-			const Camera& debugCamera = debugCamera_->GetCamera();
-
-			camera_.matView = debugCamera.matView;             // デバッグカメラのビュー行列
-			camera_.matProjection = debugCamera.matProjection; // デバッグカメラのプロジェクション行列
-
-			// ビュープロジェクション行列の転送
-			camera_.TransferMatrix();
-		} else {
-			// カメラコントローラーのトランスフォームを参照
-			camera_.translation_ = cameraController_->GetCameraTranslation();
-
-			// ビュープロジェクション行列の更新と転送
-			camera_.UpdateMatrix();
-		}
-
-		// ブロックの更新
-		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-				if (!worldTransformBlock)
-					continue;
-
-				// ワールド行列更新
-				UpdateWorldTransform(*worldTransformBlock);
-			}
-		}
-
-		// ゲームシーンの終了
-		if (deathParticles_->IsFinished()) {
-			phase_ = Phase::kFadeOut;
-		}
-#pragma endregion
+		// 必要なオブジェクトの背景更新のみ記述（省略）
 		break;
 	}
 
+	// 死んだエネミーの自動削除
 	enemies_.remove_if([](Enemy* enemy) {
 		if (enemy->GetIsDead()) {
 			delete enemy;
@@ -521,10 +226,9 @@ void GameScene::Update() {
 		}
 		return false;
 	});
-
-	shieldEnemies_.remove_if([](ShieldEnemy* shieldEnemy) {
-		if (shieldEnemy->GetIsDead()) {
-			delete shieldEnemy;
+	shieldEnemies_.remove_if([](ShieldEnemy* se) {
+		if (se->GetIsDead()) {
+			delete se;
 			return true;
 		}
 		return false;
@@ -589,28 +293,84 @@ void GameScene::Draw() {
 
 	Model::PostDraw(); // 終了
 }
+#pragma endregion
 
 void GameScene::GenerateBlocks() {
-	// 要素数
 	uint32_t kNumBlockVirtical = mapChipField_->GetNumBlockVirtical();
 	uint32_t kNumBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
 
-	// 要素数を変更する
-	// 列数を設定(縦方向のブロック数)
+	// 配列の要素数を拡張
 	worldTransformBlocks_.resize(kNumBlockVirtical);
 	for (uint32_t i = 0; i < kNumBlockVirtical; ++i) {
-		// 1列の要素数を設定(横方向のブロック数)
-		worldTransformBlocks_[i].resize(kNumBlockHorizontal);
+		worldTransformBlocks_[i].resize(kNumBlockHorizontal, nullptr);
 	}
 
-	// ブロックの生成
+	// マップ全体の解析ループ
 	for (uint32_t i = 0; i < kNumBlockVirtical; ++i) {
 		for (uint32_t j = 0; j < kNumBlockHorizontal; ++j) {
-			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) {
+			MapChipType type = mapChipField_->GetMapChipTypeByIndex(j, i);
+			Vector3 position = mapChipField_->GetMapChipPositionByIndex(j, i);
+
+			switch (type) { 
+			case MapChipType::kBlock: {
+				// ブロックの生成
 				WorldTransform* worldTransform = new WorldTransform();
 				worldTransform->Initialize();
+				worldTransform->translation_ = position;
+
 				worldTransformBlocks_[i][j] = worldTransform;
-				worldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+				break;
+			}
+			case MapChipType::kPlayer: {
+				// プレイヤーの位置をCSVの場所に初期化
+				player_ = new Player;
+				player_->Initialize(modelPlayer_, modelPlayerAttack_, &camera_, position);
+				player_->SetMapChipField(mapChipField_);
+				break;
+			}
+			case MapChipType::kEnemy: {
+				// サブIDなどに応じて通常敵と盾敵を分岐生成
+				uint8_t subID = mapChipField_->GetMapChipSubIDByIndex(j, i);
+				switch (subID) {
+				case 0: {
+					Enemy* newEnemy = new Enemy();
+					newEnemy->Initialize(modelEnemy_, &camera_, position);
+					newEnemy->SetGameScene(this);
+					enemies_.push_back(newEnemy);
+					break;
+				}
+				case 1: {
+					ShieldEnemy* newShieldEnemy = new ShieldEnemy();
+					newShieldEnemy->Initialize(modelShieldEnemy_, &camera_, position);
+					newShieldEnemy->SetGameScene(this);
+					shieldEnemies_.push_back(newShieldEnemy);
+					break;
+				}
+				}
+				break;
+			}
+			}
+		}
+	}
+}
+
+void GameScene::UpdateCameraAndTransforms() {
+	cameraController_->Update();
+
+	if (isDebugCameraActive_) {
+		const Camera& debugCamera = debugCamera_->GetCamera();
+		camera_.matView = debugCamera.matView;
+		camera_.matProjection = debugCamera.matProjection;
+		camera_.TransferMatrix();
+	} else {
+		camera_.translation_ = cameraController_->GetCameraTranslation();
+		camera_.UpdateMatrix();
+	}
+
+	for (auto& worldTransformBlockLine : worldTransformBlocks_) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+			if (worldTransformBlock) {
+				UpdateWorldTransform(*worldTransformBlock);
 			}
 		}
 	}

@@ -46,6 +46,11 @@ void ChangeScene() {
 			// 新シーンの生成と初期化
 			titleScene = new TitleScene;
 			titleScene->Initialize();
+		} else if (gameScene->hasReloadRequested()) {
+			delete gameScene;
+			gameScene = nullptr;
+			gameScene = new GameScene;
+			gameScene->Initialize();
 		}
 		break;
 	}
@@ -118,6 +123,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// 軸方向表示
 		AxisIndicator::GetInstance()->Draw();
+
+		imguiManager->Draw();
 
 		dxCommon->PostDraw(); // DirectX:終了
 

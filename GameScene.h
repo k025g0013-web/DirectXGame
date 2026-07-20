@@ -28,6 +28,9 @@ public:
 	// 表示ブロックの生成
 	void GenerateBlocks();
 
+	// カメラとブロック行列の更新
+	void UpdateCameraAndTransforms();
+
 	// 全ての当たり判定を行う
 	void CheckAllCollision();
 
@@ -53,6 +56,9 @@ public:
 
 	// 終了フラグのgetter
 	bool IsFinished() const { return finished_; };
+
+	// リロード要求フラグのgetter
+	bool hasReloadRequested() const { return reloadRequested_; };
 
 private:
 	// カメラ
@@ -93,7 +99,7 @@ private:
 	MapChipField* mapChipField_ = nullptr;
 
 	// カメラコントローラー
-	CameraController* cameraController_;
+	CameraController* cameraController_ = nullptr;
 
 	// デス演出
 	DeathParticles* deathParticles_ = nullptr;
@@ -113,4 +119,7 @@ private:
 
 	// 終了フラグ
 	bool finished_ = false;
+
+	// リロード要求フラグ
+	bool reloadRequested_ = false;
 };

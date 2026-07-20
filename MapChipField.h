@@ -7,20 +7,33 @@
 enum class MapChipType {
 	kBlank, // 空白
 	kBlock, // ブロック
+	kPlayer,// プレイヤー
+	kEnemy,	// 敵
+};
+
+struct MapChipDataUint {
+	MapChipType type;
+	uint8_t subID;
 };
 
 // マップチップデータ構造体
 struct MapChipData {
-	std::vector<std::vector<MapChipType>> data;
+	std::vector<std::vector<MapChipDataUint>> data;
 };
 
 // マップチップテーブル
 namespace {
-std::map<std::string, MapChipType> mapChipTable = {
-    {"0", MapChipType::kBlank},
-    {"1", MapChipType::kBlock},
+std::map<char, MapChipType> mapChipTable = {
+    {'B', MapChipType::kBlock },
+    {'P', MapChipType::kPlayer},
+    {'E', MapChipType::kEnemy },
 };
 }
+
+enum MapChipCharIndex { 
+	kChipType = 0, 
+	kChipSubID = 1 
+};
 
 class MapChipField {
 public:
@@ -53,6 +66,9 @@ public:
 	
 	// マップチップ座標の取得
 	KamataEngine::Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex); 
+
+	// マップチップサブIDの取得
+	uint8_t GetMapChipSubIDByIndex(uint32_t xIndex, uint32_t yIndex);
 
 	// 縦方向の個数を取得
 	uint32_t GetNumBlockVirtical();
