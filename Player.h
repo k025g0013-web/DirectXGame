@@ -29,6 +29,7 @@ enum Corner {
 };
 
 class Enemy;
+class ShieldEnemy;
 class MapChipField;
 
 class Player {
@@ -37,6 +38,7 @@ public:
 		kUnknown,
 		kRoot,
 		kAttack,
+		kKnockBack,
 	};
 
 	enum class AttackPhase {
@@ -60,6 +62,10 @@ public:
 	// 攻撃行動
 	void BehaviorAttackInitialize();
 	void BehaviorAttackUpdate();
+
+	// ノックバック行動
+	void BehaviorKnockBackInitialize();
+	void BehaviorKnockBackUpdate();
 
 	void MoveInput();																								  // 移動入力
 	void MoveOnResult(const CollisionMapInfo& info);																  // 判定結果を反映して移動させる 
@@ -90,13 +96,14 @@ public:
 	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
 
 	// ワールド座標を取得
-	KamataEngine::Vector3 GetWorldPosition();
+	KamataEngine::Vector3 GetWorldPosition() const;
 
 	// AABBを取得
 	AABB GetAABB();
 
 	// 衝突応答
 	void OnCollision(const Enemy* enemy);
+	void OnCollision(const ShieldEnemy* shieldEnemy);
 
 	// 【追加】画面端と壁の挟まれ判定
 	void CheckScreenAndWallSandwich(const CollisionMapInfo& info, float minX, float maxX);
@@ -106,6 +113,11 @@ public:
 
 	// 攻撃状態チェック
 	bool IsAttack() const { return behavior_ == Behavior::kAttack; };
+
+	// 向き取得
+	LRDirection GetDirection() const { return lrDirection_; }
+
+	void RequestKnockBack();
 
 private:
 	// 振る舞い
@@ -181,4 +193,14 @@ private:
 
 	// デスフラグ
 	bool isDead_ = false;
+
+	// ノックバック時間
+	uint32_t knockBackTimer_ = 0;
+	static inline const uint32_t kKnockBackTime = 10;
+
+	// ノックバックフラグ
+	bool isInvincible_ = false;
+
+	// ノックバック速度
+	KamataEngine::Vector3 knockBackVelocity_ = {};
 };

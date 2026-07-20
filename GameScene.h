@@ -5,9 +5,11 @@
 #include "DeathParticles.h"
 #include "Fade.h"
 #include "HitEffect.h"
+#include "GuardEffect.h"
 
 #include "CameraController.h"
 #include "Enemy.h"
+#include "ShieldEnemy.h"
 #include "MapChipField.h"
 #include "Player.h"
 #include "Skydome.h"
@@ -46,6 +48,9 @@ public:
 	// ヒットエフェクトを生成
 	void CreateHitEffect(const KamataEngine::Vector3& position);
 
+	// ガードエフェクトを生成
+	void CreateGuardEffect(const KamataEngine::Vector3& position);
+
 	// 終了フラグのgetter
 	bool IsFinished() const { return finished_; };
 
@@ -76,6 +81,10 @@ private:
 	std::list<Enemy*> enemies_;
 	KamataEngine::Model* modelEnemy_ = nullptr;
 
+	// 盾エネミー
+	std::list<ShieldEnemy*> shieldEnemies_;
+	KamataEngine::Model* modelShieldEnemy_ = nullptr;
+
 	// スカイドーム
 	Skydome* skydome_ = nullptr;
 	KamataEngine::Model* modelSkydome_ = nullptr;
@@ -97,6 +106,10 @@ private:
 	// ヒットエフェクト
 	std::list<HitEffect*> hitEffects_;
 	KamataEngine::Model* modelHitEffect_ = nullptr;
+
+	// ガードエフェクト
+	std::list<GuardEffect*> guardEffects_;
+	KamataEngine::Model* modelGuardEffect_ = nullptr;
 
 	// 終了フラグ
 	bool finished_ = false;

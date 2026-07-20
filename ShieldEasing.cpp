@@ -1,19 +1,18 @@
-#include "Enemy.h"
-#include "Player.h"
 #include "GameScene.h"
-#include <numbers>
+#include "ShieldEnemy.h"
 #include <cmath>
+#include <numbers>
 
 using namespace KamataEngine;
 
-Enemy::Enemy() {};
-Enemy::~Enemy() {};
+ShieldEnemy::ShieldEnemy() {};
+ShieldEnemy::~ShieldEnemy() {};
 
-void Enemy::Initialize(Model* model, Camera* camera, const Vector3& position) {
+void ShieldEnemy::Initialize(Model* model, Camera* camera, const Vector3& position) {
 	// nullポインタチェック
 	assert(model);
-	model_ = model;		// 引数の内容をメンバ変数に記録する
-	camera_ = camera;	// 引数の内容をメンバ変数に記録
+	model_ = model;   // 引数の内容をメンバ変数に記録する
+	camera_ = camera; // 引数の内容をメンバ変数に記録
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
@@ -28,10 +27,9 @@ void Enemy::Initialize(Model* model, Camera* camera, const Vector3& position) {
 
 	// 歩行状態初期化
 	BehaviorWalkInitialize();
-
 };
 
-void Enemy::Update() {
+void ShieldEnemy::Update() {
 	if (behaviorRequest_ != Behavior::kUnknown) {
 		// 振る舞いを変更
 		behavior_ = behaviorRequest_;
@@ -43,7 +41,11 @@ void Enemy::Update() {
 		case Behavior::kDeath:
 			BehaviorDeathInitialize();
 			break;
+		case Behavior::kGuard:
+			BehaviorGuardInitialize();
+			break;
 		}
+
 		// 振る舞いリクエストをリセット
 		behaviorRequest_ = Behavior::kUnknown;
 	}
@@ -56,19 +58,22 @@ void Enemy::Update() {
 	case Behavior::kDeath:
 		BehaviorDeathUpdate();
 		break;
+	case Behavior::kGuard:
+		BehaviorGuardUpdate();
+		break;
 	}
 
 	// 行列更新
 	UpdateWorldTransform(worldTransform_);
 };
 
-void Enemy::Draw() {
+void ShieldEnemy::Draw() {
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, *camera_);
 };
 
 #pragma region 各Behaviorの処理
-void Enemy::BehaviorWalkInitialize() {
+void ShieldEnemy::BehaviorWalkInitialize() {
 	// 経過時間
 	walkTimer_ = 0.0f;
 
@@ -76,7 +81,7 @@ void Enemy::BehaviorWalkInitialize() {
 	velocity_ = {-kWalkSpeed, 0.0f, 0.0f};
 }
 
-void Enemy::BehaviorWalkUpdate() {
+void ShieldEnemy::BehaviorWalkUpdate() {
 	// 移動
 	worldTransform_.translation_.x += velocity_.x;
 
@@ -86,17 +91,17 @@ void Enemy::BehaviorWalkUpdate() {
 	// 回転アニメーション
 	float param = std::sin(walkTimer_ / kWalkMotionTime * (2.0f * std::numbers::pi_v<float>));
 	float degree = kWalkMotionAngleStart + kWalkMotionAngleEnd * (param + 1.0f) / 2.0f;
-	worldTransform_.rotation_.x = degree * std::numbers::pi_v<float> / 180.0f;
+	worldTransform_.rotation_.y = 3.0f * std::numbers::pi_v<float> / 2.0f + degree * std::numbers::pi_v<float> / 180.0f;
 }
 
-void Enemy::BehaviorDeathInitialize() {
+void ShieldEnemy::BehaviorDeathInitialize() {
 	deathTimer_ = 0;
 
 	velocity_.x = 0.1f;
 	velocity_.y = 0.3f;
 }
 
-void Enemy::BehaviorDeathUpdate() {
+void ShieldEnemy::BehaviorDeathUpdate() {
 	deathTimer_++;
 
 	// 簡易的な重力をかけて放物線を描いて落ちる
@@ -115,9 +120,39 @@ void Enemy::BehaviorDeathUpdate() {
 		isDead_ = true;
 	}
 }
+
+void ShieldEnemy::BehaviorGuardInitialize() {
+	guardTimer_ = 0;
+	isGuarding_ = true;
+
+	// プレイヤーと逆方向（ノックバックする方向）へ少し弾かれる速度を設定
+	// 左を向いているなら右へ、右を向いているなら左へ
+	if (direction_ == LRDirection::kLeft) {
+		velocity_.x = 0.15f;
+	} else {
+		velocity_.x = -0.15f;
+	}
+	velocity_.y = 0.0f;
+}
+
+void ShieldEnemy::BehaviorGuardUpdate() {
+	guardTimer_++;
+
+	// 座標にノックバック移動を反映
+	worldTransform_.translation_.x += velocity_.x;
+
+	// 徐々に減速して止まるようにする
+	velocity_.x *= 0.8f;
+
+	// ガード時間が終了したら歩行状態に戻る
+	if (guardTimer_ >= kGuardTime) {
+		isGuarding_ = false;
+		behaviorRequest_ = Behavior::kWalk;
+	}
+}
 #pragma endregion
 
-Vector3 Enemy::GetWorldPosition() const {
+Vector3 ShieldEnemy::GetWorldPosition() const {
 	// ワールド座標を入れる変数
 	Vector3 worldPos;
 	// ワールド行列の並行移動成分を取得（ワールド座標）
@@ -128,7 +163,7 @@ Vector3 Enemy::GetWorldPosition() const {
 	return worldPos;
 };
 
-AABB Enemy::GetAABB() {
+AABB ShieldEnemy::GetAABB() {
 	Vector3 worldPos = worldTransform_.translation_;
 
 	AABB aabb;
@@ -139,21 +174,35 @@ AABB Enemy::GetAABB() {
 	return aabb;
 };
 
-void Enemy::OnCollision(const Player *player) {
+void ShieldEnemy::OnCollision(Player* player) {
 	if (GetIsCollisionDisabled()) {
 		return;
 	}
 
 	if (player->IsAttack() || player->GetWorldTransform().scale_.z > 1.0f) {
-		behaviorRequest_ = Behavior::kDeath;
-
 		Vector3 effectPos{
 		    (worldTransform_.translation_.x + player->GetWorldTransform().translation_.x) / 2.0f,
 		    (worldTransform_.translation_.y + player->GetWorldTransform().translation_.y) / 2.0f,
 		    (worldTransform_.translation_.z + player->GetWorldTransform().translation_.z) / 2.0f,
 		};
 
+		if (IsFrontAttack(player)) {
+			gameScene_->CreateGuardEffect(effectPos);
+			player->RequestKnockBack();
+
+			behaviorRequest_ = Behavior::kGuard;
+			return;
+		}
+
+		behaviorRequest_ = Behavior::kDeath;
+
 		gameScene_->CreateHitEffect(effectPos);
 		return;
 	}
 };
+
+bool ShieldEnemy::IsFrontAttack(const Player* player) const {
+	return (player->GetDirection() == LRDirection::kRight && GetDirection() == LRDirection::kLeft) ||
+
+	       (player->GetDirection() == LRDirection::kLeft && GetDirection() == LRDirection::kRight);
+}

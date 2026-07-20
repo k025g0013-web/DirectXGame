@@ -26,6 +26,11 @@ GameScene::~GameScene() {
 	}
 	enemies_.clear();
 
+	for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+		delete shieldEnemy;
+	}
+	shieldEnemies_.clear();
+
 	delete skydome_;
 	delete modelSkydome_;
 
@@ -87,6 +92,18 @@ void GameScene::Initialize() {
 		enemies_.push_back(newEnemy);
 	}
 
+	// 盾エネミー
+	modelShieldEnemy_ = Model::CreateFromOBJ("shieldEnemy", true);
+	for (int32_t i = 0; i < 3; ++i) {
+		ShieldEnemy* newShieldEnemy = new ShieldEnemy();
+		Vector3 shieldEnemyPosition = mapChipField_->GetMapChipPositionByIndex(25, 18 - i);
+		newShieldEnemy->Initialize(modelShieldEnemy_, &camera_, shieldEnemyPosition);
+
+		newShieldEnemy->SetGameScene(this);
+
+		shieldEnemies_.push_back(newShieldEnemy);
+	}
+
 	// スカイドーム
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_ = new Skydome;
@@ -108,6 +125,11 @@ void GameScene::Initialize() {
 	modelHitEffect_ = Model::CreateFromOBJ("hitEffect", true);
 	HitEffect::SetModel(modelHitEffect_);
 	HitEffect::SetCamera(&camera_);
+
+	// ガードエフェクト
+	modelGuardEffect_ = Model::CreateFromOBJ("guardEffect", true);
+	GuardEffect::SetModel(modelGuardEffect_);
+	GuardEffect::SetCamera(&camera_);
 }
 
 void GameScene::Update() {
@@ -150,14 +172,33 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 
+		// 盾エネミー
+		for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+			shieldEnemy->Update();
+		}
+
 		// ヒットエフェクト
 		for (HitEffect* hitEffect : hitEffects_) {
 			hitEffect->Update();
 		}
 
-		hitEffects_.remove_if([](HitEffect* effect) {
-			if (effect->IsDead()) {
-				delete effect;
+		hitEffects_.remove_if([](HitEffect* hitEffect) {
+			if (hitEffect->IsDead()) {
+				delete hitEffect;
+				return true;
+			}
+
+			return false;
+		});
+
+		// ガードエフェクト
+		for (GuardEffect* guardEffect : guardEffects_) {
+			guardEffect->Update();
+		}
+
+		guardEffects_.remove_if([](GuardEffect* guardEffect) {
+			if (guardEffect->IsDead()) {
+				delete guardEffect;
 				return true;
 			}
 
@@ -222,16 +263,36 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 
+		// 盾エネミー
+		for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+			shieldEnemy->Update();
+		}
+
 		// ヒットエフェクト
 		for (HitEffect* hitEffect : hitEffects_) {
 			hitEffect->Update();
 		}
 
-		hitEffects_.remove_if([](HitEffect* effect) {
-			if (effect->IsDead()) {
-				delete effect;
+		hitEffects_.remove_if([](HitEffect* hitEffect) {
+			if (hitEffect->IsDead()) {
+				delete hitEffect;
 				return true;
 			}
+
+			return false;
+		});
+
+		// ガードエフェクト
+		for (GuardEffect* guardEffect : guardEffects_) {
+			guardEffect->Update();
+		}
+
+		guardEffects_.remove_if([](GuardEffect* guardEffect) {
+			if (guardEffect->IsDead()) {
+				delete guardEffect;
+				return true;
+			}
+
 			return false;
 		});
 
@@ -282,16 +343,36 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 
+		// 盾エネミー
+		for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+			shieldEnemy->Update();
+		}
+
 		// ヒットエフェクト
 		for (HitEffect* hitEffect : hitEffects_) {
 			hitEffect->Update();
 		}
 
-		hitEffects_.remove_if([](HitEffect* effect) {
-			if (effect->IsDead()) {
-				delete effect;
+		hitEffects_.remove_if([](HitEffect* hitEffect) {
+			if (hitEffect->IsDead()) {
+				delete hitEffect;
 				return true;
 			}
+
+			return false;
+		});
+
+		// ガードエフェクト
+		for (GuardEffect* guardEffect : guardEffects_) {
+			guardEffect->Update();
+		}
+
+		guardEffects_.remove_if([](GuardEffect* guardEffect) {
+			if (guardEffect->IsDead()) {
+				delete guardEffect;
+				return true;
+			}
+
 			return false;
 		});
 
@@ -350,10 +431,38 @@ void GameScene::Update() {
 			enemy->Update();
 		}
 
+		// 盾エネミー
+		for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+			shieldEnemy->Update();
+		}
+
 		// ヒットエフェクト
 		for (HitEffect* hitEffect : hitEffects_) {
 			hitEffect->Update();
 		}
+
+		hitEffects_.remove_if([](HitEffect* hitEffect) {
+			if (hitEffect->IsDead()) {
+				delete hitEffect;
+				return true;
+			}
+
+			return false;
+		});
+
+		// ガードエフェクト
+		for (GuardEffect* guardEffect : guardEffects_) {
+			guardEffect->Update();
+		}
+
+		guardEffects_.remove_if([](GuardEffect* guardEffect) {
+			if (guardEffect->IsDead()) {
+				delete guardEffect;
+				return true;
+			}
+
+			return false;
+		});
 
 		hitEffects_.remove_if([](HitEffect* effect) {
 			if (effect->IsDead()) {
@@ -414,6 +523,14 @@ void GameScene::Update() {
 		}
 		return false;
 	});
+
+	shieldEnemies_.remove_if([](ShieldEnemy* shieldEnemy) {
+		if (shieldEnemy->GetIsDead()) {
+			delete shieldEnemy;
+			return true;
+		}
+		return false;
+	});
 }
 
 void GameScene::Draw() {
@@ -440,10 +557,21 @@ void GameScene::Draw() {
 		enemy->Draw();
 	}
 
+	// 盾エネミー
+	for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+		shieldEnemy->Draw();
+	}
+
 	// ヒットエフェクト
 	for (HitEffect* hitEffect : hitEffects_) {
 		hitEffect->Draw();
 	}
+
+	// ヒットエフェクト
+	for (GuardEffect* guardEffect : guardEffects_) {
+		guardEffect->Draw();
+	}
+
 
 	// スカイドーム
 	skydome_->Draw();
@@ -508,11 +636,33 @@ void GameScene::CheckAllCollision() {
 		aabb2 = enemy->GetAABB();
 
 		// AABB同士の交差判定
-		if ((aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) && (aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) && (aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z)) {
+		if ((aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) &&
+			(aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) &&
+			(aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z)) {
 			// 自キャラの衝突時関数を呼び出す
 			player_->OnCollision(enemy);
 			// 敵の衝突時関数を呼び出す
 			enemy->OnCollision(player_);
+		}
+	}
+
+	// 自キャラと敵弾全ての当たり判定
+	for (ShieldEnemy* shieldEnemy : shieldEnemies_) {
+		if (shieldEnemy->GetIsCollisionDisabled()) {
+			continue;
+		}
+
+		// 敵弾の座標
+		aabb2 = shieldEnemy->GetAABB();
+
+		// AABB同士の交差判定
+		if ((aabb1.min.x <= aabb2.max.x && aabb1.max.x >= aabb2.min.x) &&
+			(aabb1.min.y <= aabb2.max.y && aabb1.max.y >= aabb2.min.y) &&
+			(aabb1.min.z <= aabb2.max.z && aabb1.max.z >= aabb2.min.z)) {
+			// 自キャラの衝突時関数を呼び出す
+			player_->OnCollision(shieldEnemy);
+			// 敵の衝突時関数を呼び出す
+			shieldEnemy->OnCollision(player_);
 		}
 	}
 #pragma endregion
@@ -542,4 +692,9 @@ void GameScene::ChangePhase() {
 void GameScene::CreateHitEffect(const KamataEngine::Vector3& position) { 
 	HitEffect* newHitEffect = HitEffect::Create(position);
 	hitEffects_.push_back(newHitEffect);
+}
+
+void GameScene::CreateGuardEffect(const KamataEngine::Vector3& position) {
+	GuardEffect* newGuardEffect = GuardEffect::Create(position);
+	guardEffects_.push_back(newGuardEffect);
 }
