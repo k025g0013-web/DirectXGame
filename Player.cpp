@@ -98,6 +98,10 @@ void Player::Update() {
 		case Player::Behavior::kAttack:
 			BehaviorAttackInitialize();
 			break;
+		case Behavior::kKnockBack:
+			BehaviorKnockBackInitialize();
+			isInvincible_ = true;
+			break;
 		}
 		// 振る舞いリクエストをリセット
 		behaviorRequest_ = Behavior::kUnknown;
@@ -110,6 +114,9 @@ void Player::Update() {
 		break;
 	case Player::Behavior::kAttack:
 		BehaviorAttackUpdate();
+		break;
+	case Behavior::kKnockBack:
+		BehaviorKnockBackUpdate();
 		break;
 	}
 
@@ -288,6 +295,48 @@ void Player::BehaviorAttackUpdate() {
 
 	IsHitWallChecker(attackCollisionInfo);
 	InstallationStateSwitching(attackCollisionInfo);
+}
+
+void Player::BehaviorKnockBackInitialize() {
+	knockBackTimer_ = 0;
+
+	// 攻撃を中断
+	attackPhase_ = AttackPhase::kCharge;
+	attackParameter_ = 0;
+
+	worldTransform_.scale_ = {1.0f, 1.0f, 1.0f};
+	worldTransformAttack_.scale_ = {0.0f, 0.0f, 0.0f};
+
+	if (lrDirection_ == LRDirection::kRight) {
+		knockBackVelocity_.x = -0.8f;
+	} else {
+		knockBackVelocity_.x = 0.8f;
+	}
+
+	knockBackVelocity_.y = 0.0f;
+}
+
+void Player::BehaviorKnockBackUpdate() {
+
+	knockBackTimer_++;
+
+	CollisionMapInfo info;
+	info.move = knockBackVelocity_;
+
+	CollisionMap(info);
+	MoveOnResult(info);
+
+	// 徐々に止まる
+	knockBackVelocity_.x *= 0.8f;
+
+	if (knockBackTimer_ >= kKnockBackTime) {
+		isInvincible_ = false;
+		behaviorRequest_ = Behavior::kRoot;
+	}
+}
+
+void Player::RequestKnockBack() {
+	behaviorRequest_ = Behavior::kKnockBack;
 }
 #pragma endregion
 
@@ -679,7 +728,7 @@ void Player::CollisionMapLeft(CollisionMapInfo& info) {
 #pragma endregion
 
 #pragma region AABBによる当たり判定
-Vector3 Player::GetWorldPosition() {
+Vector3 Player::GetWorldPosition() const {
 	// ワールド座標を入れる変数
 	Vector3 worldPos;
 	// ワールド行列の並行移動成分を取得（ワールド座標）
@@ -702,11 +751,21 @@ AABB Player::GetAABB() {
 };
 
 void Player::OnCollision(const Enemy* enemy) { 
-	if (behavior_ == Behavior::kAttack) {
+	if (behavior_ == Behavior::kAttack || behavior_ == Behavior::kKnockBack || isInvincible_) {
 		return;
 	}
 
 	(void)enemy;
+	// デスフラグを立てる
+	isDead_ = true;
+};
+
+void Player::OnCollision(const ShieldEnemy* shieldEnemy) {
+	if (behavior_ == Behavior::kAttack || behavior_ == Behavior::kKnockBack || isInvincible_) {
+		return;
+	}
+
+	(void)shieldEnemy;
 	// デスフラグを立てる
 	isDead_ = true;
 };

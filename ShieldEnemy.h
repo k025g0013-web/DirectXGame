@@ -5,23 +5,23 @@
 #include "MapChipField.h"
 
 #include "AABB.h"
+#include "Player.h"
 #include "UpdateWorldTransform.h"
 
 class GameScene;
 
-class Player;
-
-class Enemy {
+class ShieldEnemy {
 public:
 	enum class Behavior {
 		kUnknown,
 		kWalk,
-		kDeath,
+		kDeath, 
+		kGuard,
 	};
 
 public:
-	Enemy();  // コンストラクタ
-	~Enemy(); // デストラクタ
+	ShieldEnemy();  // コンストラクタ
+	~ShieldEnemy(); // デストラクタ
 
 	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const KamataEngine::Vector3& position); // 初期化
 	void Update();                                                                                                    // 更新
@@ -37,19 +37,27 @@ public:
 	void BehaviorWalkUpdate();
 	void BehaviorDeathInitialize();
 	void BehaviorDeathUpdate();
+	void BehaviorGuardInitialize();
+	void BehaviorGuardUpdate();
 
 	// AABBを取得
 	AABB GetAABB();
 
 	// 衝突応答
-	void OnCollision(const Player* player);
+	void OnCollision(Player* player);
 
 	const bool GetIsDead() const { return isDead_; }
-	
-	const bool GetIsCollisionDisabled() const { return (behavior_ == Behavior::kDeath || isDead_); }
+
+	const bool GetIsCollisionDisabled() const { return (behavior_ == Behavior::kDeath || isDead_ || isGuarding_); }
 
 	// ゲームシーンポインタを取得
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
+	// プレイヤーと向かい合っているか
+	bool IsFrontAttack(const Player* player) const;
+
+	// 向きを取得
+	LRDirection GetDirection() const { return direction_; }
 
 private:
 	// 振る舞い
@@ -88,11 +96,19 @@ private:
 	uint32_t deathTimer_ = 0;
 	static inline const uint32_t kDeathTime = 60; // 60フレームで消滅
 
+	uint32_t guardTimer_ = 0;
+	// 15フレームの間ガードモーション（硬直）
+	static inline const uint32_t kGuardTime = 15; 
+	// ガード中フラグ（安全性向上用）
+	bool isGuarding_ = false;                     
+
 	// デスフラグ
 	bool isDead_ = false;
 
 	// 衝突判定スキップ
 	bool IsCollisionDisabled_ = false;
 
-	GameScene *gameScene_ = nullptr;
+	GameScene* gameScene_ = nullptr;
+
+	LRDirection direction_ = LRDirection::kLeft;
 };
