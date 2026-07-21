@@ -16,12 +16,14 @@
 
 #include "UpdateWorldTransform.h"
 
+class StageManager;
+
 class GameScene {
 public:
 	GameScene();  // コンストラクタ
 	~GameScene(); // デストラクタ
 
-	void Initialize(); // 初期化
+	void Initialize(StageManager* stageManager); // 初期化
 	void Update();     // 更新
 	void Draw();       // 描画
 
@@ -61,6 +63,9 @@ public:
 	bool hasReloadRequested() const { return reloadRequested_; };
 
 private:
+	// ステージマネージャ参照用のポインタ
+	StageManager* stageManager_ = nullptr; 
+
 	// カメラ
 	KamataEngine::Camera camera_;
 

@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "HitEffect.h"
+#include "StageManager.h"
 
 using namespace KamataEngine;
 
@@ -50,7 +51,10 @@ GameScene::~GameScene() {
 }
 
 #pragma region 初期化・更新・描画
-void GameScene::Initialize() {
+void GameScene::Initialize(StageManager *stageManager) {
+	// 引数をメンバポインタに記録する
+	stageManager_ = stageManager;
+
 	// カメラの初期化
 	camera_.farZ = 2000.0f;
 	camera_.Initialize();
@@ -70,7 +74,9 @@ void GameScene::Initialize() {
 
 	// マップチップフィールド
 	mapChipField_ = new MapChipField;
-	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+	const StageData& stageData = stageManager_->GetCurrentStageData();
+	std::string stageFileName = "Resources/fields/" + stageData.name + ".csv";
+	mapChipField_->LoadMapChipCsv(stageFileName);
 
 	// CSVの配置を読み込んでブロック、プレイヤー、エネミーを生成・配置
 	GenerateBlocks();
