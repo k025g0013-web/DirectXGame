@@ -3,7 +3,7 @@
 #include <math.h>
 #include "Math/FunctionMatrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 	void MeshGenerator::CreateSprite(
 		std::vector<VertexData> &vertices,
 		std::vector<uint32_t> &indices,

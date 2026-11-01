@@ -9,7 +9,7 @@
 #include "Graphics/Resource/Texture.h"
 #include "Graphics/Resource/TextureLoader.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     class DescriptorHeap;
 

@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Manager/InputManager.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     class DebugCamera {
     public:

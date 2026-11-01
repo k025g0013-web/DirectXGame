@@ -2,7 +2,7 @@
 
 #include "Math/FunctionMatrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     void Object3D::InitializeMaterial(
         ID3D12Device *device,

@@ -3,7 +3,7 @@
 #include <math.h>
 #include "Math/FunctionMatrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 	void Renderer::CreateVertexBuffer(
 		ID3D12Device *device,
 		MeshBuffer &vertexBuffer,

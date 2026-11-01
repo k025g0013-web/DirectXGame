@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
 
     void ModelManager::Initialize(
         ID3D12Device *device,

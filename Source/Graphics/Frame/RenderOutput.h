@@ -11,7 +11,7 @@
 
 #include "Graphics/Core/DescriptorHeap.h"
 
-namespace Kizuna {
+namespace Tuna {
     class DirectXDevice;
     class CommandCommon;
     class WinApp;

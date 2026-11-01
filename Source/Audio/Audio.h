@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include "AudioData.h"
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// オーディオシステムを管理するクラス (XAudio2制御専用)
 	/// </summary>

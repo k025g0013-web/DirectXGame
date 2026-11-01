@@ -4,7 +4,7 @@
 
 #include "Math/FunctionMatrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     void Sprite::Initialize(
         ID3D12Device *device,

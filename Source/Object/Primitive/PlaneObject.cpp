@@ -1,6 +1,6 @@
 #include "PlaneObject.h"
 
-namespace Kizuna {
+namespace Tuna {
 	void PlaneObject::Create(
 		ID3D12Device *device, ID3D12GraphicsCommandList *commandList,
 		uint32_t color, bool enableLighting) {

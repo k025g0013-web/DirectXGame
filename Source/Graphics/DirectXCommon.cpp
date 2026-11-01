@@ -3,12 +3,12 @@
 #include "Graphics/Resource/Shader.h"
 #include "Graphics/Pipeline/ViewportState.h"
 
-namespace Kizuna {
+namespace Tuna {
     void DirectXCommon::Initialize(
-        WinApp *winApp, Logger *logger, uint32_t width, uint32_t height
+        WinApp *winApp, uint32_t width, uint32_t height
     ) {
         // DirectXデバイスを生成する
-        directXDevice_.Initialize(logger);
+        directXDevice_.Initialize();
 
         // コマンドキュー・コマンドリストを生成する
         commandContext_.Initialize(&directXDevice_);
@@ -24,7 +24,7 @@ namespace Kizuna {
         fence_.Initialize(directXDevice_.GetDevice());
 
         // シェーダコンパイラを初期化する
-        Shader::InitializeCompiler(logger);
+        Shader::InitializeCompiler();
 
         // Viewport・Scissorを設定する
         viewportState_.Initialize(static_cast<float>(width), static_cast<float>(height));

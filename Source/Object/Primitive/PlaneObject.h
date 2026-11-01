@@ -2,7 +2,7 @@
 
 #include "Object/Common/Object3D.h"
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// 平面四角形オブジェクト
     /// </summary>

@@ -2,7 +2,7 @@
 #include "Graphics/Resource/Shader.h"
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
     void GraphicsPipeline::Initialize(
         ID3D12Device *device,
         ID3D12RootSignature *rootSignature,

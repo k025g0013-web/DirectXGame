@@ -7,7 +7,7 @@
 
 #pragma comment(lib, "d3d12.lib")
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// DirectX12のDescriptorHeapを管理するクラス

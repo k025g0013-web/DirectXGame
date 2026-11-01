@@ -9,7 +9,7 @@
 #include <dxgidebug.h>
 #include <dxgi1_6.h>
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// DirectX12のデバッグ機能を管理するクラス
     /// </summary>

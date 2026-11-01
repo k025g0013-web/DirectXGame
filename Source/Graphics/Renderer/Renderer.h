@@ -3,7 +3,7 @@
 #include "Graphics/Resource/MeshBuffer.h"
 #include "Graphics/Resource/TransformationMatrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// 描画用メッシュデータを生成する補助クラス
 	/// </summary>

@@ -6,7 +6,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// 読み込んだ音声データ
 	/// </summary>

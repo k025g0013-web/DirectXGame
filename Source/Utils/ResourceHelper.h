@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// アップロードヒープ上にバッファリソースを生成する
     /// </summary>

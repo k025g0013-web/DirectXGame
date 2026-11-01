@@ -10,7 +10,7 @@
 #pragma comment(lib, "mfreadwrite.lib")
 #pragma comment(lib, "mfuuid.lib")
 
-namespace Kizuna {
+namespace Tuna {
 	// === 定数定義 (このcppファイル内でのみ有効) ===
 	namespace {
 		// チャンクIDのバイトサイズ

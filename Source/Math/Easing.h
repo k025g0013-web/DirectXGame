@@ -3,7 +3,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace Kizuna {
+namespace Tuna {
     enum class EasingType {
         // 等速補間
         Linear,

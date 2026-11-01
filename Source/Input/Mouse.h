@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// マウス入力を管理するクラス
     /// </summary>

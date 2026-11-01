@@ -8,7 +8,7 @@
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-namespace Kizuna {
+namespace Tuna {
 	ImGuiManager *ImGuiManager::GetInstance() {
 		static ImGuiManager instance;
 		return &instance;

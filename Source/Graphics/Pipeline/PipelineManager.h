@@ -4,9 +4,7 @@
 #pragma comment(lib, "d3d12.lib")
 #include <d3d12.h>
 
-namespace Kizuna {
-
-    class Logger;
+namespace Tuna {
     class PipelineList;
 
     class PipelineManager {
@@ -18,8 +16,7 @@ namespace Kizuna {
         PipelineManager &operator=(const PipelineManager &) = delete;
 
         void Initialize(
-            ID3D12Device *device,
-            Logger *logger
+            ID3D12Device *device
         );
 
         const PipelineSet *GetPipeline(

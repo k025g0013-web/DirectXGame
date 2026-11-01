@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdlib>
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// 指定した範囲の乱数(float)を生成する
 	/// </summary>

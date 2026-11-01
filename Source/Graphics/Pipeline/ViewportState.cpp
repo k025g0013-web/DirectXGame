@@ -1,6 +1,6 @@
 #include "ViewportState.h"
 
-namespace Kizuna {
+namespace Tuna {
 void ViewportState::Initialize(float width, float height) {
 	// ビューポート
 	// クライアント領域のサイズと一緒にして画面全体に表示

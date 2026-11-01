@@ -1,6 +1,6 @@
 #include "TriangleObject.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     void TriangleObject::Create(
         ID3D12Device *device, ID3D12GraphicsCommandList *commandList,

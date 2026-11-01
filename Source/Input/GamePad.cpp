@@ -2,7 +2,7 @@
 #include "Core/WinApp.h"
 #include <cmath>
 
-namespace Kizuna {
+namespace Tuna {
     void GamePad::Initialize(WinApp *winApp) {
         UNREFERENCED_PARAMETER(winApp); // 将来的な拡張を考慮し引数を保持
 

@@ -6,7 +6,7 @@
 
 // === Core ===
 #include "Core/WinApp.h"
-#include "Core/Logger.h"
+#include "Utils/Debug/Logger.h"
 #include "Manager/DebugManager.h"
 
 // === Graphics ===
@@ -28,7 +28,7 @@
 #include "Manager/ModelManager.h"
 #include "Manager/SpriteManager.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// KizunaEngine全体を管理するエンジンクラス
@@ -145,9 +145,6 @@ namespace Kizuna {
     private:
         /// デバッグ管理クラス
         std::unique_ptr<DebugManager> debugManager_;
-
-        /// ログ管理クラス
-        std::unique_ptr<Logger> logger_;
 
         /// ウィンドウ管理クラス
         std::unique_ptr<WinApp> winApp_;

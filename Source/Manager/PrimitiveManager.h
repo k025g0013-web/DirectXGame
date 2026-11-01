@@ -9,7 +9,7 @@
 #include "Graphics/Resource/Texture.h"
 #include "Math/Transform.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     class PrimitiveManager {
     public:

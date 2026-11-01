@@ -8,7 +8,7 @@
 #include "Object/Sprite/Sprite.h"
 #include "Graphics/Resource/Texture.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     class SpriteManager {
     public:

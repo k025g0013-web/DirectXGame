@@ -1,7 +1,7 @@
 #include "Input/Keyboard.h"
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
 	void Keyboard::Initialize(WinApp *winApp) {
 		HRESULT result;
 		// DirectInputオブジェクトを生成する

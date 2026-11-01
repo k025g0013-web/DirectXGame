@@ -8,7 +8,7 @@
 #include <dxcapi.h>
 #include <string>
 
-namespace Kizuna {
+namespace Tuna {
     class Logger;
 
     /// <summary>
@@ -23,8 +23,7 @@ namespace Kizuna {
         /// <summary>
         /// DXCコンパイラを初期化する
         /// </summary>
-        /// <param name="logger">ログ出力クラス</param>
-        static void InitializeCompiler(Logger *logger);
+        static void InitializeCompiler();
 
         /// <summary>
         /// HLSLファイルをコンパイルする
@@ -48,9 +47,6 @@ namespace Kizuna {
         }
 
     private:
-        /// ログ出力クラス
-        static Logger *sLogger_;
-
         /// DXCユーティリティ
         static Microsoft::WRL::ComPtr<IDxcUtils> sDxcUtils_;
 

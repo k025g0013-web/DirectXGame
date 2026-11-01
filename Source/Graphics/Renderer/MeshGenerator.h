@@ -6,7 +6,7 @@
 #include "Graphics/Resource/MeshBuffer.h"
 #include "Math/Vector.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// 基本形状のメッシュデータを生成するクラス

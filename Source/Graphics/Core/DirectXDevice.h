@@ -6,9 +6,7 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 
-namespace Kizuna {
-    class Logger;
-
+namespace Tuna {
     /// <summary>
     /// DirectX12デバイス環境を管理するクラス
     /// </summary>
@@ -28,7 +26,7 @@ namespace Kizuna {
         /// 使用するGPUアダプタの選択、DirectX Device生成を行う。
         /// </remarks>
         /// <param name="logger">ログ出力管理クラス</param>
-        void Initialize(Logger *logger);
+        void Initialize();
 
 
         /// <summary>
@@ -85,11 +83,6 @@ namespace Kizuna {
 
 
     private:
-
-        /// ログ出力管理クラス
-        Logger *logger_ = nullptr;
-
-
         /// DirectX12デバイス
         Microsoft::WRL::ComPtr<ID3D12Device> device_;
 

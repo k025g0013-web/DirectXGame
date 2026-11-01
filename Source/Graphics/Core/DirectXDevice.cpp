@@ -1,20 +1,17 @@
 #include "DirectXDevice.h"
 
-#include "Core/Logger.h"
+#include "Utils/Debug/Logger.h"
+#include "Utils/Debug/AssertHelper.h"
 #include "Utils/ConvertString.h"
-#include "Utils/AssertHelper.h"
 #include <cassert>
 #include <format>
 
-namespace Kizuna {
-    void DirectXDevice::Initialize(Logger *logger) {
-        // Loggerを保持し、以降のDirectX初期化処理で発生した情報を出力できるようにする
-        logger_ = logger;
-
+namespace Tuna {
+    void DirectXDevice::Initialize() {
         // DXGI Factoryを生成する
         // Adapter列挙やSwapChain生成など、DXGI関連機能を利用するために必要
         HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory_));
-        CheckHRESULT(hr, "CreateDXGIFactory");
+        AssertHelper::AssertHRESULT(hr, "CreateDXGIFactory");
 
         // 使用するGPUを決定する
         // Device生成前に利用可能なAdapterを選択する必要がある
@@ -47,7 +44,7 @@ namespace Kizuna {
             DXGI_ADAPTER_DESC3 adapterDesc{};
 
             HRESULT hr = useAdapter_->GetDesc3(&adapterDesc);
-            CheckHRESULT(hr, "IDXGIAdapter4::GetDesc3");
+            AssertHelper::AssertHRESULT(hr, "IDXGIAdapter4::GetDesc3");
 
 
             // Software Adapter(WARPなど)は実際のGPUではないため除外する
@@ -55,7 +52,7 @@ namespace Kizuna {
             if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 
                 // 採用したGPU情報をログへ出力する
-                logger_->Log(
+                Logger::Log(
                     ConvertString(
                         std::format(L"UseAdapter : {}\n", adapterDesc.Description)
                     )
@@ -100,7 +97,7 @@ namespace Kizuna {
 
             // Device生成に成功した場合は採用して終了する
             if (SUCCEEDED(hr)) {
-                logger_->Log(
+                Logger::Log(
                     std::format(
                         "FeatureLevel : {}\n",
                         featureLevelStrings[i]
@@ -112,9 +109,9 @@ namespace Kizuna {
         }
 
         // すべてのFeatureLevelで失敗した場合は終了する
-        CheckCondition(device_ != nullptr, "DirectX12 Deviceの生成に失敗しました。");
+        AssertHelper::Assert(device_, "DirectX12 Deviceの生成に失敗しました。");
 
-        logger_->Log("Complete create D3D12Device!!!\n");
+        Logger::Log("Complete create D3D12Device!!!\n");
     }
 
 

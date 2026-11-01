@@ -5,7 +5,7 @@
 
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
     void Camera::SetScreenSize(float width, float height) {
         assert(width > 0.0f);
         assert(height > 0.0f);

@@ -6,7 +6,7 @@
 #include "Audio/Audio.h"
 #include "Audio/AudioLoader.h"
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// オーディオ管理クラス
 	/// </summary>

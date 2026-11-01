@@ -4,7 +4,7 @@
 
 #include "MeshBuffer.h"
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// メッシュデータを管理するクラス
     /// </summary>

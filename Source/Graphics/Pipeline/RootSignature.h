@@ -5,7 +5,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 
-namespace Kizuna {
+namespace Tuna {
 
     class Logger;
 
@@ -39,7 +39,6 @@ namespace Kizuna {
         /// </summary>
         void Create(
             ID3D12Device *device,
-            Logger *logger,
             Type type
         );
 

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace Kizuna {
+namespace Tuna {
 
     ModelData ModelLoader::LoadObjFile(
         const std::string &modelName) {

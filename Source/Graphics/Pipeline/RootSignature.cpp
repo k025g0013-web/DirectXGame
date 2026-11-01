@@ -1,13 +1,12 @@
 #include "RootSignature.h"
 
-#include "Core/Logger.h"
+#include "Utils/Debug/Logger.h"
 
 #include <cassert>
 
-namespace Kizuna {
-    void RootSignature::Create(ID3D12Device *device, Logger *logger, Type type) {
+namespace Tuna {
+    void RootSignature::Create(ID3D12Device *device, Type type) {
         assert(device != nullptr);
-        assert(logger != nullptr);
 
         // RootSignatureの設定
         D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -133,7 +132,7 @@ namespace Kizuna {
 
         if (FAILED(hr)) {
             if (errorBlob) {
-                logger->Log(
+                Logger::Log(
                     reinterpret_cast<char *>(
                         errorBlob->GetBufferPointer()));
             }

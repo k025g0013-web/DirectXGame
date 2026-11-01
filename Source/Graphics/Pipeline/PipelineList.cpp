@@ -5,18 +5,16 @@
 #include "PipelineElements.h"
 #include "Graphics/Resource/Shader.h"
 
-#include "Core/Logger.h"
+#include "Utils/Debug/Logger.h"
 
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
 
     void PipelineList::Initialize(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         device_ = device;
-        logger_ = logger;
 
         //====================
         // 初期Config
@@ -75,16 +73,16 @@ namespace Kizuna {
         // Pipeline生成
         //====================
 
-        CreateObject3dOpaque(device, logger);
-        CreateObject3dAlpha(device, logger);
-        CreateObject3dWireframe(device, logger);
-        CreateObject3dThroughWall(device, logger);
+        CreateObject3dOpaque(device);
+        CreateObject3dAlpha(device);
+        CreateObject3dWireframe(device);
+        CreateObject3dThroughWall(device);
 
-        CreateObject2dOpaque(device, logger);
+        CreateObject2dOpaque(device);
 
-        CreateModel3dOpaque(device, logger);
+        CreateModel3dOpaque(device);
 
-        CreateParticle(device, logger);
+        CreateParticle(device);
     }
 
 
@@ -93,8 +91,7 @@ namespace Kizuna {
     //==================================================
 
     void PipelineList::CreateObject3dOpaque(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         //====================
         // Config
@@ -127,7 +124,7 @@ namespace Kizuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, logger, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Type::Skinny3D);
 
         //====================
         // Pipeline生成
@@ -172,8 +169,7 @@ namespace Kizuna {
 
 
     void PipelineList::CreateObject3dAlpha(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         //====================
         // Config
@@ -206,7 +202,7 @@ namespace Kizuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, logger, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Type::Skinny3D);
 
         //====================
         // Pipeline生成
@@ -251,8 +247,7 @@ namespace Kizuna {
 
 
     void PipelineList::CreateObject3dWireframe(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         //====================
         // Config
@@ -285,7 +280,7 @@ namespace Kizuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, logger, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Type::Skinny3D);
 
 
         //====================
@@ -331,8 +326,7 @@ namespace Kizuna {
 
 
     void PipelineList::CreateObject3dThroughWall(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         //====================
         // Config
@@ -367,7 +361,7 @@ namespace Kizuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, logger, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Type::Skinny3D);
 
 
         //====================
@@ -417,8 +411,7 @@ namespace Kizuna {
     //==================================================
 
     void PipelineList::CreateObject2dOpaque(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         //====================
         // Config
@@ -453,7 +446,7 @@ namespace Kizuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, logger, RootSignature::Type::Skinny2D);
+        rootSignature->Create(device, RootSignature::Type::Skinny2D);
 
 
         //====================
@@ -503,8 +496,7 @@ namespace Kizuna {
     //==================================================
 
     void PipelineList::CreateModel3dOpaque(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         //====================
         // Config
@@ -538,7 +530,7 @@ namespace Kizuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, logger, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Type::Skinny3D);
 
 
         //====================
@@ -583,8 +575,7 @@ namespace Kizuna {
     }
 
     void PipelineList::CreateParticle(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         //====================
         // Config
@@ -616,11 +607,7 @@ namespace Kizuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(
-            device,
-            logger,
-            RootSignature::Type::Particles
-        );
+        rootSignature->Create(device, RootSignature::Type::Particles);
 
         //====================
         // Pipeline生成
@@ -694,31 +681,31 @@ namespace Kizuna {
         switch (type) {
 
         case PipelineType::Object3dOpaque:
-            CreateObject3dOpaque(device_, logger_);
+            CreateObject3dOpaque(device_);
             break;
 
         case PipelineType::Object3dAlpha:
-            CreateObject3dAlpha(device_, logger_);
+            CreateObject3dAlpha(device_);
             break;
 
         case PipelineType::Object3dWireframe:
-            CreateObject3dWireframe(device_, logger_);
+            CreateObject3dWireframe(device_);
             break;
 
         case PipelineType::Object3dThroughWall:
-            CreateObject3dThroughWall(device_, logger_);
+            CreateObject3dThroughWall(device_);
             break;
 
         case PipelineType::Object2dOpaque:
-            CreateObject2dOpaque(device_, logger_);
+            CreateObject2dOpaque(device_);
             break;
 
         case PipelineType::Model3dOpaque:
-            CreateModel3dOpaque(device_, logger_);
+            CreateModel3dOpaque(device_);
             break;
 
         case PipelineType::Particle:
-            CreateParticle(device_, logger_);
+            CreateParticle(device_);
             break;
         }
     }

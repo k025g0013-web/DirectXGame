@@ -2,7 +2,7 @@
 #include "Utils/ResourceHelper.h"
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
     MeshBuffer::~MeshBuffer() {
         // マッピングを解除する
         Unmap();

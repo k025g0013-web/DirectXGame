@@ -8,7 +8,7 @@
 #include "Graphics/Resource/TransformationMatrix.h"
 #include "Math/Transform.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// 2Dスプライトを描画するクラス

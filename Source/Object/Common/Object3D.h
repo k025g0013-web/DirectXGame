@@ -9,7 +9,7 @@
 #include "Graphics/Resource/TransformationMatrix.h"
 #include "Manager/CameraManager.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// プリミティブ3Dオブジェクト共通の基底クラス

@@ -4,7 +4,7 @@
 #include "RenderCore/Camera/DebugCamera.h"
 #include "Manager/InputManager.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     class CameraManager {
     public:

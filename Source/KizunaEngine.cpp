@@ -4,7 +4,7 @@
 #include "Graphics/Pipeline/RootSignature.h"
 #include "Graphics/Pipeline/GraphicsPipeline.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     void KizunaEngine::Initialize(
         const std::wstring &title,
@@ -13,9 +13,9 @@ namespace Kizuna {
     ) {
         // 最優先システムの構築
         debugManager_ = std::make_unique<DebugManager>();
-
-        logger_ = std::make_unique<Logger>();
-        logger_->Initialize();
+        
+        // ログ管理を初期化する
+        Logger::Initialize();
 
         // アプリケーションウィンドウの生成
         winApp_ = std::make_unique<WinApp>();
@@ -35,7 +35,6 @@ namespace Kizuna {
 
         directXCommon_->Initialize(
             winApp_.get(),
-            logger_.get(),
             width,
             height
         );
@@ -81,8 +80,7 @@ namespace Kizuna {
             std::make_unique<PipelineManager>();
 
         pipelineManager_->Initialize(
-            device,
-            logger_.get()
+            device
         );
 
         // グローバルライト

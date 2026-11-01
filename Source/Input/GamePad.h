@@ -6,7 +6,7 @@
 #include <Xinput.h>
 #include <cstdint>
 
-namespace Kizuna {
+namespace Tuna {
     class WinApp;
 
     /// <summary>

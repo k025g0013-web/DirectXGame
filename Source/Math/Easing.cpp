@@ -1,7 +1,7 @@
 #include "Easing.h"
 #include "Vector.h"
 
-namespace Kizuna {
+namespace Tuna {
     template <typename T>
     T Easing::Interpolate(EasingType type, float t, const T &start, const T &end) {
         // 補間率が範囲外にならないよう0～1へ制限する

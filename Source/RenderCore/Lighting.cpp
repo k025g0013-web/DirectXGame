@@ -2,7 +2,7 @@
 
 #include "Math/FunctionVector.h"
 
-namespace Kizuna {
+namespace Tuna {
     void Lighting::Initialize(ID3D12Device *device) {
 
         // ライト情報を格納する定数バッファを生成する

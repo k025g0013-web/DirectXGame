@@ -3,7 +3,7 @@
 #include "Graphics/Resource/MeshBuffer.h"
 #include "Math/Vector.h"
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// 平行光源の情報を保持する構造体
     /// </summary>

@@ -1,6 +1,6 @@
 #include "Input/Mouse.h"
 
-namespace Kizuna {
+namespace Tuna {
     void Mouse::Initialize(HWND hwnd) {
         // 入力対象となるウィンドウを保持
         hwnd_ = hwnd;

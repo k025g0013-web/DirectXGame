@@ -3,7 +3,7 @@
 #include "Math/FunctionMatrix.h"
 #include "Utils/ColorHelper.h"
 
-namespace Kizuna {
+namespace Tuna {
     void Material::Initialize(
         ID3D12Device *device, uint32_t color, bool enableLighting) {
         // マテリアル情報を格納する定数バッファを生成する

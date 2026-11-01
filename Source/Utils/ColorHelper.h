@@ -2,7 +2,7 @@
 #include <cstdint>
 #include "Math/Vector.h"
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// 32bitカラー値をVector4(RGBA)へ変換するユーティリティ関数
     /// </summary>

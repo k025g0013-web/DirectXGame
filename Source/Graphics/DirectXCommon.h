@@ -12,9 +12,8 @@
 // Graphics/Frame
 #include "Graphics/Frame/RenderOutput.h"
 
-namespace Kizuna {
+namespace Tuna {
     class WinApp;
-    class Logger;
     class Shader;
 
     /// <summary>
@@ -36,7 +35,7 @@ namespace Kizuna {
         /// <param name="width">画面幅</param>
         /// <param name="height">画面高さ</param>
         void Initialize(
-            WinApp *winApp, Logger *logger, uint32_t width, uint32_t height
+            WinApp *winApp, uint32_t width, uint32_t height
         );
 
         /// <summary>
