@@ -8,7 +8,7 @@
 
 #include "Math/Vector.h"
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// 頂点データ構造体
     /// </summary>

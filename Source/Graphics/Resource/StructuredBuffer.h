@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace Kizuna {
+namespace Tuna {
 
     class DescriptorHeap;
 

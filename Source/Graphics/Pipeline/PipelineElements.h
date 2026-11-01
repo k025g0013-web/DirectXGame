@@ -6,7 +6,7 @@
 #include <d3d12.h>
 #include <vector>
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// GraphicsPipelineで使用する各種設定要素を生成するクラス
     /// </summary>

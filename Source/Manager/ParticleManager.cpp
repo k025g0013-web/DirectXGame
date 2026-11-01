@@ -11,12 +11,11 @@
 #include <cassert>
 #include <unordered_set>
 
-namespace Kizuna {
+namespace Tuna {
 
     void ParticleManager::Initialize(
         ID3D12Device *device,
-        ID3D12GraphicsCommandList *commandList,
-        DescriptorHeap *srvHeap,
+        ID3D12GraphicsCommandList *commandList, DescriptorHeap *srvHeap,
         TextureManager *textureManager) {
 
         assert(device);
@@ -77,12 +76,9 @@ namespace Kizuna {
     }
 
     void ParticleManager::Emit(
-        const std::string &texturePath,
-        uint32_t count,
-        const Transform &transform,
-        const Vector3 &velocity,
-        float lifeTime,
-        const Vector4 &color) {
+        const std::string &texturePath, uint32_t count,
+        const Transform &transform, const Vector3 &velocity,
+        float lifeTime, const Vector4 &color) {
 
         assert(textureManager_);
 
@@ -110,12 +106,7 @@ namespace Kizuna {
             Particle particle;
 
             // 全パーティクルを指定された同じ座標に生成する
-            particle.Initialize(
-                transform,
-                velocity,
-                lifeTime,
-                color
-            );
+            particle.Initialize(transform, velocity, lifeTime, color);
 
             if (particle.IsAlive()) {
                 particles_.push_back(particle);

@@ -5,7 +5,7 @@
 #include "Object/Primitive/TriangleObject.h"
 #include "Object/Primitive/SphereObject.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     void PrimitiveManager::Initialize(
         ID3D12Device *device,

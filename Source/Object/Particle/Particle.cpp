@@ -3,13 +3,11 @@
 #include <algorithm>
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
 
     void Particle::Initialize(
-        const Transform &transform,
-        const Vector3 &velocity,
-        float lifeTime,
-        const Vector4 &color
+        const Transform &transform, const Vector3 &velocity,
+        float lifeTime, const Vector4 &color
     ) {
         transform_ = transform;
         velocity_ = velocity;

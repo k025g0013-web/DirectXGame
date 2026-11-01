@@ -9,7 +9,7 @@
 #include "Math/Matrix.h"
 #include "Math/Transform.h"
 
-namespace Kizuna {
+namespace Tuna {
 	namespace Math {
 #ifndef MATH_EPSILON_DEFINED
 #define MATH_EPSILON_DEFINED

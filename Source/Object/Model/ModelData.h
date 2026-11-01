@@ -5,7 +5,7 @@
 #include "Graphics/Resource/Mesh.h"
 #include "Graphics/Resource/MeshBuffer.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// モデルデータを保持する構造体

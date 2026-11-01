@@ -2,22 +2,20 @@
 
 #include "PipelineList.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     PipelineManager::PipelineManager() = default;
     PipelineManager::~PipelineManager() = default;
 
 
     void PipelineManager::Initialize(
-        ID3D12Device *device,
-        Logger *logger
+        ID3D12Device *device
     ) {
         pipelineList_ =
             std::make_unique<PipelineList>();
 
         pipelineList_->Initialize(
-            device,
-            logger
+            device
         );
     }
 

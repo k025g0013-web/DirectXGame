@@ -4,7 +4,7 @@
 #include "Input/GamePad.h"
 #include "Input/Mouse.h"
 
-namespace Kizuna {
+namespace Tuna {
     class WinApp;
 
     class InputManager {

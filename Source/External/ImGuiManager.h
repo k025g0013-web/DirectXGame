@@ -5,7 +5,7 @@
 
 #ifdef USE_IMGUI
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// Dear ImGuiの初期化・描画・終了処理を管理するクラス
 	/// </summary>

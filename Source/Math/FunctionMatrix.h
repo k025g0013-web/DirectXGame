@@ -6,7 +6,7 @@
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 	namespace Math {
 #ifndef MATH_EPSILON_DEFINED
 #define MATH_EPSILON_DEFINED

@@ -5,7 +5,7 @@
 #include <xaudio2.h>
 #include <cstdint>
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// RIFFチャンク共通ヘッダ
 	/// </summary>

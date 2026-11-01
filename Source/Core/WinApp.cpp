@@ -8,7 +8,7 @@
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 
-namespace Kizuna {
+namespace Tuna {
     // ウィンドウプロシージャ
     LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
         // ImGuiが有効な場合は、先にImGui側で入力メッセージを処理する

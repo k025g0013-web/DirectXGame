@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Kizuna {
+namespace Tuna {
     enum class RenderPass {
         kDefault,
         kThroughWall,

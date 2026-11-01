@@ -5,7 +5,7 @@
 
 #include "Graphics/Core/DescriptorHeap.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     Texture::~Texture() {
         if (descriptorHeap_ != nullptr &&

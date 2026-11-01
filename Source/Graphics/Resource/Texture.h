@@ -5,7 +5,7 @@
 #include <DirectXTex/DirectXTex.h>
 #include <wrl.h>
 
-namespace Kizuna {
+namespace Tuna {
 
     class DescriptorHeap;
 

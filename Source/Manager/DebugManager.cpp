@@ -2,7 +2,7 @@
 #include <cassert>
 #include <objbase.h>
 
-namespace Kizuna {
+namespace Tuna {
     // コンストラクタ
     DebugManager::DebugManager() {
         // COMライブラリをマルチスレッドモードで初期化する

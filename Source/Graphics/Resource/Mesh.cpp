@@ -2,7 +2,7 @@
 
 #include "Graphics/Renderer/Renderer.h"
 
-namespace Kizuna {
+namespace Tuna {
     void Mesh::Create(
         ID3D12Device *device,
         const std::vector<VertexData> &vertices

@@ -3,7 +3,7 @@
 #include <cassert>
 #include <utility>
 
-namespace Kizuna {
+namespace Tuna {
 
     void SpriteManager::Initialize(
         ID3D12Device *device) {

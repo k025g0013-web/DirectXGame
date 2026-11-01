@@ -6,7 +6,7 @@
 #include <d3d12.h>
 #include <vector>
 
-namespace Kizuna {
+namespace Tuna {
     class RootSignature;
     class Shader;
 

@@ -8,7 +8,7 @@
 
 #include "Core/WinApp.h"
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// キーボード入力を管理するクラス
 	/// </summary>

@@ -8,7 +8,7 @@
 #include "Utils/ConvertString.h"
 #include "Utils/ResourceHelper.h"
 
-namespace Kizuna {
+namespace Tuna {
     void TextureLoader::Initialize(
         ID3D12Device *device, DescriptorHeap *srvHeap) {
         

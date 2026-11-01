@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// Rasterizerの設定

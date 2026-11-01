@@ -2,7 +2,7 @@
 
 #include "Math/Transform.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// パーティクル1個分の状態と更新処理を管理するクラス
@@ -14,10 +14,8 @@ namespace Kizuna {
         /// パーティクルを初期化する
         /// </summary>
         void Initialize(
-            const Transform &transform,
-            const Vector3 &velocity,
-            float lifeTime,
-            const Vector4 &color
+            const Transform &transform, const Vector3 &velocity,
+            float lifeTime, const Vector4 &color
         );
 
         /// <summary>

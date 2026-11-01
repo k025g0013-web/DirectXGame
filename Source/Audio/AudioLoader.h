@@ -9,7 +9,7 @@
 
 #include "AudioData.h"
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// 音声ファイル読み込みクラス
 	/// </summary>

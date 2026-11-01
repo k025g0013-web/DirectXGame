@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <chrono>
 
-using namespace Kizuna;
+using namespace Tuna;
 
 namespace {
 	// 球モデル分割数

@@ -4,7 +4,7 @@
 
 #include "Graphics/Core/DescriptorHeap.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     void TextureManager::Initialize(
         ID3D12Device *device,

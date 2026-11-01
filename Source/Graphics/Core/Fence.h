@@ -8,7 +8,7 @@
 #pragma comment(lib, "d3d12.lib")
 #include <d3d12.h>
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// GPUとCPU間の同期処理を管理するクラス
     /// </summary>

@@ -14,7 +14,7 @@
 #include "Graphics/Resource/Texture.h"
 #include "Graphics/Resource/TextureLoader.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     class CameraManager;
     class DescriptorHeap;
@@ -28,20 +28,15 @@ namespace Kizuna {
     class ParticleManager {
     public:
         void Initialize(
-            ID3D12Device *device,
-            ID3D12GraphicsCommandList *commandList,
-            DescriptorHeap *srvHeap,
+            ID3D12Device *device, 
+            ID3D12GraphicsCommandList *commandList, DescriptorHeap *srvHeap,
             TextureManager *textureManager
         );
 
         void Emit(
-            const std::string &texturePath,
-            uint32_t count,
-            const Transform &transform,
-            const Vector3 &velocity,
-            float lifeTime,
-            const Vector4 &color
-        );
+            const std::string &texturePath, uint32_t count,
+            const Transform &transform, const Vector3 &velocity,
+            float lifeTime, const Vector4 &color);
 
         void Update(float deltaTime, CameraManager *camera);
 
@@ -51,9 +46,7 @@ namespace Kizuna {
 
     private:
         // パーティクル用テクスチャを読み込む
-        D3D12_GPU_DESCRIPTOR_HANDLE LoadParticleTexture(
-            const std::string &texturePath
-        );
+        D3D12_GPU_DESCRIPTOR_HANDLE LoadParticleTexture(const std::string &texturePath);
 
         ID3D12Device *device_ = nullptr;
         ID3D12GraphicsCommandList *commandList_ = nullptr;
@@ -65,8 +58,7 @@ namespace Kizuna {
         std::vector<Particle> particles_;
         std::vector<std::string> particleTexturePaths_;
 
-        std::unordered_map<std::string, ParticleTexture>
-            particleTextures_;
+        std::unordered_map<std::string, ParticleTexture> particleTextures_;
 
         Mesh mesh_;
         std::unique_ptr<Material> material_;

@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <string>
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// UTF-8文字列(std::string)をワイド文字列(std::wstring)へ変換する
 	/// </summary>

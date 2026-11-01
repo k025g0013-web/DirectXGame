@@ -1,21 +1,18 @@
 #include "Shader.h"
 
-#include "Core/Logger.h"
+#include "Utils/Debug/Logger.h"
 #include "Utils/ConvertString.h"
 
 #include <cassert>
 #include <format>
 
-namespace Kizuna {
+namespace Tuna {
     // 静的メンバの実体を定義する
-    Logger *Shader::sLogger_ = nullptr;
     Microsoft::WRL::ComPtr<IDxcUtils> Shader::sDxcUtils_ = nullptr;
     Microsoft::WRL::ComPtr<IDxcCompiler3> Shader::sDxcCompiler_ = nullptr;
     IDxcIncludeHandler *Shader::sIncludeHandler_ = nullptr;
 
-    void Shader::InitializeCompiler(Logger *logger) {
-        // ログ出力先を保持する
-        sLogger_ = logger;
+    void Shader::InitializeCompiler() {
 
         // DXCユーティリティを生成する
         HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(sDxcUtils_.GetAddressOf()));
@@ -34,7 +31,7 @@ namespace Kizuna {
 
     void Shader::Compile(const std::wstring &filePath, const wchar_t *profile) {
         // シェーダーコンパイル開始をログへ出力する
-        sLogger_->Log(ConvertString(std::format(L"Begin Compileshader, path:{}, profile:{}\n", filePath, profile)));
+        Logger::Log(ConvertString(std::format(L"Begin Compileshader, path:{}, profile:{}\n", filePath, profile)));
 
         // シェーダーファイルを読み込む
         Microsoft::WRL::ComPtr<IDxcBlobEncoding> shaderSource;
@@ -74,7 +71,7 @@ namespace Kizuna {
 
         if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
             // エラーメッセージをログへ出力する
-            sLogger_->Log(shaderError->GetStringPointer());
+            Logger::Log(shaderError->GetStringPointer());
             assert(false && "シェーダーコンパイルエラーが発生しました。詳細はログを確認してください。");
         }
 
@@ -83,7 +80,7 @@ namespace Kizuna {
         assert(SUCCEEDED(hr));
 
         // コンパイル成功をログへ出力する
-        sLogger_->Log(ConvertString(std::format(L"Compile Succeeded, path:{}, profile:{}\n", filePath, profile)));
+        Logger::Log(ConvertString(std::format(L"Compile Succeeded, path:{}, profile:{}\n", filePath, profile)));
 
         (void)hr;
     }

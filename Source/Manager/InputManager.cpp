@@ -3,7 +3,7 @@
 
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
 
     void InputManager::Initialize(WinApp *winApp) {
         assert(winApp != nullptr);

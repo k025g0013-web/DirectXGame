@@ -10,11 +10,10 @@
 #include "GraphicsPipeline.h"
 #include "PipelineConfig.h"
 
-namespace Kizuna {
+namespace Tuna {
 
 	class RootSignature;
 	class GraphicsPipeline;
-	class Logger;
 
 	enum class PipelineType {
 		Object3dOpaque,
@@ -49,8 +48,7 @@ namespace Kizuna {
 
 
 		void Initialize(
-			ID3D12Device *device,
-			Logger *logger
+			ID3D12Device *device
 		);
 
 
@@ -74,38 +72,31 @@ namespace Kizuna {
 	private:
 
 		void CreateObject3dOpaque(
-			ID3D12Device *device,
-			Logger *logger
+			ID3D12Device *device
 		);
 
 		void CreateObject3dAlpha(
-			ID3D12Device *device,
-			Logger *logger
+			ID3D12Device *device
 		);
 
 		void CreateObject3dWireframe(
-			ID3D12Device *device,
-			Logger *logger
+			ID3D12Device *device
 		);
 
 		void CreateObject3dThroughWall(
-			ID3D12Device *device,
-			Logger *logger
+			ID3D12Device *device
 		);
 
 		void CreateObject2dOpaque(
-			ID3D12Device *device,
-			Logger *logger
+			ID3D12Device *device
 		);
 
 		void CreateModel3dOpaque(
-			ID3D12Device *device,
-			Logger *logger
+			ID3D12Device *device
 		);
 
 		void CreateParticle(
-			ID3D12Device *device,
-			Logger *logger
+			ID3D12Device *device
 		);
 
 	private:
@@ -118,7 +109,6 @@ namespace Kizuna {
 
 		// 再生成に使用する
 		ID3D12Device *device_ = nullptr;
-		Logger *logger_ = nullptr;
 	};
 
 }

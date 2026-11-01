@@ -5,7 +5,7 @@
 #include <numbers>
 #include <cmath>
 
-namespace Kizuna {
+namespace Tuna {
 
     void DebugCamera::SetScreenSize(float width, float height) {
         camera_.SetScreenSize(width, height);

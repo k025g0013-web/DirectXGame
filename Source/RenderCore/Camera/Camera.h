@@ -3,7 +3,7 @@
 #include "Math/Matrix.h"
 #include "Math/Transform.h"
 
-namespace Kizuna {
+namespace Tuna {
     class Camera {
     public:
         void SetScreenSize(float width, float height);

@@ -2,7 +2,7 @@
 
 #include <d3d12.h>
 
-namespace Kizuna {
+namespace Tuna {
     /// <summary>
     /// DirectX12のViewportとScissorRectを管理するクラス
     /// </summary>

@@ -1,6 +1,6 @@
 #include "Fence.h"
 
-namespace Kizuna {
+namespace Tuna {
 Fence::~Fence() {
     if (fenceEvent_) {
         CloseHandle(fenceEvent_);

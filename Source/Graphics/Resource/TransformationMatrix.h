@@ -2,7 +2,7 @@
 
 #include "Math/Matrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 	/// <summary>
 	/// シェーダーへ渡す変換行列を保持する構造体
 	/// </summary>

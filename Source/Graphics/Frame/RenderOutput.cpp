@@ -3,10 +3,10 @@
 #include "Core/WinApp.h"
 #include "Graphics/Core/DirectXDevice.h"
 #include "Graphics/Core/CommandCommon.h"
-#include "Utils/AssertHelper.h"
+#include "Utils/Debug/AssertHelper.h"
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
     void RenderOutput::Initialize(
         DirectXDevice *device, CommandCommon *commandContext, WinApp *winApp,
         DescriptorHeap *descriptorHeap, uint32_t width, uint32_t height
@@ -35,13 +35,13 @@ namespace Kizuna {
         assert(SUCCEEDED(hr));
 
         hr = swapChain1.As(&swapChain_);
-        CheckHRESULT(hr);
+        AssertHelper::AssertHRESULT(hr, "SwapChainの生成に失敗しました");
 
         // SwapChainが保持するバックバッファを取得する
         // 取得したResourceをRTV作成時に使用する
         for (uint32_t i = 0; i < kBufferCount; ++i) {
             hr = swapChain_->GetBuffer(i, IID_PPV_ARGS(backBuffers_[i].GetAddressOf()));
-            CheckHRESULT(hr);
+            AssertHelper::AssertHRESULT(hr, "BackBufferの取得に失敗しました");
         }
 
         //====================
@@ -117,7 +117,7 @@ namespace Kizuna {
             &depthClearValue,
             IID_PPV_ARGS(&depthStencilResource_)
         );
-        CheckHRESULT(hr);
+        AssertHelper::AssertHRESULT(hr, "DepthStencilResourceの生成に失敗しました");
 
         //====================
         // DSV記述子の生成と保持
@@ -133,6 +133,6 @@ namespace Kizuna {
 
     void RenderOutput::Present() {
         HRESULT hr = swapChain_->Present(1, 0);
-        CheckHRESULT(hr);
+        AssertHelper::AssertHRESULT(hr, "画面への描画結果の表示に失敗しました");
     }
 }

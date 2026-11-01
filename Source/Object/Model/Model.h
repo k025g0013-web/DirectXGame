@@ -16,7 +16,7 @@
 
 #include "Manager/CameraManager.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// 3Dモデルを管理・描画するクラス

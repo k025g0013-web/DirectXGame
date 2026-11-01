@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
 	void AudioManager::Initialize() {
 		// オーディオシステムを初期化
 		audio_.Initialize();

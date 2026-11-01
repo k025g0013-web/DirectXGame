@@ -5,7 +5,7 @@
 
 #include "Math/FunctionMatrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     void Model::Create(
         ID3D12Device *device,

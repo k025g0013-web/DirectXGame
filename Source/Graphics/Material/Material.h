@@ -6,7 +6,7 @@
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// マテリアル情報をGPUへ転送するための構造体

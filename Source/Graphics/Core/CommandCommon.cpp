@@ -3,7 +3,7 @@
 
 #include <cassert>
 
-namespace Kizuna {
+namespace Tuna {
 	void CommandCommon::Initialize(DirectXDevice *device) {
 		device_ = device;
 

@@ -10,7 +10,7 @@
 #pragma comment(lib, "mfreadwrite.lib")
 #pragma comment(lib, "mfuuid.lib")
 
-namespace Kizuna {
+namespace Tuna {
 	void Audio::Initialize() {
 		// XAudio2エンジンのインスタンスを作成
 		HRESULT hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);

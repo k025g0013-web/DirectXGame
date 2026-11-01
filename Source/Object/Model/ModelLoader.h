@@ -4,7 +4,7 @@
 
 #include "ModelData.h"
 
-namespace Kizuna {
+namespace Tuna {
 
     /// <summary>
     /// objモデルを読み込むローダークラス
