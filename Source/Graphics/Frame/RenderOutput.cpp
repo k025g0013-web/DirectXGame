@@ -2,13 +2,13 @@
 
 #include "Core/WinApp.h"
 #include "Graphics/Core/DirectXDevice.h"
-#include "Graphics/Core/CommandCommon.h"
+#include "Graphics/Core/CommandContext.h"
 #include "Utils/Debug/AssertHelper.h"
 #include <cassert>
 
 namespace Tuna {
     void RenderOutput::Initialize(
-        DirectXDevice *device, CommandCommon *commandContext, WinApp *winApp,
+        DirectXDevice *device, CommandContext *commandContext, WinApp *winApp,
         DescriptorHeap *descriptorHeap, uint32_t width, uint32_t height
     ) {
         ID3D12Device *d3d12Device = device->GetDevice();

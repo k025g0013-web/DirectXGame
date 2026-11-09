@@ -14,7 +14,7 @@ namespace Tuna {
     /// Rasterizer、DepthStencil、BlendState、InputLayoutなどの
     /// DirectX12パイプライン設定を生成するためのユーティリティクラス。
     /// </remarks>
-    class PipelineElements {
+    class PipelineDescBuilder {
     public:
        
         static D3D12_RASTERIZER_DESC CreateRasterizer(RasterizerMode mode) {

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Math/FunctionMatrix.h"
+#include "Math/MatrixFunctions.h"
 
 namespace Tuna {
 

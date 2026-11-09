@@ -10,7 +10,7 @@
 #include <cassert>
 
 #include "Object/Particle/Particle.h"
-#include "Graphics/Renderer/BillboardMode.h"
+#include "Object/Particle/BillboardMode.h"
 
 #include "Graphics/Resource/Mesh.h"
 #include "Graphics/Resource/StructuredBuffer.h"

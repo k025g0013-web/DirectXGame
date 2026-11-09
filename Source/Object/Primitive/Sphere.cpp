@@ -1,7 +1,7 @@
-#include "SphereObject.h"
+#include "Sphere.h"
 
 namespace Tuna {
-    void SphereObject::Create(
+    void Sphere::Create(
         ID3D12Device *device, ID3D12GraphicsCommandList *commandList,
         uint32_t color, bool enableLighting) {
         // commandListはプリミティブでは使用しない

@@ -1,12 +1,10 @@
 #pragma once
-#include "PipelineList.h"
+#include "PipelineLibrary.h"
 
 #pragma comment(lib, "d3d12.lib")
 #include <d3d12.h>
 
 namespace Tuna {
-    class PipelineList;
-
     class PipelineManager {
     public:
         PipelineManager();
@@ -19,20 +17,20 @@ namespace Tuna {
             ID3D12Device *device
         );
 
-        const PipelineSet *GetPipeline(
-            PipelineType type
+        const PipelineState *GetPipeline(
+            PipelineMode mode
         ) const;
 
         PipelineConfig &GetConfig(
-            PipelineType type
+            PipelineMode mode
         );
 
         void RebuildPipeline(
-            PipelineType type
+            PipelineMode mode
         );
 
     private:
-        std::unique_ptr<PipelineList> pipelineList_;
+        std::unique_ptr<PipelineLibrary> pipelineLibrary_;
     };
 
 }

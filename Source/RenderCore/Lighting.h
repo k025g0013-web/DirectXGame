@@ -22,7 +22,7 @@ namespace Tuna {
         float intensity;
 
         /// ライティング方式
-        int lightType;
+        int lightMode;
 
         /// ConstantBufferのアライメント調整用
         float padding[3];
@@ -41,10 +41,10 @@ namespace Tuna {
         /// <summary>
         /// ライティング方式
         /// </summary>
-        enum class LightingType {
+        enum class LightingMode {
             None,
             Lambert,
-            Half_Lambert,
+            HalfLambert,
         };
 
     public:
@@ -77,8 +77,8 @@ namespace Tuna {
         /// <summary>
         /// ライティング方式を変更する
         /// </summary>
-        /// <param name="type">設定するライティング方式</param>
-        void SetLightType(LightingType type);
+        /// <param name="mode">設定するライティング方式</param>
+        void SetLightMode(LightingMode mode);
 
         /// <summary>
         /// ライト情報を取得する
@@ -88,7 +88,7 @@ namespace Tuna {
         /// <summary>
         /// 現在のライティング方式を取得する
         /// </summary>
-        LightingType GetLightType() const { return currentLightType_; }
+        LightingMode GetLightMode() const { return currentLightMode_; }
 
     private:
 
@@ -99,6 +99,6 @@ namespace Tuna {
         DirectionalLight *lightingData_ = nullptr;
 
         /// 現在のライティング方式
-        LightingType currentLightType_{};
+        LightingMode currentLightMode_{};
     };
 }

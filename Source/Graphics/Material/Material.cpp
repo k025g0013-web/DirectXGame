@@ -1,6 +1,6 @@
 #include "Material.h"
 
-#include "Math/FunctionMatrix.h"
+#include "Math/MatrixFunctions.h"
 #include "Utils/ColorHelper.h"
 
 namespace Tuna {

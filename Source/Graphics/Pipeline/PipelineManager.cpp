@@ -1,6 +1,6 @@
 #include "PipelineManager.h"
 
-#include "PipelineList.h"
+#include "PipelineLibrary.h"
 
 namespace Tuna {
 
@@ -11,32 +11,26 @@ namespace Tuna {
     void PipelineManager::Initialize(
         ID3D12Device *device
     ) {
-        pipelineList_ =
-            std::make_unique<PipelineList>();
+        pipelineLibrary_ =
+            std::make_unique<PipelineLibrary>();
 
-        pipelineList_->Initialize(
+        pipelineLibrary_->Initialize(
             device
         );
     }
 
 
-    const PipelineSet *PipelineManager::GetPipeline(
-        PipelineType type
-    ) const {
-        return pipelineList_->GetPipeline(type);
+    const PipelineState *PipelineManager::GetPipeline(PipelineMode mode) const {
+        return pipelineLibrary_->GetPipeline(mode);
     }
 
 
-    PipelineConfig &PipelineManager::GetConfig(
-        PipelineType type
-    ) {
-        return pipelineList_->GetConfig(type);
+    PipelineConfig &PipelineManager::GetConfig(PipelineMode mode) {
+        return pipelineLibrary_->GetConfig(mode);
     }
 
 
-    void PipelineManager::RebuildPipeline(
-        PipelineType type
-    ) {
-        pipelineList_->RebuildPipeline(type);
+    void PipelineManager::RebuildPipeline(PipelineMode mode) {
+        pipelineLibrary_->RebuildPipeline(mode);
     }
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Math/Transform.h"
-#include "Graphics/Renderer/BillboardMode.h"
+#include "BillboardMode.h"
 
 namespace Tuna {
 

@@ -3,7 +3,7 @@
 #include <cassert>
 #include <filesystem>
 
-#include "Math/FunctionMatrix.h"
+#include "Math/MatrixFunctions.h"
 
 namespace Tuna {
 

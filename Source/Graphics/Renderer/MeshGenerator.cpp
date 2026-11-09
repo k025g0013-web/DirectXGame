@@ -1,7 +1,7 @@
 #include "MeshGenerator.h"
 #include <numbers>
 #include <math.h>
-#include "Math/FunctionMatrix.h"
+#include "Math/MatrixFunctions.h"
 
 namespace Tuna {
 	void MeshGenerator::CreateSprite(

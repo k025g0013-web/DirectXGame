@@ -7,16 +7,16 @@
 #include "Graphics/Resource/MeshBuffer.h"
 #include "Graphics/Resource/Texture.h"
 #include "Graphics/Resource/TransformationMatrix.h"
-#include "Manager/CameraManager.h"
+#include "RenderCore/Camera/CameraManager.h"
 
 namespace Tuna {
 
     /// <summary>
     /// プリミティブ3Dオブジェクト共通の基底クラス
     /// </summary>
-    class Object3D {
+    class Primitive {
     public:
-        virtual ~Object3D() = default;
+        virtual ~Primitive() = default;
 
         /// <summary>
         /// 各プリミティブ固有の生成処理

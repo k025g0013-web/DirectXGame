@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Object/Common/Object3D.h"
+#include "Primitive.h"
 
 namespace Tuna {
 
     /// <summary>
     /// 球体オブジェクト
     /// </summary>
-    class SphereObject : public Object3D {
+    class Sphere : public Primitive {
     public:
-        explicit SphereObject(uint32_t subdivision = 16)
+        explicit Sphere(uint32_t subdivision = 16)
             : subdivision_(subdivision) {}
 
         /// <summary>

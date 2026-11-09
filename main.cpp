@@ -1,15 +1,15 @@
-#include "KizunaEngine.h"
-#include "Manager/CameraManager.h"
+#include "TunaEngine.h"
+#include "RenderCore/Camera/CameraManager.h"
 #include "RenderCore/Lighting.h"
-#include "Object/Common/Object3D.h"
-#include "External/ImGuiManager.h"
+#include "Object/Primitive/Primitive.h"
+#include "Manager/ImGuiManager.h"
 
-#include "Object/Primitive/TriangleObject.h"
-#include "Object/Primitive/PlaneObject.h"
-#include "Object/Primitive/SphereObject.h"
+#include "Object/Primitive/Triangle.h"
+#include "Object/Primitive/Plane.h"
+#include "Object/Primitive/Sphere.h"
 
 #include "Manager/ParticleManager.h"
-#include "Graphics/Renderer/BillboardMode.h"
+#include "Object/Particle/BillboardMode.h"
 
 #include "Utils/RandomHelper.h"
 
@@ -34,9 +34,9 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//-------------------------------------------------------------------------
 	// 基盤初期化
 	//-------------------------------------------------------------------------
-	auto engine = std::make_unique<KizunaEngine>();
+	auto engine = std::make_unique<TunaEngine>();
 
-	engine->Initialize(L"KizunaEngine", kClientWidth, kClientHeight);
+	engine->Initialize(L"TunaEngine", kClientWidth, kClientHeight);
 
 	ID3D12Device *device = engine->GetDevice();
 
@@ -262,7 +262,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		// 3Dオブジェクト
 		{
 			engine->SetPipeline(
-				PipelineType::Object3dOpaque);
+				PipelineMode::Object3DOpaque);
 
 			lighting.Bind(kLightRegisterIndex, commandList);
 
@@ -281,7 +281,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// パーティクル
 		{
-			engine->SetPipeline(PipelineType::Particle);
+			engine->SetPipeline(PipelineMode::Particle);
 
 			lighting.Bind(kLightRegisterIndex, commandList);
 
@@ -290,7 +290,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		// 2Dオブジェクト
 		{
-			engine->SetPipeline(PipelineType::Object2dOpaque);
+			engine->SetPipeline(PipelineMode::Object2DOpaque);
 
 			spriteManager->Update(
 				kClientWidth,

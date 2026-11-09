@@ -2,7 +2,7 @@
 
 // Graphic/Core
 #include "Graphics/Core/DirectXDevice.h"
-#include "Graphics/Core/CommandCommon.h"
+#include "Graphics/Core/CommandContext.h"
 #include "Graphics/Core/Fence.h"
 #include "Graphics/Core/DescriptorHeap.h"
 
@@ -108,7 +108,7 @@ namespace Tuna {
         DirectXDevice directXDevice_;
 
         /// コマンド管理
-        CommandCommon commandContext_;
+        CommandContext commandContext_;
 
         /// RTV用DescriptorHeap
         DescriptorHeap rtvDescriptorHeap_;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Camera.h"
-#include "Manager/InputManager.h"
+#include "Input/InputManager.h"
 
 namespace Tuna {
 

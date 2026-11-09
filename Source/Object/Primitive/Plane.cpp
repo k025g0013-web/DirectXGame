@@ -1,7 +1,7 @@
-#include "PlaneObject.h"
+#include "Plane.h"
 
 namespace Tuna {
-	void PlaneObject::Create(
+	void Plane::Create(
 		ID3D12Device *device, ID3D12GraphicsCommandList *commandList,
 		uint32_t color, bool enableLighting) {
 		// commandListはプリミティブでは使用しない

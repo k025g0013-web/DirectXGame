@@ -15,36 +15,36 @@ namespace Tuna {
 	class RootSignature;
 	class GraphicsPipeline;
 
-	enum class PipelineType {
-		Object3dOpaque,
-		Object3dAlpha,
-		Object3dWireframe,
-		Object3dThroughWall,
+	enum class PipelineMode {
+		Object3DOpaque,
+		Object3DAlpha,
+		Object3DWireframe,
+		Object3DThroughWall,
 
-		Object2dOpaque,
+		Object2DOpaque,
 
-		Model3dOpaque,
+		Model3DOpaque,
 
 		Particle,
 	};
 
 
-	struct PipelineSet {
+	struct PipelineState {
 		std::unique_ptr<RootSignature> rootSignature;
 		std::unique_ptr<GraphicsPipeline> pipeline;
 	};
 
 
-	class PipelineList {
+	class PipelineLibrary {
 	public:
 
-		PipelineList() = default;
+		PipelineLibrary() = default;
 
-		~PipelineList() = default;
+		~PipelineLibrary() = default;
 
-		PipelineList(const PipelineList &) = delete;
+		PipelineLibrary(const PipelineLibrary &) = delete;
 
-		PipelineList &operator=(const PipelineList &) = delete;
+		PipelineLibrary &operator=(const PipelineLibrary &) = delete;
 
 
 		void Initialize(
@@ -52,46 +52,46 @@ namespace Tuna {
 		);
 
 
-		const PipelineSet *GetPipeline(
-			PipelineType type
+		const PipelineState *GetPipeline(
+			PipelineMode mode
 		) const;
 
 
 		// Pipelineの設定を取得
 		PipelineConfig &GetConfig(
-			PipelineType type
+			PipelineMode mode
 		);
 
 
 		// Pipelineを再生成
 		void RebuildPipeline(
-			PipelineType type
+			PipelineMode mode
 		);
 
 
 	private:
 
-		void CreateObject3dOpaque(
+		void CreateObject3DOpaque(
 			ID3D12Device *device
 		);
 
-		void CreateObject3dAlpha(
+		void CreateObject3DAlpha(
 			ID3D12Device *device
 		);
 
-		void CreateObject3dWireframe(
+		void CreateObject3DWireframe(
 			ID3D12Device *device
 		);
 
-		void CreateObject3dThroughWall(
+		void CreateObject3DThroughWall(
 			ID3D12Device *device
 		);
 
-		void CreateObject2dOpaque(
+		void CreateObject2DOpaque(
 			ID3D12Device *device
 		);
 
-		void CreateModel3dOpaque(
+		void CreateModel3DOpaque(
 			ID3D12Device *device
 		);
 
@@ -101,11 +101,11 @@ namespace Tuna {
 
 	private:
 
-		// PipelineTypeをキーとしてPipelineを管理
-		std::unordered_map<PipelineType, PipelineSet> pipelines_;
+		// PipelineModeをキーとしてPipelineを管理
+		std::unordered_map<PipelineMode, PipelineState> pipelines_;
 
-		// PipelineTypeをキーとして設定を管理
-		std::unordered_map<PipelineType, PipelineConfig> configs_;
+		// PipelineModeをキーとして設定を管理
+		std::unordered_map<PipelineMode, PipelineConfig> configs_;
 
 		// 再生成に使用する
 		ID3D12Device *device_ = nullptr;

@@ -64,9 +64,6 @@
     <Filter Include="Source\RenderCore">
       <UniqueIdentifier>{fb4032d0-8005-4adc-ba25-fceaa8089cf9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\External">
-      <UniqueIdentifier>{cb60f5ab-4b82-49b5-b098-afef0125bde6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="externals">
       <UniqueIdentifier>{b4814eb5-6ea5-4c8d-81e5-7b4766c04609}</UniqueIdentifier>
     </Filter>
@@ -84,9 +81,6 @@
     </Filter>
     <Filter Include="Source\Graphics\Material">
       <UniqueIdentifier>{d81e25c7-38ae-4cd5-a66b-216ae65a4fe9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Object\Common">
-      <UniqueIdentifier>{a237530c-241a-4738-8635-daec9d6e5485}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Object\Primitive">
       <UniqueIdentifier>{8a4f6480-d187-45b9-88e2-875c9ecae87c}</UniqueIdentifier>
@@ -138,13 +132,10 @@
     <ClCompile Include="Source\Core\WinApp.cpp">
       <Filter>Source\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\External\ImGuiManager.cpp">
-      <Filter>Source\External</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Graphics\DirectXCommon.cpp">
       <Filter>Source\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Core\CommandCommon.cpp">
+    <ClCompile Include="Source\Graphics\Core\CommandContext.cpp">
       <Filter>Source\Graphics\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Core\DescriptorHeap.cpp">
@@ -196,7 +187,7 @@
       <Filter>Source\RenderCore</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Source\KizunaEngine.cpp">
+    <ClCompile Include="Source\TunaEngine.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Audio\AudioLoader.cpp">
@@ -208,7 +199,7 @@
     <ClCompile Include="Source\RenderCore\Camera\DebugCamera.cpp">
       <Filter>Source\RenderCore\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Pipeline\PipelineList.cpp">
+    <ClCompile Include="Source\Graphics\Pipeline\PipelineLibrary.cpp">
       <Filter>Source\Graphics\Pipeline</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Renderer\MeshGenerator.cpp">
@@ -223,16 +214,13 @@
     <ClCompile Include="Source\Graphics\Resource\Mesh.cpp">
       <Filter>Source\Graphics\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Common\Object3D.cpp">
-      <Filter>Source\Object\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Object\Primitive\PlaneObject.cpp">
+    <ClCompile Include="Source\Object\Primitive\Plane.cpp">
       <Filter>Source\Object\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Primitive\SphereObject.cpp">
+    <ClCompile Include="Source\Object\Primitive\Sphere.cpp">
       <Filter>Source\Object\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Primitive\TriangleObject.cpp">
+    <ClCompile Include="Source\Object\Primitive\Triangle.cpp">
       <Filter>Source\Object\Primitive</Filter>
     </ClCompile>
     <ClCompile Include="Source\Object\Model\Model.cpp">
@@ -244,13 +232,7 @@
     <ClCompile Include="Source\Object\Sprite\Sprite.cpp">
       <Filter>Source\Object\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Manager\AudioManager.cpp">
-      <Filter>Source\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Manager\DebugManager.cpp">
-      <Filter>Source\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Manager\TextureManager.cpp">
       <Filter>Source\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Resource\TextureLoader.cpp">
@@ -260,12 +242,6 @@
       <Filter>Source\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Source\Manager\ModelManager.cpp">
-      <Filter>Source\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Manager\InputManager.cpp">
-      <Filter>Source\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Manager\CameraManager.cpp">
       <Filter>Source\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Source\Manager\SpriteManager.cpp">
@@ -286,8 +262,26 @@
     <ClCompile Include="Source\Utils\Debug\DumpHelper.cpp">
       <Filter>Source\Utils\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Renderer\BillboardMatrix.cpp">
-      <Filter>Source\Graphics\Renderer</Filter>
+    <ClCompile Include="Source\Audio\AudioManager.cpp">
+      <Filter>Source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Resource\TextureManager.cpp">
+      <Filter>Source\Graphics\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input\InputManager.cpp">
+      <Filter>Source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Manager\ImGuiManager.cpp">
+      <Filter>Source\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RenderCore\Camera\CameraManager.cpp">
+      <Filter>Source\RenderCore\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Particle\BillboardMatrix.cpp">
+      <Filter>Source\Object\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Primitive\Primitive.cpp">
+      <Filter>Source\Object\Primitive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -370,13 +364,10 @@
     <ClInclude Include="Source\Core\WinApp.h">
       <Filter>Source\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\External\ImGuiManager.h">
-      <Filter>Source\External</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Graphics\DirectXCommon.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Core\CommandCommon.h">
+    <ClInclude Include="Source\Graphics\Core\CommandContext.h">
       <Filter>Source\Graphics\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Core\DescriptorHeap.h">
@@ -397,7 +388,7 @@
     <ClInclude Include="Source\Graphics\Pipeline\GraphicsPipeline.h">
       <Filter>Source\Graphics\Pipeline</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Pipeline\PipelineElements.h">
+    <ClInclude Include="Source\Graphics\Pipeline\PipelineDescBuilder.h">
       <Filter>Source\Graphics\Pipeline</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Pipeline\PipelineManager.h">
@@ -433,10 +424,10 @@
     <ClInclude Include="Source\Math\Easing.h">
       <Filter>Source\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Math\FunctionMatrix.h">
+    <ClInclude Include="Source\Math\MatrixFunctions.h">
       <Filter>Source\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Math\FunctionVector.h">
+    <ClInclude Include="Source\Math\VectorFunctions.h">
       <Filter>Source\Math</Filter>
     </ClInclude>
     <ClInclude Include="Source\Math\Matrix.h">
@@ -457,7 +448,7 @@
     <ClInclude Include="Source\Utils\ResourceHelper.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Source\KizunaEngine.h">
+    <ClInclude Include="Source\TunaEngine.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Audio\AudioData.h">
@@ -475,7 +466,7 @@
     <ClInclude Include="Source\RenderCore\Camera\DebugCamera.h">
       <Filter>Source\RenderCore\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Pipeline\PipelineList.h">
+    <ClInclude Include="Source\Graphics\Pipeline\PipelineLibrary.h">
       <Filter>Source\Graphics\Pipeline</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Pipeline\PipelineConfig.h">
@@ -493,22 +484,16 @@
     <ClInclude Include="Source\Graphics\Resource\Mesh.h">
       <Filter>Source\Graphics\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Common\Object3D.h">
-      <Filter>Source\Object\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Object\Common\ObjectTypes.h">
-      <Filter>Source\Object\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Graphics\Resource\TransformationMatrix.h">
       <Filter>Source\Graphics\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Primitive\TriangleObject.h">
+    <ClInclude Include="Source\Object\Primitive\Triangle.h">
       <Filter>Source\Object\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Primitive\PlaneObject.h">
+    <ClInclude Include="Source\Object\Primitive\Plane.h">
       <Filter>Source\Object\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Primitive\SphereObject.h">
+    <ClInclude Include="Source\Object\Primitive\Sphere.h">
       <Filter>Source\Object\Primitive</Filter>
     </ClInclude>
     <ClInclude Include="Source\Object\Model\Model.h">
@@ -523,13 +508,7 @@
     <ClInclude Include="Source\Object\Sprite\Sprite.h">
       <Filter>Source\Object\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Manager\AudioManager.h">
-      <Filter>Source\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Manager\DebugManager.h">
-      <Filter>Source\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Manager\TextureManager.h">
       <Filter>Source\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Resource\TextureLoader.h">
@@ -539,12 +518,6 @@
       <Filter>Source\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Source\Manager\ModelManager.h">
-      <Filter>Source\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Manager\InputManager.h">
-      <Filter>Source\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Manager\CameraManager.h">
       <Filter>Source\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Source\Manager\SpriteManager.h">
@@ -568,11 +541,29 @@
     <ClInclude Include="Source\Utils\Debug\DumpHelper.h">
       <Filter>Source\Utils\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Renderer\BillboardMatrix.h">
-      <Filter>Source\Graphics\Renderer</Filter>
+    <ClInclude Include="Source\Audio\AudioManager.h">
+      <Filter>Source\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Renderer\BillboardMode.h">
-      <Filter>Source\Graphics\Renderer</Filter>
+    <ClInclude Include="Source\Graphics\Resource\TextureManager.h">
+      <Filter>Source\Graphics\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input\InputManager.h">
+      <Filter>Source\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Manager\ImGuiManager.h">
+      <Filter>Source\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RenderCore\Camera\CameraManager.h">
+      <Filter>Source\RenderCore\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Particle\BillboardMatrix.h">
+      <Filter>Source\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Particle\BillboardMode.h">
+      <Filter>Source\Object\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Primitive\Primitive.h">
+      <Filter>Source\Object\Primitive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

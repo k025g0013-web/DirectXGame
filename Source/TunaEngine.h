@@ -12,16 +12,16 @@
 // === Graphics ===
 #include "Graphics/DirectXCommon.h"
 #include "Graphics/Pipeline/PipelineManager.h"
-#include "Manager/TextureManager.h"
+#include "Graphics/Resource/TextureManager.h"
 
 // === RenderCore ===
 #include "RenderCore/Lighting.h"
 
 // === Audio ===
-#include "Manager/AudioManager.h"
+#include "Audio/AudioManager.h"
 
 // === Input ===
-#include "Manager/InputManager.h"
+#include "Input/InputManager.h"
 
 // === Object ===
 #include "Manager/PrimitiveManager.h"
@@ -31,9 +31,9 @@
 namespace Tuna {
 
     /// <summary>
-    /// KizunaEngine全体を管理するエンジンクラス
+    /// TunaEngine全体を管理するエンジンクラス
     /// </summary>
-    class KizunaEngine {
+    class TunaEngine {
     public:
         /// <summary>
         /// エンジンを初期化する
@@ -72,14 +72,14 @@ namespace Tuna {
         /// <summary>
         /// 描画パイプラインを設定する
         /// </summary>
-        void SetPipeline(PipelineType type);
+        void SetPipeline(PipelineMode mode);
 
         PipelineConfig &GetPipelineConfig(
-            PipelineType type
+            PipelineMode mode
         );
 
         void RebuildPipeline(
-            PipelineType type
+            PipelineMode mode
         );
 
         WinApp *GetWinApp() const {
@@ -135,12 +135,12 @@ namespace Tuna {
         }
 
     public:
-        KizunaEngine() = default;
-        ~KizunaEngine() = default;
+        TunaEngine() = default;
+        ~TunaEngine() = default;
 
         // コピー禁止
-        KizunaEngine(const KizunaEngine &) = delete;
-        KizunaEngine &operator=(const KizunaEngine &) = delete;
+        TunaEngine(const TunaEngine &) = delete;
+        TunaEngine &operator=(const TunaEngine &) = delete;
 
     private:
         /// デバッグ管理クラス

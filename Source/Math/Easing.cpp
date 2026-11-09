@@ -4,55 +4,55 @@
 
 namespace Tuna {
     template <typename T>
-    T Easing::Interpolate(EasingType type, float t, const T &start, const T &end) {
+    T Easing::Interpolate(EasingMode mode, float t, const T &start, const T &end) {
         // 補間率が範囲外にならないよう0～1へ制限する
         t = std::clamp(t, 0.0f, 1.0f);
         // イージング後の補間率
         float rate = t;
 
         // 指定されたイージング関数を実行する
-        switch (type) {
-        case EasingType::Linear: rate = t; break;
+        switch (mode) {
+        case EasingMode::Linear: rate = t; break;
 
-        case EasingType::easeInSine:     rate = InSine(t); break;
-        case EasingType::easeOutSine:    rate = OutSine(t); break;
-        case EasingType::easeInOutSine:  rate = InOutSine(t); break;
+        case EasingMode::EaseInSine:     rate = InSine(t); break;
+        case EasingMode::EaseOutSine:    rate = OutSine(t); break;
+        case EasingMode::EaseInOutSine:  rate = InOutSine(t); break;
 
-        case EasingType::easeInQuad:     rate = InQuad(t); break;
-        case EasingType::easeOutQuad:    rate = OutQuad(t); break;
-        case EasingType::easeInOutQuad:  rate = InOutQuad(t); break;
+        case EasingMode::EaseInQuad:     rate = InQuad(t); break;
+        case EasingMode::EaseOutQuad:    rate = OutQuad(t); break;
+        case EasingMode::EaseInOutQuad:  rate = InOutQuad(t); break;
 
-        case EasingType::easeInCubic:    rate = InCubic(t); break;
-        case EasingType::easeOutCubic:   rate = OutCubic(t); break;
-        case EasingType::easeInOutCubic: rate = InOutCubic(t); break;
+        case EasingMode::EaseInCubic:    rate = InCubic(t); break;
+        case EasingMode::EaseOutCubic:   rate = OutCubic(t); break;
+        case EasingMode::EaseInOutCubic: rate = InOutCubic(t); break;
 
-        case EasingType::easeInQuart:    rate = InQuart(t); break;
-        case EasingType::easeOutQuart:   rate = OutQuart(t); break;
-        case EasingType::easeInOutQuart: rate = InOutQuart(t); break;
+        case EasingMode::EaseInQuart:    rate = InQuart(t); break;
+        case EasingMode::EaseOutQuart:   rate = OutQuart(t); break;
+        case EasingMode::EaseInOutQuart: rate = InOutQuart(t); break;
 
-        case EasingType::easeInQuint:    rate = InQuint(t); break;
-        case EasingType::easeOutQuint:   rate = OutQuint(t); break;
-        case EasingType::easeInOutQuint: rate = InOutQuint(t); break;
+        case EasingMode::EaseInQuint:    rate = InQuint(t); break;
+        case EasingMode::EaseOutQuint:   rate = OutQuint(t); break;
+        case EasingMode::EaseInOutQuint: rate = InOutQuint(t); break;
 
-        case EasingType::easeInExpo:     rate = InExpo(t); break;
-        case EasingType::easeOutExpo:    rate = OutExpo(t); break;
-        case EasingType::easeInOutExpo:  rate = InOutExpo(t); break;
+        case EasingMode::EaseInExpo:     rate = InExpo(t); break;
+        case EasingMode::EaseOutExpo:    rate = OutExpo(t); break;
+        case EasingMode::EaseInOutExpo:  rate = InOutExpo(t); break;
 
-        case EasingType::easeInCirc:     rate = InCirc(t); break;
-        case EasingType::easeOutCirc:    rate = OutCirc(t); break;
-        case EasingType::easeInOutCirc:  rate = InOutCirc(t); break;
+        case EasingMode::EaseInCirc:     rate = InCirc(t); break;
+        case EasingMode::EaseOutCirc:    rate = OutCirc(t); break;
+        case EasingMode::EaseInOutCirc:  rate = InOutCirc(t); break;
 
-        case EasingType::easeInBack:     rate = InBack(t); break;
-        case EasingType::easeOutBack:    rate = OutBack(t); break;
-        case EasingType::easeInOutBack:  rate = InOutBack(t); break;
+        case EasingMode::EaseInBack:     rate = InBack(t); break;
+        case EasingMode::EaseOutBack:    rate = OutBack(t); break;
+        case EasingMode::EaseInOutBack:  rate = InOutBack(t); break;
 
-        case EasingType::easeInElastic:  rate = InElastic(t); break;
-        case EasingType::easeOutElastic: rate = OutElastic(t); break;
-        case EasingType::easeInOutElastic: rate = InOutElastic(t); break;
+        case EasingMode::EaseInElastic:  rate = InElastic(t); break;
+        case EasingMode::EaseOutElastic: rate = OutElastic(t); break;
+        case EasingMode::EaseInOutElastic: rate = InOutElastic(t); break;
 
-        case EasingType::easeInBounce:   rate = InBounce(t); break;
-        case EasingType::easeOutBounce:  rate = OutBounce(t); break;
-        case EasingType::easeInOutBounce: rate = InOutBounce(t); break;
+        case EasingMode::EaseInBounce:   rate = InBounce(t); break;
+        case EasingMode::EaseOutBounce:  rate = OutBounce(t); break;
+        case EasingMode::EaseInOutBounce: rate = InOutBounce(t); break;
         }
 
         // 補間率を用いて開始値と終了値の間を補間する
@@ -316,8 +316,8 @@ namespace Tuna {
 #pragma endregion
 
     // 使用する型のテンプレートを明示的に生成する
-    template float Easing::Interpolate<float>(EasingType, float, const float &, const float &);
-    template Vector2 Easing::Interpolate<Vector2>(EasingType, float, const Vector2 &, const Vector2 &);
-    template Vector3 Easing::Interpolate<Vector3>(EasingType, float, const Vector3 &, const Vector3 &);
-    template Vector4 Easing::Interpolate<Vector4>(EasingType, float, const Vector4 &, const Vector4 &);
+    template float Easing::Interpolate<float>(EasingMode, float, const float &, const float &);
+    template Vector2 Easing::Interpolate<Vector2>(EasingMode, float, const Vector2 &, const Vector2 &);
+    template Vector3 Easing::Interpolate<Vector3>(EasingMode, float, const Vector3 &, const Vector3 &);
+    template Vector4 Easing::Interpolate<Vector4>(EasingMode, float, const Vector4 &, const Vector4 &);
 }

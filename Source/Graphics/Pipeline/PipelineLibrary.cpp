@@ -1,8 +1,8 @@
-#include "PipelineList.h"
+#include "PipelineLibrary.h"
 
 #include "RootSignature.h"
 #include "GraphicsPipeline.h"
-#include "PipelineElements.h"
+#include "PipelineDescBuilder.h"
 #include "Graphics/Resource/Shader.h"
 
 #include "Utils/Debug/Logger.h"
@@ -11,7 +11,7 @@
 
 namespace Tuna {
 
-    void PipelineList::Initialize(
+    void PipelineLibrary::Initialize(
         ID3D12Device *device
     ) {
         device_ = device;
@@ -20,49 +20,49 @@ namespace Tuna {
         // 初期Config
         //====================
 
-        configs_[PipelineType::Object3dOpaque] = {
+        configs_[PipelineMode::Object3DOpaque] = {
             .rasterizer = RasterizerMode::Default,
             .depth = DepthMode::Default,
             .blend = BlendMode::Default,
             .inputLayout = InputLayoutMode::Default
         };
 
-        configs_[PipelineType::Object3dAlpha] = {
+        configs_[PipelineMode::Object3DAlpha] = {
             .rasterizer = RasterizerMode::NoCull,
             .depth = DepthMode::Alpha,
             .blend = BlendMode::Alpha,
             .inputLayout = InputLayoutMode::Default
         };
 
-        configs_[PipelineType::Object3dWireframe] = {
+        configs_[PipelineMode::Object3DWireframe] = {
             .rasterizer = RasterizerMode::Wireframe,
             .depth = DepthMode::Default,
             .blend = BlendMode::Default,
             .inputLayout = InputLayoutMode::Default
         };
 
-        configs_[PipelineType::Object3dThroughWall] = {
+        configs_[PipelineMode::Object3DThroughWall] = {
             .rasterizer = RasterizerMode::Default,
             .depth = DepthMode::ThroughWall,
             .blend = BlendMode::Alpha,
             .inputLayout = InputLayoutMode::Default
         };
 
-        configs_[PipelineType::Object2dOpaque] = {
+        configs_[PipelineMode::Object2DOpaque] = {
             .rasterizer = RasterizerMode::NoCull,
             .depth = DepthMode::Disable,
             .blend = BlendMode::Default,
             .inputLayout = InputLayoutMode::Default
         };
 
-        configs_[PipelineType::Model3dOpaque] = {
+        configs_[PipelineMode::Model3DOpaque] = {
             .rasterizer = RasterizerMode::Default,
             .depth = DepthMode::Default,
             .blend = BlendMode::Default,
             .inputLayout = InputLayoutMode::Model3d
         };
 
-        configs_[PipelineType::Particle] = {
+        configs_[PipelineMode::Particle] = {
             .rasterizer = RasterizerMode::NoCull,
             .depth = DepthMode::Alpha,
             .blend = BlendMode::Add,
@@ -73,14 +73,14 @@ namespace Tuna {
         // Pipeline生成
         //====================
 
-        CreateObject3dOpaque(device);
-        CreateObject3dAlpha(device);
-        CreateObject3dWireframe(device);
-        CreateObject3dThroughWall(device);
+        CreateObject3DOpaque(device);
+        CreateObject3DAlpha(device);
+        CreateObject3DWireframe(device);
+        CreateObject3DThroughWall(device);
 
-        CreateObject2dOpaque(device);
+        CreateObject2DOpaque(device);
 
-        CreateModel3dOpaque(device);
+        CreateModel3DOpaque(device);
 
         CreateParticle(device);
     }
@@ -90,7 +90,7 @@ namespace Tuna {
     // 3D Object
     //==================================================
 
-    void PipelineList::CreateObject3dOpaque(
+    void PipelineLibrary::CreateObject3DOpaque(
         ID3D12Device *device
     ) {
         //====================
@@ -98,7 +98,7 @@ namespace Tuna {
         //====================
 
         PipelineConfig &config =
-            configs_[PipelineType::Object3dOpaque];
+            configs_[PipelineMode::Object3DOpaque];
 
         //====================
         // HLSL読み込み
@@ -124,7 +124,7 @@ namespace Tuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Mode::Lit3D);
 
         //====================
         // Pipeline生成
@@ -134,7 +134,7 @@ namespace Tuna {
             std::make_unique<GraphicsPipeline>();
 
         auto inputLayout =
-            PipelineElements::CreateInputLayout(
+            PipelineDescBuilder::CreateInputLayout(
                 config.inputLayout
             );
 
@@ -144,13 +144,13 @@ namespace Tuna {
             vs,
             ps,
             inputLayout,
-            PipelineElements::CreateRasterizer(
+            PipelineDescBuilder::CreateRasterizer(
                 config.rasterizer
             ),
-            PipelineElements::CreateDepthStencil(
+            PipelineDescBuilder::CreateDepthStencil(
                 config.depth
             ),
-            PipelineElements::CreateBlendState(
+            PipelineDescBuilder::CreateBlendState(
                 config.blend
             )
         );
@@ -160,7 +160,7 @@ namespace Tuna {
         // Pipeline登録
         //====================
 
-        pipelines_[PipelineType::Object3dOpaque] =
+        pipelines_[PipelineMode::Object3DOpaque] =
         {
             std::move(rootSignature),
             std::move(pipeline)
@@ -168,7 +168,7 @@ namespace Tuna {
     }
 
 
-    void PipelineList::CreateObject3dAlpha(
+    void PipelineLibrary::CreateObject3DAlpha(
         ID3D12Device *device
     ) {
         //====================
@@ -176,7 +176,7 @@ namespace Tuna {
         //====================
 
         PipelineConfig &config =
-            configs_[PipelineType::Object3dAlpha];
+            configs_[PipelineMode::Object3DAlpha];
 
         //====================
         // HLSL読み込み
@@ -202,7 +202,7 @@ namespace Tuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Mode::Lit3D);
 
         //====================
         // Pipeline生成
@@ -212,7 +212,7 @@ namespace Tuna {
             std::make_unique<GraphicsPipeline>();
 
         auto inputLayout =
-            PipelineElements::CreateInputLayout(
+            PipelineDescBuilder::CreateInputLayout(
                 config.inputLayout
             );
 
@@ -222,13 +222,13 @@ namespace Tuna {
             vs,
             ps,
             inputLayout,
-            PipelineElements::CreateRasterizer(
+            PipelineDescBuilder::CreateRasterizer(
                 config.rasterizer
             ),
-            PipelineElements::CreateDepthStencil(
+            PipelineDescBuilder::CreateDepthStencil(
                 config.depth
             ),
-            PipelineElements::CreateBlendState(
+            PipelineDescBuilder::CreateBlendState(
                 config.blend
             )
         );
@@ -238,7 +238,7 @@ namespace Tuna {
         // Pipeline登録
         //====================
 
-        pipelines_[PipelineType::Object3dAlpha] =
+        pipelines_[PipelineMode::Object3DAlpha] =
         {
             std::move(rootSignature),
             std::move(pipeline)
@@ -246,7 +246,7 @@ namespace Tuna {
     }
 
 
-    void PipelineList::CreateObject3dWireframe(
+    void PipelineLibrary::CreateObject3DWireframe(
         ID3D12Device *device
     ) {
         //====================
@@ -254,7 +254,7 @@ namespace Tuna {
         //====================
 
         PipelineConfig &config =
-            configs_[PipelineType::Object3dWireframe];
+            configs_[PipelineMode::Object3DWireframe];
 
         //====================
         // HLSL読み込み
@@ -280,7 +280,7 @@ namespace Tuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Mode::Lit3D);
 
 
         //====================
@@ -291,7 +291,7 @@ namespace Tuna {
             std::make_unique<GraphicsPipeline>();
 
         auto inputLayout =
-            PipelineElements::CreateInputLayout(
+            PipelineDescBuilder::CreateInputLayout(
                 config.inputLayout
             );
 
@@ -301,13 +301,13 @@ namespace Tuna {
             vs,
             ps,
             inputLayout,
-            PipelineElements::CreateRasterizer(
+            PipelineDescBuilder::CreateRasterizer(
                 config.rasterizer
             ),
-            PipelineElements::CreateDepthStencil(
+            PipelineDescBuilder::CreateDepthStencil(
                 config.depth
             ),
-            PipelineElements::CreateBlendState(
+            PipelineDescBuilder::CreateBlendState(
                 config.blend
             )
         );
@@ -317,7 +317,7 @@ namespace Tuna {
         // Pipeline登録
         //====================
 
-        pipelines_[PipelineType::Object3dWireframe] =
+        pipelines_[PipelineMode::Object3DWireframe] =
         {
             std::move(rootSignature),
             std::move(pipeline)
@@ -325,7 +325,7 @@ namespace Tuna {
     }
 
 
-    void PipelineList::CreateObject3dThroughWall(
+    void PipelineLibrary::CreateObject3DThroughWall(
         ID3D12Device *device
     ) {
         //====================
@@ -334,7 +334,7 @@ namespace Tuna {
 
 
         PipelineConfig &config =
-            configs_[PipelineType::Object3dThroughWall];
+            configs_[PipelineMode::Object3DThroughWall];
 
 
         //====================
@@ -361,7 +361,7 @@ namespace Tuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Mode::Lit3D);
 
 
         //====================
@@ -372,7 +372,7 @@ namespace Tuna {
             std::make_unique<GraphicsPipeline>();
 
         auto inputLayout =
-            PipelineElements::CreateInputLayout(
+            PipelineDescBuilder::CreateInputLayout(
                 config.inputLayout
             );
 
@@ -382,13 +382,13 @@ namespace Tuna {
             vs,
             ps,
             inputLayout,
-            PipelineElements::CreateRasterizer(
+            PipelineDescBuilder::CreateRasterizer(
                 config.rasterizer
             ),
-            PipelineElements::CreateDepthStencil(
+            PipelineDescBuilder::CreateDepthStencil(
                 config.depth
             ),
-            PipelineElements::CreateBlendState(
+            PipelineDescBuilder::CreateBlendState(
                 config.blend
             )
         );
@@ -398,7 +398,7 @@ namespace Tuna {
         // Pipeline登録
         //====================
 
-        pipelines_[PipelineType::Object3dThroughWall] =
+        pipelines_[PipelineMode::Object3DThroughWall] =
         {
             std::move(rootSignature),
             std::move(pipeline)
@@ -410,7 +410,7 @@ namespace Tuna {
     // 2D Object
     //==================================================
 
-    void PipelineList::CreateObject2dOpaque(
+    void PipelineLibrary::CreateObject2DOpaque(
         ID3D12Device *device
     ) {
         //====================
@@ -419,7 +419,7 @@ namespace Tuna {
 
 
         PipelineConfig &config =
-            configs_[PipelineType::Object2dOpaque];
+            configs_[PipelineMode::Object2DOpaque];
 
 
         //====================
@@ -446,7 +446,7 @@ namespace Tuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, RootSignature::Type::Skinny2D);
+        rootSignature->Create(device, RootSignature::Mode::Unlit2D);
 
 
         //====================
@@ -457,7 +457,7 @@ namespace Tuna {
             std::make_unique<GraphicsPipeline>();
 
         auto inputLayout =
-            PipelineElements::CreateInputLayout(
+            PipelineDescBuilder::CreateInputLayout(
                 config.inputLayout
             );
 
@@ -467,13 +467,13 @@ namespace Tuna {
             vs,
             ps,
             inputLayout,
-            PipelineElements::CreateRasterizer(
+            PipelineDescBuilder::CreateRasterizer(
                 config.rasterizer
             ),
-            PipelineElements::CreateDepthStencil(
+            PipelineDescBuilder::CreateDepthStencil(
                 config.depth
             ),
-            PipelineElements::CreateBlendState(
+            PipelineDescBuilder::CreateBlendState(
                 config.blend
             )
         );
@@ -483,7 +483,7 @@ namespace Tuna {
         // Pipeline登録
         //====================
 
-        pipelines_[PipelineType::Object2dOpaque] =
+        pipelines_[PipelineMode::Object2DOpaque] =
         {
             std::move(rootSignature),
             std::move(pipeline)
@@ -495,7 +495,7 @@ namespace Tuna {
     // Model
     //==================================================
 
-    void PipelineList::CreateModel3dOpaque(
+    void PipelineLibrary::CreateModel3DOpaque(
         ID3D12Device *device
     ) {
         //====================
@@ -503,7 +503,7 @@ namespace Tuna {
         //====================
 
         PipelineConfig &config =
-            configs_[PipelineType::Model3dOpaque];
+            configs_[PipelineMode::Model3DOpaque];
 
 
         //====================
@@ -530,7 +530,7 @@ namespace Tuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, RootSignature::Type::Skinny3D);
+        rootSignature->Create(device, RootSignature::Mode::Lit3D);
 
 
         //====================
@@ -541,7 +541,7 @@ namespace Tuna {
             std::make_unique<GraphicsPipeline>();
 
         auto inputLayout =
-            PipelineElements::CreateInputLayout(
+            PipelineDescBuilder::CreateInputLayout(
                 config.inputLayout
             );
 
@@ -551,13 +551,13 @@ namespace Tuna {
             vs,
             ps,
             inputLayout,
-            PipelineElements::CreateRasterizer(
+            PipelineDescBuilder::CreateRasterizer(
                 config.rasterizer
             ),
-            PipelineElements::CreateDepthStencil(
+            PipelineDescBuilder::CreateDepthStencil(
                 config.depth
             ),
-            PipelineElements::CreateBlendState(
+            PipelineDescBuilder::CreateBlendState(
                 config.blend
             )
         );
@@ -567,14 +567,14 @@ namespace Tuna {
         // Pipeline登録
         //====================
 
-        pipelines_[PipelineType::Model3dOpaque] =
+        pipelines_[PipelineMode::Model3DOpaque] =
         {
             std::move(rootSignature),
             std::move(pipeline)
         };
     }
 
-    void PipelineList::CreateParticle(
+    void PipelineLibrary::CreateParticle(
         ID3D12Device *device
     ) {
         //====================
@@ -582,7 +582,7 @@ namespace Tuna {
         //====================
 
         PipelineConfig &config =
-            configs_[PipelineType::Particle];
+            configs_[PipelineMode::Particle];
 
         //====================
         // HLSL読み込み
@@ -607,7 +607,7 @@ namespace Tuna {
         auto rootSignature =
             std::make_unique<RootSignature>();
 
-        rootSignature->Create(device, RootSignature::Type::Particles);
+        rootSignature->Create(device, RootSignature::Mode::Particles);
 
         //====================
         // Pipeline生成
@@ -617,7 +617,7 @@ namespace Tuna {
             std::make_unique<GraphicsPipeline>();
 
         auto inputLayout =
-            PipelineElements::CreateInputLayout(
+            PipelineDescBuilder::CreateInputLayout(
                 config.inputLayout
             );
 
@@ -627,13 +627,13 @@ namespace Tuna {
             vs,
             ps,
             inputLayout,
-            PipelineElements::CreateRasterizer(
+            PipelineDescBuilder::CreateRasterizer(
                 config.rasterizer
             ),
-            PipelineElements::CreateDepthStencil(
+            PipelineDescBuilder::CreateDepthStencil(
                 config.depth
             ),
-            PipelineElements::CreateBlendState(
+            PipelineDescBuilder::CreateBlendState(
                 config.blend
             )
         );
@@ -642,7 +642,7 @@ namespace Tuna {
         // Pipeline登録
         //====================
 
-        pipelines_[PipelineType::Particle] = {
+        pipelines_[PipelineMode::Particle] = {
             std::move(rootSignature),
             std::move(pipeline)
         };
@@ -652,10 +652,10 @@ namespace Tuna {
     // Get Pipeline
     //==================================================
 
-    const PipelineSet *PipelineList::GetPipeline(
-        PipelineType type
+    const PipelineState *PipelineLibrary::GetPipeline(
+        PipelineMode mode
     ) const {
-        auto it = pipelines_.find(type);
+        auto it = pipelines_.find(mode);
 
         if (it != pipelines_.end()) {
             return &it->second;
@@ -669,42 +669,42 @@ namespace Tuna {
         return nullptr;
     }
 
-    PipelineConfig &PipelineList::GetConfig(
-        PipelineType type
+    PipelineConfig &PipelineLibrary::GetConfig(
+        PipelineMode mode
     ) {
-        return configs_.at(type);
+        return configs_.at(mode);
     }
 
-    void PipelineList::RebuildPipeline(
-        PipelineType type
+    void PipelineLibrary::RebuildPipeline(
+        PipelineMode mode
     ) {
-        switch (type) {
+        switch (mode) {
 
-        case PipelineType::Object3dOpaque:
-            CreateObject3dOpaque(device_);
+        case PipelineMode::Object3DOpaque:
+            CreateObject3DOpaque(device_);
             break;
 
-        case PipelineType::Object3dAlpha:
-            CreateObject3dAlpha(device_);
+        case PipelineMode::Object3DAlpha:
+            CreateObject3DAlpha(device_);
             break;
 
-        case PipelineType::Object3dWireframe:
-            CreateObject3dWireframe(device_);
+        case PipelineMode::Object3DWireframe:
+            CreateObject3DWireframe(device_);
             break;
 
-        case PipelineType::Object3dThroughWall:
-            CreateObject3dThroughWall(device_);
+        case PipelineMode::Object3DThroughWall:
+            CreateObject3DThroughWall(device_);
             break;
 
-        case PipelineType::Object2dOpaque:
-            CreateObject2dOpaque(device_);
+        case PipelineMode::Object2DOpaque:
+            CreateObject2DOpaque(device_);
             break;
 
-        case PipelineType::Model3dOpaque:
-            CreateModel3dOpaque(device_);
+        case PipelineMode::Model3DOpaque:
+            CreateModel3DOpaque(device_);
             break;
 
-        case PipelineType::Particle:
+        case PipelineMode::Particle:
             CreateParticle(device_);
             break;
         }

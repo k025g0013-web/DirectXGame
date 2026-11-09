@@ -46,7 +46,7 @@ namespace Tuna {
     /// </summary>
     /// <remarks>
     /// ImGuiなどから設定を変更し、
-    /// PipelineListでPSOを再生成するために使用する。
+    /// PipelineLibraryでPSOを再生成するために使用する。
     /// </remarks>
     struct PipelineConfig {
         /// Rasterizer設定

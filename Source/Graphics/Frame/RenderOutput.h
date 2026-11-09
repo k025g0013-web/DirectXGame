@@ -13,7 +13,7 @@
 
 namespace Tuna {
     class DirectXDevice;
-    class CommandCommon;
+    class CommandContext;
     class WinApp;
 
 
@@ -49,7 +49,7 @@ namespace Tuna {
         /// <param name="width">画面幅</param>
         /// <param name="height">画面高さ</param>
         void Initialize(
-            DirectXDevice *device, CommandCommon *commandContext, WinApp *winApp,
+            DirectXDevice *device, CommandContext *commandContext, WinApp *winApp,
             DescriptorHeap *rtvDescriptorHeap, uint32_t width, uint32_t height
         );
 

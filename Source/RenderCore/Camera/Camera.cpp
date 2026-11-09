@@ -1,7 +1,7 @@
 #include "Camera.h"
 
-#include "Math/FunctionVector.h"
-#include "Math/FunctionMatrix.h"
+#include "Math/VectorFunctions.h"
+#include "Math/MatrixFunctions.h"
 
 #include <cassert>
 
