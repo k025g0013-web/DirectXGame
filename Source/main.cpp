@@ -61,7 +61,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		engine->GetDirectXCommon()->GetSRVHeap(), engine->GetTextureManager());
 
 	Vector3 emitterPosition = {};			// 生成座標
-	BillboardMode emitterBillboardMode = BillboardMode::kFull;	// ビルボードの種類
+	BillboardMode emitterBillboardMode = BillboardMode::Full;	// ビルボードの種類
 	constexpr float kEmitInterval = 0.5f;	// 何秒ごとに生成するか
 	constexpr int kEmitCount = 10;			// いくつ生成するか
 	float emitTimer = 0.0f;					// タイマー 

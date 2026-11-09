@@ -103,6 +103,9 @@
     <Filter Include="Source\Utils\Debug">
       <UniqueIdentifier>{8e420c93-363a-45e4-a325-91e3ea9da224}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Scene">
+      <UniqueIdentifier>{701867a3-bea4-47e6-9d4d-2ecba5ef5586}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
@@ -186,7 +189,6 @@
     <ClCompile Include="Source\RenderCore\Lighting.cpp">
       <Filter>Source\RenderCore</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Source\TunaEngine.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -283,6 +285,18 @@
     <ClCompile Include="Source\Object\Primitive\Primitive.cpp">
       <Filter>Source\Object\Primitive</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\GameScene.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneManager.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\TitleScene.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exclusion.dic" />
@@ -319,13 +333,13 @@
     <None Include="Resources\Models\plane\plane.mtl">
       <Filter>Resources\Models\plane</Filter>
     </None>
-    <None Include="Resources\Shader\Object3d.hlsli">
+    <None Include="Resources\Shader\Object3D.hlsli">
       <Filter>Resources\Shader</Filter>
     </None>
-    <None Include="Resources\Shader\Object2d.hlsli">
+    <None Include="Resources\Shader\Object2D.hlsli">
       <Filter>Resources\Shader</Filter>
     </None>
-    <None Include="Resources\Shader\Model3d.hlsli">
+    <None Include="Resources\Shader\Model3D.hlsli">
       <Filter>Resources\Shader</Filter>
     </None>
     <None Include=".gitignore" />
@@ -565,6 +579,18 @@
     <ClInclude Include="Source\Object\Primitive\Primitive.h">
       <Filter>Source\Object\Primitive</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scene\GameScene.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\IScene.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneManager.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\TitleScene.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -626,25 +652,25 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shader\ThroughWall3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\ThroughWall3D.PS.hlsl">
       <Filter>Resources\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Object3d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Object3D.VS.hlsl">
       <Filter>Resources\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Object3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Object3D.PS.hlsl">
       <Filter>Resources\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Object2d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Object2D.VS.hlsl">
       <Filter>Resources\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Object2d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Object2D.PS.hlsl">
       <Filter>Resources\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Model3d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Model3D.VS.hlsl">
       <Filter>Resources\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Model3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Model3D.PS.hlsl">
       <Filter>Resources\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shader\Particle.VS.hlsl">

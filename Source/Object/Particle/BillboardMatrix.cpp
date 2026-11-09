@@ -17,7 +17,7 @@ namespace Tuna {
 
         switch (mode) {
 
-        case BillboardMode::kNone:
+        case BillboardMode::None:
             // ビルボードなし：自身の回転を使用
             return Math::MakeAffineMatrix(
                 transform.scale,
@@ -25,7 +25,7 @@ namespace Tuna {
                 transform.translate
             );
 
-        case BillboardMode::kFull:
+        case BillboardMode::Full:
             // 全軸ビルボード：カメラと同じ回転を使用
             return Math::MakeAffineMatrix(
                 transform.scale,
@@ -33,7 +33,7 @@ namespace Tuna {
                 transform.translate
             );
 
-        case BillboardMode::kYAxis: {
+        case BillboardMode::YAxis: {
             // Y軸ビルボード：Y軸方向の回転だけを計算する
 
             const float dx =

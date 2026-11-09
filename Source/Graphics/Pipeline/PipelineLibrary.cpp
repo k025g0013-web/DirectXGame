@@ -107,12 +107,12 @@ namespace Tuna {
         Shader vs, ps;
 
         vs.Compile(
-            L"Resources/Shader/Object3d.VS.hlsl",
+            L"Resources/Shader/Object3D.VS.hlsl",
             L"vs_6_0"
         );
 
         ps.Compile(
-            L"Resources/Shader/Object3d.PS.hlsl",
+            L"Resources/Shader/Object3D.PS.hlsl",
             L"ps_6_0"
         );
 
@@ -185,12 +185,12 @@ namespace Tuna {
         Shader vs, ps;
 
         vs.Compile(
-            L"Resources/Shader/Object3d.VS.hlsl",
+            L"Resources/Shader/Object3D.VS.hlsl",
             L"vs_6_0"
         );
 
         ps.Compile(
-            L"Resources/Shader/Object3d.PS.hlsl",
+            L"Resources/Shader/Object3D.PS.hlsl",
             L"ps_6_0"
         );
 
@@ -263,12 +263,12 @@ namespace Tuna {
         Shader vs, ps;
 
         vs.Compile(
-            L"Resources/Shader/Object3d.VS.hlsl",
+            L"Resources/Shader/Object3D.VS.hlsl",
             L"vs_6_0"
         );
 
         ps.Compile(
-            L"Resources/Shader/Object3d.PS.hlsl",
+            L"Resources/Shader/Object3D.PS.hlsl",
             L"ps_6_0"
         );
 
@@ -344,12 +344,12 @@ namespace Tuna {
         Shader vs, ps;
 
         vs.Compile(
-            L"Resources/Shader/Object3d.VS.hlsl",
+            L"Resources/Shader/Object3D.VS.hlsl",
             L"vs_6_0"
         );
 
         ps.Compile(
-            L"Resources/Shader/ThroughWall3d.PS.hlsl",
+            L"Resources/Shader/ThroughWall3D.PS.hlsl",
             L"ps_6_0"
         );
 
@@ -429,12 +429,12 @@ namespace Tuna {
         Shader vs, ps;
 
         vs.Compile(
-            L"Resources/Shader/Object2d.VS.hlsl",
+            L"Resources/Shader/Object2D.VS.hlsl",
             L"vs_6_0"
         );
 
         ps.Compile(
-            L"Resources/Shader/Object2d.PS.hlsl",
+            L"Resources/Shader/Object2D.PS.hlsl",
             L"ps_6_0"
         );
 
@@ -513,12 +513,12 @@ namespace Tuna {
         Shader vs, ps;
 
         vs.Compile(
-            L"Resources/Shader/Model3d.VS.hlsl",
+            L"Resources/Shader/Model3D.VS.hlsl",
             L"vs_6_0"
         );
 
         ps.Compile(
-            L"Resources/Shader/Model3d.PS.hlsl",
+            L"Resources/Shader/Model3D.PS.hlsl",
             L"ps_6_0"
         );
 

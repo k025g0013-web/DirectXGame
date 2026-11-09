@@ -2,8 +2,8 @@
 
 namespace Tuna {
     enum class BillboardMode {
-        kNone,       // ビルボードなし
-        kFull,       // 全軸ビルボード
-        kYAxis       // Y軸ビルボード
+        None,       // ビルボードなし
+        Full,       // 全軸ビルボード
+        YAxis       // Y軸ビルボード
     };
 }
