@@ -24,6 +24,7 @@ namespace Tuna {
             return isDebugCamera_ ? "DEBUG" : "NORMAL";
         }
 
+        const Transform &GetTransform() const;
         const Matrix4x4 &GetViewMatrix() const;
         const Matrix4x4 &GetProjectionMatrix() const;
         const Matrix4x4 &GetViewProjectionMatrix() const;

@@ -1,5 +1,6 @@
 #include "Easing.h"
 #include "Vector.h"
+#include <numbers>
 
 namespace Tuna {
     template <typename T>
@@ -66,17 +67,17 @@ namespace Tuna {
 
     // ゆっくり加速する補間
     float Easing::InSine(float t) {
-        return 1.0f - std::cos((t * static_cast<float>(M_PI)) / 2.0f);
+        return 1.0f - std::cos((t * std::numbers::pi_v<float>) / 2.0f);
     }
 
     // ゆっくり減速する補間
     float Easing::OutSine(float t) {
-        return std::sin((t * static_cast<float>(M_PI)) / 2.0f);
+        return std::sin((t * std::numbers::pi_v<float>) / 2.0f);
     }
 
     // ゆっくり加速し、ゆっくり減速する補間
     float Easing::InOutSine(float t) {
-        return -(std::cos(static_cast<float>(M_PI) * t) - 1.0f) / 2.0f;
+        return -(std::cos(std::numbers::pi_v<float> * t) - 1.0f) / 2.0f;
     }
 
     //=============================================================================
@@ -223,8 +224,8 @@ namespace Tuna {
         constexpr float C1 = 1.70158f;
         constexpr float C2 = C1 * 1.525f;
         constexpr float C3 = C1 + 1.0f;
-        constexpr float C4 = (2.0f * static_cast<float>(M_PI)) / 3.0f;
-        constexpr float C5 = (2.0f * static_cast<float>(M_PI)) / 4.5f;
+        constexpr float C4 = (2.0f * std::numbers::pi_v<float>) / 3.0f;
+        constexpr float C5 = (2.0f * std::numbers::pi_v<float>) / 4.5f;
     }
 
     // 一度逆方向へ動いてから加速する補間

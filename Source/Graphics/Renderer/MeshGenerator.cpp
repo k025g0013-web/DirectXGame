@@ -1,5 +1,5 @@
 #include "MeshGenerator.h"
-#define _USE_MATH_DEFINES
+#include <numbers>
 #include <math.h>
 #include "Math/FunctionMatrix.h"
 
@@ -70,15 +70,15 @@ namespace Tuna {
 		indices.resize(indexCount);
 
 		// 経度方向1区画あたりの角度
-		const float kLonEvery = static_cast<float>(M_PI) * 2.0f / static_cast<float>(subdivision);
+		const float kLonEvery = std::numbers::pi_v<float> * 2.0f / static_cast<float>(subdivision);
 
 		// 緯度方向1区画あたりの角度
-		const float kLatEvery = static_cast<float>(M_PI) / static_cast<float>(subdivision);
+		const float kLatEvery = std::numbers::pi_v<float> / static_cast<float>(subdivision);
 
 		// 緯度方向に頂点を生成する（-90°～90°）
 		for (uint32_t latIndex = 0; latIndex <= subdivision; ++latIndex) {
 
-			float lat = -static_cast<float>(M_PI) / 2.0f + kLatEvery * latIndex;
+			float lat = -std::numbers::pi_v<float> / 2.0f + kLatEvery * latIndex;
 
 			// 経度方向に頂点を生成する（0°～360°）
 			for (uint32_t lonIndex = 0; lonIndex <= subdivision; ++lonIndex) {

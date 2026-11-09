@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Transform.h"
+#include "Graphics/Renderer/BillboardMode.h"
 
 namespace Tuna {
 
@@ -9,19 +10,20 @@ namespace Tuna {
     /// </summary>
     class Particle {
     public:
+        virtual ~Particle() = default;
 
         /// <summary>
         /// パーティクルを初期化する
         /// </summary>
-        void Initialize(
+        virtual void Initialize(
             const Transform &transform, const Vector3 &velocity,
-            float lifeTime, const Vector4 &color
+            float lifeTime, const Vector4 &color, BillboardMode billboardMode
         );
 
         /// <summary>
         /// パーティクルを更新する
         /// </summary>
-        void Update(float deltaTime);
+        virtual void Update(float deltaTime);
 
         /// <summary>
         /// 生存しているか取得する
@@ -65,7 +67,15 @@ namespace Tuna {
             return color_;
         }
 
-    private:
+        BillboardMode GetBillboardMode() const {
+            return billboardMode_;
+        }
+
+        void SetBillboardMode(BillboardMode mode) {
+            billboardMode_ = mode;
+        }
+
+    protected:
 
         // パーティクルのTransform
         Transform transform_{
@@ -81,8 +91,11 @@ namespace Tuna {
         float lifeTime_ = 0.0f;
         float initialLifeTime_ = 0.0f;
 
-        // RGBは生成時の色、Aは経過時間で変化
+        // 色
         Vector4 color_{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+        // ビルボードの種類
+        BillboardMode billboardMode_ = BillboardMode::kFull;
 
         // 生存フラグ
         bool isAlive_ = false;

@@ -27,6 +27,14 @@ namespace Tuna {
         isDebugCamera_ = !isDebugCamera_;
     }
 
+    const Transform &CameraManager::GetTransform() const {
+        if (isDebugCamera_) {
+            return debugCamera_.GetTransform();
+        }
+
+        return camera_.GetTransform();
+    }
+
     const Matrix4x4 &CameraManager::GetViewMatrix() const {
         if (isDebugCamera_) {
             return debugCamera_.GetViewMatrix();

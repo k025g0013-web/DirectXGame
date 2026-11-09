@@ -11,6 +11,10 @@ namespace Tuna {
         // 通常カメラの行列を更新する
         void Update(const Transform &transform);
 
+        const Transform &GetTransform() const {
+            return transform_;
+        }
+
         const Matrix4x4 &GetViewMatrix() const {
             return viewMatrix_;
         }
@@ -27,6 +31,8 @@ namespace Tuna {
         void UpdateMatrices(const Transform &transform);
 
     private:
+        Transform transform_{};
+
         Matrix4x4 viewMatrix_{};
         Matrix4x4 projectionMatrix_{};
         Matrix4x4 viewProjectionMatrix_{};

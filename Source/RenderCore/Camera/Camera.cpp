@@ -19,6 +19,8 @@ namespace Tuna {
     }
 
     void Camera::UpdateMatrices(const Transform &transform) {
+        transform_ = transform;
+
         Matrix4x4 cameraMatrix = Math::MakeAffineMatrix(
             transform.scale,
             transform.rotate,

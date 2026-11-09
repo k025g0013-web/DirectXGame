@@ -6,8 +6,8 @@
 namespace Tuna {
 
     void Particle::Initialize(
-        const Transform &transform, const Vector3 &velocity,
-        float lifeTime, const Vector4 &color
+        const Transform& transform, const Vector3& velocity,
+        float lifeTime, const Vector4& color, BillboardMode billboardMode
     ) {
         transform_ = transform;
         velocity_ = velocity;
@@ -17,6 +17,8 @@ namespace Tuna {
 
         color_ = color;
         color_.w = 1.0f;
+
+        billboardMode_ = billboardMode;
 
         isAlive_ = lifeTime_ > 0.0f;
     }
@@ -45,7 +47,6 @@ namespace Tuna {
             color_.w = lifeTime_ / initialLifeTime_;
         }
 
-        // 寿命が尽きたら死亡
         if (lifeTime_ <= 0.0f) {
             isAlive_ = false;
         }

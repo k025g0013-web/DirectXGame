@@ -4,6 +4,7 @@
 #include "Graphics/Core/DescriptorHeap.h"
 #include "Graphics/Resource/TransformationMatrix.h"
 #include "Math/FunctionMatrix.h"
+#include "Graphics/Renderer/BillboardMatrix.h"
 
 #include "Manager/TextureManager.h"
 
@@ -75,63 +76,22 @@ namespace Tuna {
         );
     }
 
-    void ParticleManager::Emit(
-        const std::string &texturePath, uint32_t count,
-        const Transform &transform, const Vector3 &velocity,
-        float lifeTime, const Vector4 &color) {
-
-        assert(textureManager_);
-
-        if (count == 0 || lifeTime <= 0.0f) {
-            return;
-        }
-
-        // 最大数を超えないようにする。
-        const uint32_t aliveCount =
-            static_cast<uint32_t>(particles_.size());
-
-        const uint32_t available =
-            kMaxParticles - (std::min)(aliveCount, kMaxParticles);
-
-        count = (std::min)(count, available);
-
-        if (count == 0) {
-            return;
-        }
-
-        const D3D12_GPU_DESCRIPTOR_HANDLE textureHandle =
-            LoadParticleTexture(texturePath);
-
-        for (uint32_t i = 0; i < count; ++i) {
-            Particle particle;
-
-            // 全パーティクルを指定された同じ座標に生成する
-            particle.Initialize(transform, velocity, lifeTime, color);
-
-            if (particle.IsAlive()) {
-                particles_.push_back(particle);
-                particleTexturePaths_.push_back(texturePath);
-            }
-        }
-    }
-
     void ParticleManager::Update(
         float deltaTime,
-        CameraManager *camera) {
-
+        CameraManager *camera
+    ) {
         assert(camera);
 
         camera_ = camera;
 
-        // 生存時間を更新し、死亡したパーティクルとテクスチャ情報を同時に削除する。
+        // パーティクル更新・削除
         for (size_t i = 0; i < particles_.size();) {
-            particles_[i].Update(deltaTime);
+            Particle *particle = particles_[i].particle.get();
 
-            if (!particles_[i].IsAlive()) {
+            particle->Update(deltaTime);
+
+            if (!particle->IsAlive()) {
                 particles_.erase(particles_.begin() + i);
-                particleTexturePaths_.erase(
-                    particleTexturePaths_.begin() + i
-                );
             } else {
                 ++i;
             }
@@ -139,8 +99,8 @@ namespace Tuna {
     }
 
     void ParticleManager::Draw(
-        ID3D12GraphicsCommandList *commandList) {
-
+        ID3D12GraphicsCommandList *commandList
+    ) {
         assert(commandList);
 
         if (particles_.empty() || !camera_) {
@@ -150,7 +110,6 @@ namespace Tuna {
         assert(material_);
         assert(transformationBuffer_);
 
-        // マテリアルとメッシュは全パーティクルで共有する。
         commandList->SetGraphicsRootConstantBufferView(
             0,
             material_->GetGPUVirtualAddress()
@@ -158,21 +117,32 @@ namespace Tuna {
 
         mesh_.BindBuffers(commandList);
 
-        // 同じテクスチャを使うパーティクルをまとめて描画する。
-        std::unordered_set<std::string> drawnTextures;
-
+        // テクスチャとビルボードモードの組み合わせごとに描画する
         for (size_t first = 0; first < particles_.size(); ++first) {
-            const std::string &texturePath =
-                particleTexturePaths_[first];
 
-            if (drawnTextures.contains(texturePath)) {
+            const std::string &texturePath =
+                particles_[first].texturePath;
+
+            const BillboardMode billboardMode =
+                particles_[first].particle->GetBillboardMode();
+
+            // 同じテクスチャ・同じモードのグループが
+            // すでに描画されているか確認
+            bool alreadyDrawn = false;
+
+            for (size_t j = 0; j < first; ++j) {
+                if (particles_[j].texturePath == texturePath &&
+                    particles_[j].particle->GetBillboardMode() == billboardMode) {
+                    alreadyDrawn = true;
+                    break;
+                }
+            }
+
+            if (alreadyDrawn) {
                 continue;
             }
 
-            drawnTextures.insert(texturePath);
-
             const auto textureIt = particleTextures_.find(texturePath);
-
             assert(textureIt != particleTextures_.end());
 
             const D3D12_GPU_DESCRIPTOR_HANDLE textureHandle =
@@ -181,29 +151,29 @@ namespace Tuna {
             std::vector<TransformationMatrix> matrices;
             matrices.reserve(particles_.size());
 
-            // このテクスチャを使用するパーティクルの行列だけを作る。
-            for (size_t i = 0; i < particles_.size(); ++i) {
-                if (particleTexturePaths_[i] != texturePath) {
+            // 同じテクスチャ・同じビルボードモードのパーティクルを集める
+            for (const auto &instance : particles_) {
+
+                Particle *particle = instance.particle.get();
+
+                if (instance.texturePath != texturePath ||
+                    particle->GetBillboardMode() != billboardMode) {
                     continue;
                 }
 
-                const Transform &transform =
-                    particles_[i].GetTransform();
-
                 TransformationMatrix matrix{};
 
-                matrix.World = Math::MakeAffineMatrix(
-                    transform.scale,
-                    transform.rotate,
-                    transform.translate
+                // ビルボード方式に応じたワールド行列を生成
+                matrix.World = BillboardMatrix::Make(
+                    particle->GetTransform(),
+                    *camera_,
+                    particle->GetBillboardMode()
                 );
 
                 matrix.WVP = Math::Multiply(
-                    matrix.World,
-                    camera_->GetViewProjectionMatrix()
-                );
+                    matrix.World, camera_->GetViewProjectionMatrix());
 
-                matrix.color = particles_[i].GetColor();
+                matrix.color = particle->GetColor();
 
                 matrices.push_back(matrix);
             }
@@ -212,32 +182,14 @@ namespace Tuna {
                 continue;
             }
 
-            // CPU側の変換行列をGPU側の構造化バッファへ転送する。
-            transformationBuffer_->Update(
-                matrices.data(),
-                matrices.size() * sizeof(TransformationMatrix)
-            );
+            transformationBuffer_->Update(matrices.data(), matrices.size() * sizeof(TransformationMatrix));
 
-            // Root Parameter 1: TransformationMatrixのSRV
-            commandList->SetGraphicsRootDescriptorTable(
-                1,
-                transformationBuffer_->GetGPUHandle()
-            );
+            commandList->SetGraphicsRootDescriptorTable(1, transformationBuffer_->GetGPUHandle());
 
-            // Root Parameter 2: パーティクルのテクスチャ
-            commandList->SetGraphicsRootDescriptorTable(
-                2,
-                textureHandle
-            );
+            commandList->SetGraphicsRootDescriptorTable(2, textureHandle);
 
-            // 同じテクスチャのパーティクルをインスタンシング描画する。
             commandList->DrawIndexedInstanced(
-                mesh_.GetIndexCount(),
-                static_cast<UINT>(matrices.size()),
-                0,
-                0,
-                0
-            );
+                mesh_.GetIndexCount(), static_cast<UINT>(matrices.size()), 0, 0, 0);
         }
     }
 
@@ -278,5 +230,9 @@ namespace Tuna {
         assert(inserted);
 
         return insertedIt->second.gpuHandle;
+    }
+
+    void ParticleManager::AddEmitter(const Emitter &emitter) {
+        emitters_.push_back(emitter);
     }
 }
