@@ -43,7 +43,7 @@ namespace Tuna {
         float frequency = 0.1f;
         float frequencyTime = 0.0f;
 
-        BillboardMode billboardMode = BillboardMode::kFull;
+        BillboardMode billboardMode = BillboardMode::Full;
     };
 
     class ParticleManager {
@@ -63,7 +63,7 @@ namespace Tuna {
             const std::string &texturePath, uint32_t count,
             const Transform &transform, const Vector3 &velocity,
             float lifeTime, const Vector4 &color, 
-            BillboardMode billboardMode = BillboardMode::kFull) {
+            BillboardMode billboardMode = BillboardMode::Full) {
             
             static_assert(std::is_base_of_v<Particle, T>, "T must be derived from Particle.");
 

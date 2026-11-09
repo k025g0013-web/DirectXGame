@@ -20,7 +20,7 @@
     <ProjectGuid>{89469fc5-0886-49e6-90da-99357c5d3f49}</ProjectGuid>
     <RootNamespace>DirectXGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>MyEngine</ProjectName>
+    <ProjectName>DirectXGame</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -173,10 +173,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
-      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
-    </ClCompile>
     <ClCompile Include="Source\Audio\Audio.cpp" />
     <ClCompile Include="Source\Audio\AudioLoader.cpp" />
     <ClCompile Include="Source\Audio\AudioManager.cpp" />
@@ -206,10 +202,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Source\Input\InputManager.cpp" />
     <ClCompile Include="Source\Input\Keyboard.cpp" />
     <ClCompile Include="Source\Input\Mouse.cpp" />
+    <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Manager\ImGuiManager.cpp" />
     <ClCompile Include="Source\Object\Particle\BillboardMatrix.cpp" />
     <ClCompile Include="Source\Object\Primitive\Primitive.cpp" />
     <ClCompile Include="Source\RenderCore\Camera\CameraManager.cpp" />
+    <ClCompile Include="Source\Scene\GameScene.cpp" />
+    <ClCompile Include="Source\Scene\SceneManager.cpp" />
+    <ClCompile Include="Source\Scene\TitleScene.cpp" />
     <ClCompile Include="Source\TunaEngine.cpp" />
     <ClCompile Include="Source\Manager\DebugManager.cpp" />
     <ClCompile Include="Source\Manager\ModelManager.cpp" />
@@ -288,17 +288,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Resources\Shader\Model3d.hlsli">
+    <None Include="Resources\Shader\Model3D.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Resources\Shader\Object2d.hlsli">
+    <None Include="Resources\Shader\Object2D.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Resources\Shader\Object3d.hlsli">
+    <None Include="Resources\Shader\Object3D.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
@@ -306,6 +306,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Resources\Shader\Particle.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -356,6 +357,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Source\Object\Particle\BillboardMode.h" />
     <ClInclude Include="Source\Object\Primitive\Primitive.h" />
     <ClInclude Include="Source\RenderCore\Camera\CameraManager.h" />
+    <ClInclude Include="Source\Scene\GameScene.h" />
+    <ClInclude Include="Source\Scene\IScene.h" />
+    <ClInclude Include="Source\Scene\SceneManager.h" />
+    <ClInclude Include="Source\Scene\TitleScene.h" />
     <ClInclude Include="Source\TunaEngine.h" />
     <ClInclude Include="Source\Manager\DebugManager.h" />
     <ClInclude Include="Source\Manager\ModelManager.h" />
@@ -446,32 +451,32 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Object>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shader\Model3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Model3D.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Model3d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Model3D.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Object2d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Object2D.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Object2d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Object2D.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Object3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Object3D.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\Object3d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Object3D.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
@@ -479,12 +484,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <FxCompile Include="Resources\Shader\Particle.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Resources\Shader\Particle.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\ThroughWall3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\ThroughWall3D.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>

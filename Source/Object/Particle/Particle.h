@@ -95,7 +95,7 @@ namespace Tuna {
         Vector4 color_{ 1.0f, 1.0f, 1.0f, 1.0f };
 
         // ビルボードの種類
-        BillboardMode billboardMode_ = BillboardMode::kFull;
+        BillboardMode billboardMode_ = BillboardMode::Full;
 
         // 生存フラグ
         bool isAlive_ = false;

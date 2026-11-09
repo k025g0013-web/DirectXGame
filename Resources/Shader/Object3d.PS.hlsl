@@ -1,4 +1,4 @@
-#include "object3d.hlsli"
+#include "object3D.hlsli"
     
 struct Material
 {

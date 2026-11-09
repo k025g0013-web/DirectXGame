@@ -138,7 +138,7 @@ namespace Tuna {
 		//==================================================
 		Microsoft::WRL::ComPtr<IMFSourceReader> reader;
 
-		HRESULT hr =
+		[[maybe_unused]] HRESULT hr =
 			MFCreateSourceReaderFromURL(filename, nullptr, &reader);
 
 		assert(SUCCEEDED(hr));
