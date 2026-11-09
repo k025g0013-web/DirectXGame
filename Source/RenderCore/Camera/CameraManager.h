@@ -2,7 +2,7 @@
 
 #include "RenderCore/Camera/Camera.h"
 #include "RenderCore/Camera/DebugCamera.h"
-#include "Manager/InputManager.h"
+#include "Input/InputManager.h"
 
 namespace Tuna {
 

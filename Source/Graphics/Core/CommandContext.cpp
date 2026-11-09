@@ -1,10 +1,10 @@
-#include "CommandCommon.h"
+#include "CommandContext.h"
 #include "DirectXDevice.h"
 
 #include <cassert>
 
 namespace Tuna {
-	void CommandCommon::Initialize(DirectXDevice *device) {
+	void CommandContext::Initialize(DirectXDevice *device) {
 		device_ = device;
 
 		// GPUへ命令を送信するためのCommandQueueを生成
@@ -17,7 +17,7 @@ namespace Tuna {
 		CreateCommandList();
 	}
 
-	void CommandCommon::CreateCommandQueue() {
+	void CommandContext::CreateCommandQueue() {
 		D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 
 		// DirectタイプのCommandQueueを生成する
@@ -32,7 +32,7 @@ namespace Tuna {
 		(void)hr;
 	}
 
-	void CommandCommon::CreateCommandAllocator() {
+	void CommandContext::CreateCommandAllocator() {
 		HRESULT hr = device_->GetDevice()->CreateCommandAllocator(
 			D3D12_COMMAND_LIST_TYPE_DIRECT,
 			IID_PPV_ARGS(&commandAllocator_)
@@ -43,7 +43,7 @@ namespace Tuna {
 		(void)hr;
 	}
 
-	void CommandCommon::CreateCommandList() {
+	void CommandContext::CreateCommandList() {
 		HRESULT hr = device_->GetDevice()->CreateCommandList(
 			0,
 			D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -57,14 +57,14 @@ namespace Tuna {
 		(void)hr;
 	}
 
-	void CommandCommon::Close() {
+	void CommandContext::Close() {
 		HRESULT hr = commandList_->Close();
 
 		assert(SUCCEEDED(hr));
 		(void)hr;
 	}
 
-	void CommandCommon::Execute() {
+	void CommandContext::Execute() {
 		ID3D12CommandList *commandLists[] = {
 			commandList_.Get()
 		};
@@ -75,7 +75,7 @@ namespace Tuna {
 		);
 	}
 
-	void CommandCommon::Reset() {
+	void CommandContext::Reset() {
 		// コマンド記録領域をリセット
 		HRESULT hr = commandAllocator_->Reset();
 		assert(SUCCEEDED(hr));

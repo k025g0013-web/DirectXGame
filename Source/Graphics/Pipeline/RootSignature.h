@@ -18,12 +18,12 @@ namespace Tuna {
         /// <summary>
         /// RootSignatureの種類
         /// </summary>
-        enum class Type {
+        enum class Mode {
             /// ライト計算を使用する3D描画用
-            Skinny3D,
+            Lit3D,
 
             /// ライト計算を使用しない2D描画用
-            Skinny2D,
+            Unlit2D,
 
             /// 壁越し描画用3D
             ThroughWall3D,
@@ -39,7 +39,7 @@ namespace Tuna {
         /// </summary>
         void Create(
             ID3D12Device *device,
-            Type type
+            Mode type
         );
 
         /// <summary>

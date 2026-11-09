@@ -16,7 +16,7 @@ namespace Tuna {
     /// コマンドを記録するCommandAllocator、CommandListの生成と制御を行う。
     /// フレームごとのコマンド記録、実行、リセット処理を担当する。
     /// </remarks>
-    class CommandCommon {
+    class CommandContext {
     public:
 
         /// <summary>

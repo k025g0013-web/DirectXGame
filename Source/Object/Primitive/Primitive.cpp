@@ -1,10 +1,10 @@
-#include "Object3D.h"
+#include "Primitive.h"
 
-#include "Math/FunctionMatrix.h"
+#include "Math/MatrixFunctions.h"
 
 namespace Tuna {
 
-    void Object3D::InitializeMaterial(
+    void Primitive::InitializeMaterial(
         ID3D12Device *device,
         uint32_t color,
         bool enableLighting) {
@@ -25,7 +25,7 @@ namespace Tuna {
         */
     }
 
-    void Object3D::Update(
+    void Primitive::Update(
         CameraManager *camera,
         Transform transform) {
 
@@ -65,7 +65,7 @@ namespace Tuna {
             uvTransformMatrix;
     }
 
-    void Object3D::Draw(
+    void Primitive::Draw(
         ID3D12GraphicsCommandList *commandList) {
 
         commandList->SetGraphicsRootConstantBufferView(

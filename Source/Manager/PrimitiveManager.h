@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "Object/Common/Object3D.h"
+#include "Object/Primitive/Primitive.h"
 #include "Graphics/Resource/Texture.h"
 #include "Math/Transform.h"
 
@@ -37,7 +37,7 @@ namespace Tuna {
         void Draw(
             ID3D12GraphicsCommandList *commandList);
 
-        std::vector<std::unique_ptr<Object3D>> &GetObjects() {
+        std::vector<std::unique_ptr<Primitive>> &GetObjects() {
             return objects_;
         }
 
@@ -53,7 +53,7 @@ namespace Tuna {
         ID3D12Device *device_ = nullptr;
         ID3D12GraphicsCommandList *commandList_ = nullptr;
 
-        std::vector<std::unique_ptr<Object3D>> objects_;
+        std::vector<std::unique_ptr<Primitive>> objects_;
         std::vector<Transform> transforms_;
     };
 }

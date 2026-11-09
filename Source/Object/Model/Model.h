@@ -10,11 +10,10 @@
 #include "Graphics/Resource/Mesh.h"
 #include "Graphics/Resource/MeshBuffer.h"
 #include "Graphics/Resource/Texture.h"
+#include "Graphics/Resource/TextureManager.h"
 #include "Graphics/Resource/TransformationMatrix.h"
 
-#include "Manager/TextureManager.h"
-
-#include "Manager/CameraManager.h"
+#include "RenderCore/Camera/CameraManager.h"
 
 namespace Tuna {
 

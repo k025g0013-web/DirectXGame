@@ -1,12 +1,12 @@
-#include "KizunaEngine.h"
+#include "TunaEngine.h"
 
-#include "External/ImGuiManager.h"
+#include "Manager/ImGuiManager.h"
 #include "Graphics/Pipeline/RootSignature.h"
 #include "Graphics/Pipeline/GraphicsPipeline.h"
 
 namespace Tuna {
 
-    void KizunaEngine::Initialize(
+    void TunaEngine::Initialize(
         const std::wstring &title,
         int32_t width,
         int32_t height
@@ -109,7 +109,7 @@ namespace Tuna {
     }
 
 
-    void KizunaEngine::Finalize() {
+    void TunaEngine::Finalize() {
 
 #ifdef USE_IMGUI
 
@@ -140,19 +140,19 @@ namespace Tuna {
     }
 
 
-    bool KizunaEngine::ProcessMessage() {
+    bool TunaEngine::ProcessMessage() {
 
         return winApp_->ProcessMessage();
     }
 
 
-    void KizunaEngine::BeginFrame() {
+    void TunaEngine::BeginFrame() {
 
         directXCommon_->BeginFrame();
     }
 
 
-    void KizunaEngine::EndFrame() {
+    void TunaEngine::EndFrame() {
 
 #ifdef USE_IMGUI
 
@@ -170,19 +170,19 @@ namespace Tuna {
     }
 
 
-    void KizunaEngine::UpdateInput() {
+    void TunaEngine::UpdateInput() {
         if (inputManager_) {
             inputManager_->Update();
         }
     }
 
 
-    void KizunaEngine::SetPipeline(
-        PipelineType type
+    void TunaEngine::SetPipeline(
+        PipelineMode mode
     ) {
         // PipelineManagerにパイプライン取得を任せる
-        const PipelineSet *pipeline =
-            pipelineManager_->GetPipeline(type);
+        const PipelineState *pipeline =
+            pipelineManager_->GetPipeline(mode);
 
         // コマンドリストを取得
         ID3D12GraphicsCommandList *commandList =
@@ -204,16 +204,16 @@ namespace Tuna {
         );
     }
 
-    PipelineConfig &KizunaEngine::GetPipelineConfig(
-        PipelineType type
+    PipelineConfig &TunaEngine::GetPipelineConfig(
+        PipelineMode mode
     ) {
-        return pipelineManager_->GetConfig(type);
+        return pipelineManager_->GetConfig(mode);
     }
 
 
-    void KizunaEngine::RebuildPipeline(
-        PipelineType type
+    void TunaEngine::RebuildPipeline(
+        PipelineMode mode
     ) {
-        pipelineManager_->RebuildPipeline(type);
+        pipelineManager_->RebuildPipeline(mode);
     }
 }

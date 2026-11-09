@@ -1,6 +1,6 @@
 #include "Lighting.h"
 
-#include "Math/FunctionVector.h"
+#include "Math/VectorFunctions.h"
 
 namespace Tuna {
     void Lighting::Initialize(ID3D12Device *device) {
@@ -17,8 +17,8 @@ namespace Tuna {
         lightingData_->intensity = 1.0f;
 
         // 初期ライティング方式を設定する
-        currentLightType_ = LightingType::None;
-        SetLightType(LightingType::Half_Lambert);
+        currentLightMode_ = LightingMode::None;
+        SetLightMode(LightingMode::HalfLambert);
 
         // ConstantBufferのアライメント調整用
         lightingData_->padding[0] = 0.0f;
@@ -43,12 +43,12 @@ namespace Tuna {
         );
     }
 
-    void Lighting::SetLightType(LightingType type) {
+    void Lighting::SetLightMode(LightingMode mode) {
 
         // ライト情報が生成済みの場合のみ設定を反映する
         if (lightingData_) {
-            currentLightType_ = type;
-            lightingData_->lightType = static_cast<int>(type);
+            currentLightMode_ = mode;
+            lightingData_->lightMode = static_cast<int>(mode);
         }
     }
 }

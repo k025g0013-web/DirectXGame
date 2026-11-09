@@ -1,8 +1,8 @@
-#include "TriangleObject.h"
+#include "Triangle.h"
 
 namespace Tuna {
 
-    void TriangleObject::Create(
+    void Triangle::Create(
         ID3D12Device *device, ID3D12GraphicsCommandList *commandList,
         uint32_t color, bool enableLighting) {
         // commandListはプリミティブでは使用しない

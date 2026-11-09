@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Object/Common/Object3D.h"
+#include "Primitive.h"
 
 namespace Tuna {
     /// <summary>
     /// 平面四角形オブジェクト
     /// </summary>
-    class PlaneObject : public Object3D {
+    class Plane : public Primitive {
     public:
-        explicit PlaneObject(
+        explicit Plane(
             const Vector3 center, const float width, const float depth)
             : center_(center), width_(width), depth_(depth){}
 

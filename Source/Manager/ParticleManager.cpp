@@ -1,12 +1,12 @@
 #include "ParticleManager.h"
 
-#include "Manager/CameraManager.h"
+#include "RenderCore/Camera/CameraManager.h"
 #include "Graphics/Core/DescriptorHeap.h"
 #include "Graphics/Resource/TransformationMatrix.h"
-#include "Math/FunctionMatrix.h"
-#include "Graphics/Renderer/BillboardMatrix.h"
+#include "Math/MatrixFunctions.h"
+#include "Object/Particle/BillboardMatrix.h"
 
-#include "Manager/TextureManager.h"
+#include "Graphics/Resource/TextureManager.h"
 
 #include <algorithm>
 #include <cassert>

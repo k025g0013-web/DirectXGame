@@ -4,39 +4,39 @@
 #include <algorithm>
 
 namespace Tuna {
-    enum class EasingType {
+    enum class EasingMode{
         // 等速補間
         Linear,
 
         // Sine系イージング
-        easeInSine, easeOutSine, easeInOutSine,
+        EaseInSine, EaseOutSine, EaseInOutSine,
 
         // 2次関数系イージング
-        easeInQuad, easeOutQuad, easeInOutQuad,
+        EaseInQuad, EaseOutQuad, EaseInOutQuad,
 
         // 3次関数系イージング
-        easeInCubic, easeOutCubic, easeInOutCubic,
+        EaseInCubic, EaseOutCubic, EaseInOutCubic,
 
         // 4次関数系イージング
-        easeInQuart, easeOutQuart, easeInOutQuart,
+        EaseInQuart, EaseOutQuart, EaseInOutQuart,
 
         // 5次関数系イージング
-        easeInQuint, easeOutQuint, easeInOutQuint,
+        EaseInQuint, EaseOutQuint, EaseInOutQuint,
 
         // 指数関数系イージング
-        easeInExpo, easeOutExpo, easeInOutExpo,
+        EaseInExpo, EaseOutExpo, EaseInOutExpo,
 
         // 円運動系イージング
-        easeInCirc, easeOutCirc, easeInOutCirc,
+        EaseInCirc, EaseOutCirc, EaseInOutCirc,
 
         // オーバーシュートするイージング
-        easeInBack, easeOutBack, easeInOutBack,
+        EaseInBack, EaseOutBack, EaseInOutBack,
 
         // バネのように振動するイージング
-        easeInElastic, easeOutElastic, easeInOutElastic,
+        EaseInElastic, EaseOutElastic, EaseInOutElastic,
 
         // バウンドするイージング
-        easeInBounce, easeOutBounce, easeInOutBounce,
+        EaseInBounce, EaseOutBounce, EaseInOutBounce,
     };
 
     /// <summary>
@@ -65,7 +65,7 @@ namespace Tuna {
         /// <param name="end">終了値</param>
         /// <returns>補間後の値</returns>
         template <typename T>
-        static T Interpolate(EasingType type, float t, const T &start, const T &end);
+        static T Interpolate(EasingMode mode, float t, const T &start, const T &end);
 
     private:
 #pragma region イージング関数群

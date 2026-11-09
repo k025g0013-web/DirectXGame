@@ -1,7 +1,7 @@
 #include "BillboardMatrix.h"
 
-#include "Manager/CameraManager.h"
-#include "Math/FunctionMatrix.h"
+#include "RenderCore/Camera/CameraManager.h"
+#include "Math/MatrixFunctions.h"
 
 #include <cmath>
 

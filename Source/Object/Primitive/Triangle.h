@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Object/Common/Object3D.h"
+#include "Primitive.h"
 
 namespace Tuna {
 
     /// <summary>
     /// 三角平面オブジェクト
     /// </summary>
-    class TriangleObject : public Object3D {
+    class Triangle : public Primitive {
     public:
-        explicit TriangleObject(
+        explicit Triangle(
             const Vector3 &left,
             const Vector3 &top,
             const Vector3 &right)

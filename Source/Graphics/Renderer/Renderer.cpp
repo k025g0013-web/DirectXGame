@@ -1,7 +1,7 @@
 #include "Renderer.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include "Math/FunctionMatrix.h"
+#include "Math/MatrixFunctions.h"
 
 namespace Tuna {
 	void Renderer::CreateVertexBuffer(

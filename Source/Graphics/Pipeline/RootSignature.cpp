@@ -5,7 +5,7 @@
 #include <cassert>
 
 namespace Tuna {
-    void RootSignature::Create(ID3D12Device *device, Type type) {
+    void RootSignature::Create(ID3D12Device *device, Mode type) {
         assert(device != nullptr);
 
         // RootSignatureの設定
@@ -46,7 +46,7 @@ namespace Tuna {
 
         // 種類ごとのRootParameter設定
         switch (type) {
-        case Type::Skinny3D:
+        case Mode::Lit3D:
             SetCBV(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
             SetCBV(1, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
@@ -57,7 +57,7 @@ namespace Tuna {
             rootParameterCount = 4;
             break;
 
-        case Type::Skinny2D:
+        case Mode::Unlit2D:
             SetCBV(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
             SetCBV(1, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
@@ -66,7 +66,7 @@ namespace Tuna {
             rootParameterCount = 3;
             break;
 
-        case Type::ThroughWall3D:
+        case Mode::ThroughWall3D:
             SetCBV(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
             SetCBV(1, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
@@ -78,7 +78,7 @@ namespace Tuna {
             rootParameterCount = 5;
             break;
 
-        case Type::Particles:
+        case Mode::Particles:
             SetCBV(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
             rootParameters[1].ParameterType =
