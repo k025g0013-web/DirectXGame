@@ -193,6 +193,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Source\Graphics\Pipeline\PipelineManager.cpp" />
     <ClCompile Include="Source\Graphics\Pipeline\RootSignature.cpp" />
     <ClCompile Include="Source\Graphics\Pipeline\ViewportState.cpp" />
+    <ClCompile Include="Source\Graphics\Renderer\BillboardMatrix.cpp" />
     <ClCompile Include="Source\Graphics\Renderer\MeshGenerator.cpp" />
     <ClCompile Include="Source\Graphics\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Graphics\Resource\Mesh.cpp" />
@@ -336,6 +337,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Source\Graphics\Pipeline\PipelineManager.h" />
     <ClInclude Include="Source\Graphics\Pipeline\RootSignature.h" />
     <ClInclude Include="Source\Graphics\Pipeline\ViewportState.h" />
+    <ClInclude Include="Source\Graphics\Renderer\BillboardMatrix.h" />
+    <ClInclude Include="Source\Graphics\Renderer\BillboardMode.h" />
     <ClInclude Include="Source\Graphics\Renderer\MeshGenerator.h" />
     <ClInclude Include="Source\Graphics\Renderer\Renderer.h" />
     <ClInclude Include="Source\Graphics\Resource\Mesh.h" />

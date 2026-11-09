@@ -12,6 +12,10 @@ namespace Tuna {
 
         void Update();
 
+        const Transform &GetTransform() const {
+            return camera_.GetTransform();
+        }
+
         const Matrix4x4 &GetViewMatrix() const {
             return camera_.GetViewMatrix();
         }

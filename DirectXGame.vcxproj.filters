@@ -286,6 +286,9 @@
     <ClCompile Include="Source\Utils\Debug\DumpHelper.cpp">
       <Filter>Source\Utils\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Graphics\Renderer\BillboardMatrix.cpp">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exclusion.dic" />
@@ -564,6 +567,12 @@
     </ClInclude>
     <ClInclude Include="Source\Utils\Debug\DumpHelper.h">
       <Filter>Source\Utils\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Renderer\BillboardMatrix.h">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Renderer\BillboardMode.h">
+      <Filter>Source\Graphics\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

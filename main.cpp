@@ -9,6 +9,7 @@
 #include "Object/Primitive/SphereObject.h"
 
 #include "Manager/ParticleManager.h"
+#include "Graphics/Renderer/BillboardMode.h"
 
 #include "Utils/RandomHelper.h"
 
@@ -19,9 +20,6 @@
 using namespace Tuna;
 
 namespace {
-	// 球モデル分割数
-	constexpr int32_t kSubdivision = 16;
-
 	// クライアント領域のサイズ
 	constexpr int32_t kClientWidth = 1280;
 	constexpr int32_t kClientHeight = 720;
@@ -49,88 +47,25 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//-------------------------------------------------------------------------
 	PrimitiveManager *primitiveManager = engine->GetPrimitiveManager();
 
-    ModelManager *modelManager = engine->GetModelManager();
+	ModelManager *modelManager = engine->GetModelManager();
 
-    SpriteManager *spriteManager = engine->GetSpriteManager();
-    assert(engine != nullptr);
-    assert(spriteManager != nullptr);
+	SpriteManager *spriteManager = engine->GetSpriteManager();
+	assert(engine != nullptr);
+	assert(spriteManager != nullptr);
 
 	//-------------------------------------------------------------------------
-	// テクスチャの読み込み
+	// パーティクル
 	//-------------------------------------------------------------------------
-	TextureManager *textureManager =
-		engine->GetTextureManager();
+	ParticleManager particleManager;
+	particleManager.Initialize(device, commandList,
+		engine->GetDirectXCommon()->GetSRVHeap(), engine->GetTextureManager());
 
-	// 外部テクスチャとして使用するもの
-	TextureData textures[6];
-
-	textures[0] = textureManager->LoadTexture(
-		commandList, "resources/uvChecker.png");
-
-	textures[1] = textureManager->LoadTexture(
-		commandList, "resources/monsterBall.png");
-
-	textures[2] = textureManager->LoadTexture(
-		commandList, "resources/cube.jpg");
-
-	textures[3] =
-		textureManager->LoadTexture(
-			commandList,
-			"resources/axis.jpg");
-
-	textures[4] =
-		textureManager->LoadTexture(
-			commandList,
-			"resources/checkerBoard.png");
-
-	textures[5] =
-		textureManager->LoadTexture(
-			commandList,
-			"resources/white1x1.png");
-
-    ParticleManager particleManager;
-
-    particleManager.Initialize(
-        device,
-        commandList,
-        engine->GetDirectXCommon()->GetSRVHeap(),
-        engine->GetTextureManager()
-    );
-
-    // 基準となる位置から斜め方向にずらして生成する
-    for (int i = 0; i < 100; ++i) {
-        Transform transform{};
-        transform.translate = {
-            RandHelperFloat(-1.0f, 1.0f),
-            RandHelperFloat(-1.0f, 1.0f),
-            RandHelperFloat(-1.0f, 1.0f)
-        };
-
-        // ランダムな移動速度
-        Vector3 particleVelocity = {
-            RandHelperFloat(-2.0f, 2.0f),
-            RandHelperFloat(-2.0f, 2.0f),
-            RandHelperFloat(-2.0f, 2.0f)
-        };
-
-        // ランダムな色
-        Vector4 color = {
-            RandHelperFloat(0.0f, 1.0f),
-            RandHelperFloat(0.0f, 1.0f),
-            RandHelperFloat(0.0f, 1.0f),
-            1.0f
-        };
-
-        particleManager.Emit(
-            "resources/circle.png",
-            1,
-            transform,
-            particleVelocity,
-            3.0f,
-            color
-        );
-    }
-
+	Vector3 emitterPosition = {};			// 生成座標
+	BillboardMode emitterBillboardMode = BillboardMode::kFull;	// ビルボードの種類
+	constexpr float kEmitInterval = 0.5f;	// 何秒ごとに生成するか
+	constexpr int kEmitCount = 10;			// いくつ生成するか
+	float emitTimer = 0.0f;					// タイマー 
+	bool isEmitterActive = true;			// 生成するか否か
 
 	//-------------------------------------------------------------------------
 	// 初期オブジェクト
@@ -140,7 +75,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	std::vector<int> spriteTextureIndices;
 
 	// 初期モデル
-    modelManager->CreateModel(commandList, "fence");
+	modelManager->CreateModel(commandList, "fence");
 
 	//-------------------------------------------------------------------------
 	// ライト / カメラ
@@ -154,7 +89,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	camera.Initialize(
 		float(kClientWidth),
 		float(kClientHeight),
-        &engine->Input());
+		&engine->Input());
 
 	Transform cameraTransform = {
 		.scale = {1.0f, 1.0f, 1.0f},
@@ -166,810 +101,157 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// オーディオ
 	//-------------------------------------------------------------------------
 
-	engine->GetAudioManager()->Load(
-		"fanfare",
-		"Resources/fanfare.wav");
+	engine->GetAudioManager()->Load("fanfare", "Resources/fanfare.wav");
+	engine->GetAudioManager()->Play("fanfare", false, 1.0f);
 
-	engine->GetAudioManager()->Load(
-		"bgm_music",
-		"Resources/music.mp3");
-
-	engine->GetAudioManager()->Play(
-		"fanfare",
-		false,
-		1.0f);
-
-    using Clock = std::chrono::steady_clock;
-    auto previousFrameTime = Clock::now();
+	using Clock = std::chrono::steady_clock;
+	auto previousFrameTime = Clock::now();
 
 	//-------------------------------------------------------------------------
 	// メインループ
 	//-------------------------------------------------------------------------
 
-    while (engine->ProcessMessage()) {
-        engine.get()->GetAudioManager()->ClearFinishedVoices();
+	while (engine->ProcessMessage()) {
+		engine.get()->GetAudioManager()->ClearFinishedVoices();
 
 
-        //=========================================================================
-        // 入力更新
-        //=========================================================================
+		//=========================================================================
+		// 入力更新
+		//=========================================================================
 
-        engine->UpdateInput();
+		engine->UpdateInput();
 
-        //=========================================================================
-        // カメラ更新
-        //=========================================================================
+		//=========================================================================
+		// カメラ更新
+		//=========================================================================
 
 #ifdef _DEBUG
 
-        if (engine->Input().TriggerKey(DIK_Q) ||
-            engine->Input().TriggerButton(XINPUT_GAMEPAD_A)) {
-            camera.ToggleCamera();
-        }
+		if (engine->Input().TriggerKey(DIK_Q) ||
+			engine->Input().TriggerButton(XINPUT_GAMEPAD_A)) {
+			camera.ToggleCamera();
+		}
 
 #endif
 
-        // 実際のフレーム経過時間を計算
-        const auto currentFrameTime = Clock::now();
+		// 実際のフレーム経過時間を計算
+		const auto currentFrameTime = Clock::now();
 
-        float deltaTime =
-            std::chrono::duration<float>(
-                currentFrameTime - previousFrameTime).count();
+		float deltaTime =
+			std::chrono::duration<float>(
+				currentFrameTime - previousFrameTime).count();
 
-        previousFrameTime = currentFrameTime;
+		previousFrameTime = currentFrameTime;
 
-        // デバッグ停止などによる極端な時間経過を制限
-        deltaTime = (std::min)(deltaTime, 0.1f);
+		// デバッグ停止などによる極端な時間経過を制限
+		deltaTime = (std::min)(deltaTime, 0.1f);
 
-        // カメラ・パーティクル更新
-        camera.Update(cameraTransform);
-        particleManager.Update(deltaTime, &camera);
+		//-------------------------------------------------------------------------
+		// カメラ更新
+		//-------------------------------------------------------------------------
+		camera.Update(cameraTransform);
+
+		//-------------------------------------------------------------------------
+		// パーティクル生成
+		//-------------------------------------------------------------------------
+		if (isEmitterActive) {
+
+			emitTimer += deltaTime;
+
+			// 経過時間が0.5秒以上なら生成
+			// whileにすることで、時間経過が大きくなっても生成漏れを防ぐ
+			while (emitTimer >= kEmitInterval) {
+
+				emitTimer -= kEmitInterval;
+
+				const Vector4 colors[] = {
+					{ 1,0,0,1 }, // 赤
+					{ 0,1,0,1 }, // 緑
+					{ 0,0,1,1 }, // 青
+				};
+
+				for (int i = 0; i < kEmitCount; ++i) {
+
+					Transform transform{};
+					transform.translate = emitterPosition;
+
+
+					for (const Vector4 &color : colors) {
+						Vector3 particleVelocity = {
+							RandHelperFloat(-2.0f, 2.0f),
+							RandHelperFloat(-2.0f, 2.0f),
+							RandHelperFloat(-2.0f, 2.0f)
+						};
+
+						particleManager.Emit("resources/circle.png", 1, transform,
+							particleVelocity, 3.0f, color, emitterBillboardMode
+						);
+					}
+				}
+			}
+		}
+
+		//-------------------------------------------------------------------------
+		// パーティクル更新
+		//-------------------------------------------------------------------------
+		particleManager.Update(deltaTime, &camera);
 
 		//-------------------------------------------------------------------------
 		// ImGui
 		//-------------------------------------------------------------------------
 #ifdef USE_IMGUI
 
-        //=========================================================================
-        // ImGui Begin
-        //=========================================================================
-
-        ImGuiManager::GetInstance()->BeginFrame();
-
-        ImGui::DockSpaceOverViewport(
-            ImGui::GetMainViewport()->ID,
-            nullptr,
-            ImGuiDockNodeFlags_PassthruCentralNode);
-
-        ImGui::Begin("Setting");
-
-        //=========================================================================
-        // ImGui State
-        //=========================================================================
-
-        enum class SelectedObjectType {
-            Model,
-            Primitive
-        };
-
-        struct SelectedObject {
-            SelectedObjectType type = SelectedObjectType::Model;
-            int index = 0;
-        };
-
-        static SelectedObject selectedObject;
-
-        static int createType = 0;
-        static int currentSpriteIndex = 0;
-
-        //=========================================================================
-        // Camera
-        //=========================================================================
-
-        ImGui::SeparatorText("Camera");
-
-        ImGui::Text(
-            "Camera Mode : %s",
-            camera.GetStateName());
-
-        ImGui::Text(
-            "Q : Keyboard / A : GamePad");
-
-        //=========================================================================
-        // Create Object
-        //=========================================================================
-
-        ImGui::SeparatorText("Create Object");
-
-        const char *createItems[] = {
-            "Triangle",
-            "Plane",
-            "Cube",
-            "Sphere",
-            "Teapot",
-            "Bunny",
-            "Suzanne",
-        };
-
-        ImGui::Combo(
-            "Type",
-            &createType,
-            createItems,
-            IM_ARRAYSIZE(createItems));
-
-        if (ImGui::Button("Create Object")) {
-
-            switch (createType) {
-
-                //=================================================================
-                // Triangle
-                //=================================================================
-
-            case 0: {
-
-                primitiveManager->CreateTriangle(
-                    Vector3{ -0.5f, -0.5f, 0.0f },
-                    Vector3{ 0.0f,  0.5f, 0.0f },
-                    Vector3{ 0.5f, -0.5f, 0.0f },
-                    textures[0]);
-
-                // 作成したPrimitiveを選択
-                selectedObject.type =
-                    SelectedObjectType::Primitive;
-
-                selectedObject.index =
-                    static_cast<int>(
-                        primitiveManager->GetObjectCount()) - 1;
-
-                break;
-            }
-
-                  //=================================================================
-                  // Plane
-                  //=================================================================
-
-            case 1: {
-
-                modelManager->CreateModel(commandList, "plane", textures[0]);
-
-                // 作成したModelを選択
-                selectedObject.type =
-                    SelectedObjectType::Model;
-
-                selectedObject.index =
-                    static_cast<int>(
-                        modelManager->GetModelCount()) - 1;
-
-                break;
-            }
-
-                  //=================================================================
-                  // Cube
-                  //=================================================================
-
-            case 2: {
-
-                modelManager->CreateModel(commandList, "cube", textures[2]);
-
-                // 作成したModelを選択
-                selectedObject.type =
-                    SelectedObjectType::Model;
-
-                selectedObject.index =
-                    static_cast<int>(
-                        modelManager->GetModelCount()) - 1;
-
-                break;
-            }
-
-                  //=================================================================
-                  // Sphere
-                  //=================================================================
-
-            case 3: {
-
-                primitiveManager->CreateSphere(
-                    kSubdivision,
-                    textures[0]);
-
-                // 作成したPrimitiveを選択
-                selectedObject.type =
-                    SelectedObjectType::Primitive;
-
-                selectedObject.index =
-                    static_cast<int>(
-                        primitiveManager->GetObjectCount()) - 1;
-
-                break;
-            }
-
-                  //=================================================================
-                  // Teapot
-                  //=================================================================
-
-            case 4: {
-                modelManager->CreateModel(commandList, "teapot", textures[4]);
-
-                // 作成したModelを選択
-                selectedObject.type =
-                    SelectedObjectType::Model;
-
-                selectedObject.index =
-                    static_cast<int>(
-                        modelManager->GetModelCount()) - 1;
-
-                break;
-            }
-
-                  //=================================================================
-                  // Bunny
-                  //=================================================================
-
-            case 5: {
-
-                modelManager->CreateModel(commandList, "bunny", textures[0]);
-
-                // 作成したModelを選択
-                selectedObject.type =
-                    SelectedObjectType::Model;
-
-                selectedObject.index =
-                    static_cast<int>(
-                        modelManager->GetModelCount()) - 1;
-
-                break;
-            }
-
-                  //=================================================================
-                  // Suzanne
-                  //=================================================================
-
-            case 6: {
-                modelManager->CreateModel(commandList, "suzanne", textures[5]);
-
-                // 作成したModelを選択
-                selectedObject.type =
-                    SelectedObjectType::Model;
-
-                selectedObject.index =
-                    static_cast<int>(
-                        modelManager->GetModelCount()) - 1;
-                break;
-            }
-            }
-        }
-
-        //=========================================================================
-        // Objects
-        //=========================================================================
-
-        ImGui::SeparatorText("Objects");
-
-        //-------------------------------------------------------------------------
-        // Object List
-        //-------------------------------------------------------------------------
-
-        if (ImGui::BeginListBox(
-            "Object List",
-            ImVec2(-FLT_MIN, 150.0f))) {
-
-            //=====================================================================
-            // Models
-            //=====================================================================
-
-            for (int i = 0;
-                i < static_cast<int>(
-                    modelManager->GetModelCount());
-                    ++i) {
-
-                char label[64];
-
-                sprintf_s(
-                    label,
-                    "Model %d",
-                    i);
-
-                bool selected =
-                    selectedObject.type ==
-                    SelectedObjectType::Model &&
-                    selectedObject.index == i;
-
-                if (ImGui::Selectable(
-                    label,
-                    selected)) {
-
-                    selectedObject.type =
-                        SelectedObjectType::Model;
-
-                    selectedObject.index = i;
-                }
-            }
-
-            //=====================================================================
-            // Primitives
-            //=====================================================================
-
-            for (int i = 0;
-                i < static_cast<int>(
-                    primitiveManager->GetObjectCount());
-                ++i) {
-
-                char label[64];
-
-                sprintf_s(
-                    label,
-                    "Primitive %d",
-                    i);
-
-                bool selected =
-                    selectedObject.type ==
-                    SelectedObjectType::Primitive &&
-                    selectedObject.index == i;
-
-                if (ImGui::Selectable(
-                    label,
-                    selected)) {
-
-                    selectedObject.type =
-                        SelectedObjectType::Primitive;
-
-                    selectedObject.index = i;
-                }
-            }
-
-            ImGui::EndListBox();
-        }
-
-        //=========================================================================
-        // Selected Object
-        //=========================================================================
-
-        bool hasSelectedObject = false;
-
-        //-------------------------------------------------------------------------
-        // 選択状態の補正
-        //-------------------------------------------------------------------------
-
-        if (selectedObject.type ==
-            SelectedObjectType::Model) {
-
-            if (modelManager->GetModelCount() > 0) {
-
-                selectedObject.index =
-                    std::clamp(
-                        selectedObject.index,
-                        0,
-                        static_cast<int>(
-                            modelManager->GetModelCount()) - 1);
-
-                hasSelectedObject = true;
-            }
-
-        } else {
-
-            if (primitiveManager->GetObjectCount() > 0) {
-
-                selectedObject.index =
-                    std::clamp(
-                        selectedObject.index,
-                        0,
-                        static_cast<int>(
-                            primitiveManager->GetObjectCount()) - 1);
-
-                hasSelectedObject = true;
-            }
-        }
-
-        //-------------------------------------------------------------------------
-        // Transform
-        //-------------------------------------------------------------------------
-
-        if (hasSelectedObject) {
-
-            Transform *transform = nullptr;
-
-            if (selectedObject.type ==
-                SelectedObjectType::Model) {
-
-                transform =
-                    &modelManager->GetModels()
-                    [selectedObject.index]
-                    ->GetTransform();
-            
-            } else {
-
-                transform =
-                    &primitiveManager->GetTransforms()[
-                        selectedObject.index];
-            }
-
-            if (ImGui::CollapsingHeader(
-                "Transform",
-                ImGuiTreeNodeFlags_DefaultOpen)) {
-
-                ImGui::DragFloat3(
-                    "Translate",
-                    &transform->translate.x,
-                    0.1f);
-
-                ImGui::DragFloat3(
-                    "Rotate",
-                    &transform->rotate.x,
-                    0.01f);
-
-                ImGui::DragFloat3(
-                    "Scale",
-                    &transform->scale.x,
-                    0.01f);
-            }
-
-            //=====================================================================
-            // Material
-            //=====================================================================
-
-            if (ImGui::CollapsingHeader(
-                "Material",
-                ImGuiTreeNodeFlags_DefaultOpen)) {
-
-                Material *material = nullptr;
-
-                if (selectedObject.type ==
-                    SelectedObjectType::Model) {
-
-                    material =
-                        &modelManager
-                        ->GetModels()[selectedObject.index]
-                        ->GetMaterial();
-
-                } else {
-
-                    material =
-                        &primitiveManager
-                        ->GetObjects()[selectedObject.index]
-                        ->GetMaterial();
-                }
-
-                ImGui::ColorEdit4(
-                    "Color",
-                    &material
-                    ->GetMaterialData()
-                    ->color.x);
-            }
-
-            //=====================================================================
-            // UV Transform
-            //=====================================================================
-
-            if (selectedObject.type ==
-                SelectedObjectType::Model) {
-
-                Model &model =
-                    *modelManager->GetModels()[selectedObject.index];
-
-                if (ImGui::CollapsingHeader(
-                    "UV Transform",
-                    ImGuiTreeNodeFlags_DefaultOpen)) {
-
-                    Transform &uv =
-                        model.GetUVTransform();
-
-                    ImGui::DragFloat2(
-                        "UV Translate",
-                        &uv.translate.x,
-                        0.01f);
-
-                    ImGui::SliderAngle(
-                        "UV Rotate",
-                        &uv.rotate.z);
-
-                    ImGui::DragFloat2(
-                        "UV Scale",
-                        &uv.scale.x,
-                        0.01f);
-                }
-            }
-            //=====================================================================
-            // Lighting
-            //=====================================================================
-
-            if (ImGui::CollapsingHeader(
-                "Lighting",
-                ImGuiTreeNodeFlags_DefaultOpen)) {
-
-                Lighting::LightingType currentType =
-                    lighting.GetLightType();
-
-                const char *lightTypeNames[] = {
-                    "None",
-                    "Lambert",
-                    "Half-Lambert"
-                };
-
-                int currentItem =
-                    static_cast<int>(currentType);
-
-                if (ImGui::Combo(
-                    "Light Type",
-                    &currentItem,
-                    lightTypeNames,
-                    IM_ARRAYSIZE(lightTypeNames))) {
-
-                    lighting.SetLightType(
-                        static_cast<Lighting::LightingType>(
-                            currentItem));
-                }
-            }
-
-            //=====================================================================
-            // Delete
-            //=====================================================================
-            if (modelManager->GetModelCount() > 1) {
-
-                if (ImGui::Button(
-                    "Delete Model")) {
-
-                    modelManager->DeleteModel(
-                        selectedObject.index);
-
-                    if (modelManager->GetModelCount() > 0) {
-
-                        selectedObject.index =
-                            (std::min)(
-                                selectedObject.index,
-                                static_cast<int>(
-                                    modelManager->GetModelCount()) - 1);
-
-                    } else {
-
-                        selectedObject.index = 0;
-                    }
-                }
-
-            } else {
-
-                ImGui::BeginDisabled();
-
-                ImGui::Button(
-                    "Delete Model");
-
-                ImGui::EndDisabled();
-            }
-        }
-
-        //=========================================================================
-        // Light
-        //=========================================================================
-
-        ImGui::SeparatorText("Light");
-
-        if (ImGui::CollapsingHeader(
-            "Directional Light",
-            ImGuiTreeNodeFlags_DefaultOpen)) {
-
-            ImGui::ColorEdit4(
-                "Light Color",
-                &lighting.GetLightingData()->color.x);
-
-            ImGui::SliderFloat3(
-                "Direction",
-                &lighting.GetLightingData()->direction.x,
-                -1.0f,
-                1.0f);
-
-            ImGui::DragFloat(
-                "Intensity",
-                &lighting.GetLightingData()->intensity,
-                0.05f,
-                0.0f,
-                10.0f);
-        }
-
-        //=========================================================================
-        // Sprites
-        //=========================================================================
-
-        ImGui::SeparatorText("Sprites");
-
-        //-------------------------------------------------------------------------
-        // Create Sprite
-        //-------------------------------------------------------------------------
-
-        if (ImGui::Button("Create Sprite")) {
-
-            spriteManager->CreateSprite(
-                0.0f, 0.0f, float(kClientWidth / 2), float(kClientHeight / 2), textures[0], 0);
-
-            currentSpriteIndex =
-                static_cast<int>(
-                    spriteManager->GetSpriteCount()) - 1;
-        }
-
-        //-------------------------------------------------------------------------
-        // Sprite List
-        //-------------------------------------------------------------------------
-
-        if (ImGui::BeginListBox(
-            "Sprite List",
-            ImVec2(-FLT_MIN, 120.0f))) {
-
-            for (int i = 0; i < static_cast<int>(spriteManager->GetSpriteCount()); ++i) {
-                char label[64];
-
-                sprintf_s(label, "Sprite %d", i);
-
-                if (ImGui::Selectable(label, currentSpriteIndex == i)) {
-                    currentSpriteIndex = i;
-                }
-            }
-
-            ImGui::EndListBox();
-        }
-
-        //-------------------------------------------------------------------------
-        // Selected Sprite
-        //-------------------------------------------------------------------------
-
-        if (spriteManager->GetSpriteCount() > 0) {
-
-            currentSpriteIndex = std::clamp(
-                currentSpriteIndex,
-                0,
-                static_cast<int>(
-                    spriteManager->GetSpriteCount()) - 1);
-
-            Sprite &sprite =
-                *spriteManager->GetSprite(
-                    currentSpriteIndex);
-
-            // Texture
-            const char *textureItems[] = {
-                "UVChecker",
-                "Cube",
-                "MonsterBall",
-            };
-
-            // 選択肢の順番から実際のテクスチャ配列のインデックスへの対応
-            const int textureMap[] = {
-                0, // UVChecker
-                2, // Cube
-                1, // MonsterBall
-            };
-
-            int textureIndex =
-                spriteManager->GetTextureIndex(
-                    currentSpriteIndex);
-
-            if (ImGui::Combo(
-                "Texture",
-                &textureIndex,
-                textureItems,
-                IM_ARRAYSIZE(textureItems))) {
-
-                spriteManager->SetTexture(
-                    currentSpriteIndex,
-                    textures[textureMap[textureIndex]],
-                    textureIndex);
-            }
-
-            // Transform
-            if (ImGui::CollapsingHeader(
-                "Sprite Transform",
-                ImGuiTreeNodeFlags_DefaultOpen)) {
-
-                Transform &transform =
-                    sprite.GetTransform();
-
-                ImGui::DragFloat3(
-                    "Translate##Sprite",
-                    &transform.translate.x,
-                    0.1f);
-
-                ImGui::DragFloat3(
-                    "Rotate##Sprite",
-                    &transform.rotate.x,
-                    0.01f);
-
-                ImGui::DragFloat3(
-                    "Scale##Sprite",
-                    &transform.scale.x,
-                    0.01f);
-            }
-
-            // Material
-            if (ImGui::CollapsingHeader(
-                "Sprite Material",
-                ImGuiTreeNodeFlags_DefaultOpen)) {
-
-                Material &material =
-                    sprite.GetMaterial();
-
-                ImGui::ColorEdit4(
-                    "Sprite Color",
-                    &material.GetMaterialData()->color.x);
-
-                Transform &uv = sprite.GetUVTransform();
-
-                ImGui::DragFloat2(
-                    "UV Translate##Sprite",
-                    &uv.translate.x,
-                    0.01f);
-
-                ImGui::SliderAngle(
-                    "UV Rotate##Sprite",
-                    &uv.rotate.z);
-
-                ImGui::DragFloat2(
-                    "UV Scale##Sprite",
-                    &uv.scale.x,
-                    0.01f);
-            }
-
-            // Delete
-            ImGui::Separator();
-
-            if (ImGui::Button("Delete Sprite")) {
-
-                spriteManager->DeleteSprite(
-                    currentSpriteIndex);
-
-                if (spriteManager->GetSpriteCount() > 0) {
-                    currentSpriteIndex = (std::min)(
-                        currentSpriteIndex,
-                        static_cast<int>(
-                            spriteManager->GetSpriteCount()) - 1);
-                } else {
-                    currentSpriteIndex = 0;
-                }
-            }
-        }
-
-        //=========================================================================
-        // Pipeline
-        //=========================================================================
-
-        ImGui::SeparatorText("Pipeline");
-
-        auto &pipelineConfig =
-            engine->GetPipelineConfig(
-                PipelineType::Object3dOpaque);
-
-        const char *blendModeNames[] = {
-            "Default",
-            "Alpha",
-            "Add",
-            "Subtract",
-            "Multiply",
-            "Screen"
-        };
-
-        int blendMode =
-            static_cast<int>(
-                pipelineConfig.blend);
-
-        if (ImGui::Combo(
-            "Blend Mode",
-            &blendMode,
-            blendModeNames,
-            IM_ARRAYSIZE(blendModeNames))) {
-
-            pipelineConfig.blend =
-                static_cast<BlendMode>(
-                    blendMode);
-
-            engine->RebuildPipeline(
-                PipelineType::Object3dOpaque);
-        }
-
-        //=========================================================================
-        // ImGui End
-        //=========================================================================
-
-        ImGui::End();
-
-        ImGuiManager::GetInstance()->EndFrame();
+		ImGuiManager::GetInstance()->BeginFrame();
+
+		ImGui::Begin("Particle Emitter");
+
+		ImGui::Text(
+			"Particle Count: %d",
+			particleManager.GetAliveCount()
+		);
+
+		// エミッターの有効・無効
+		ImGui::Checkbox(
+			"Emitter Active",
+			&isEmitterActive
+		);
+
+		// 生成位置
+		ImGui::DragFloat3(
+			"Emitter Position",
+			&emitterPosition.x,
+			0.1f
+		);
+
+		// ビルボードモード
+		const char *billboardItems[] = {
+			"None",
+			"Full",
+			"YAxis"
+		};
+
+		int billboardIndex = static_cast<int>(emitterBillboardMode);
+
+		if (ImGui::Combo(
+			"Billboard Mode",
+			&billboardIndex,
+			billboardItems,
+			IM_ARRAYSIZE(billboardItems))) {
+
+			emitterBillboardMode =
+				static_cast<BillboardMode>(billboardIndex);
+		}
+
+		ImGui::End();
+
+		ImGuiManager::GetInstance()->EndFrame();
 
 #endif
-        lighting.Update();
+
+		//-------------------------------------------------------------------------
+		// Lighting
+		//-------------------------------------------------------------------------
+		lighting.Update();
 
 		//-------------------------------------------------------------------------
 		// 描画処理
@@ -993,36 +275,36 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 			// モデル
-            modelManager->Update(&camera);
-            modelManager->Draw(commandList);
+			modelManager->Update(&camera);
+			modelManager->Draw(commandList);
 		}
 
-        // パーティクル（板ポリ10枚）
-        {
-            engine->SetPipeline(PipelineType::Particle);
+		// パーティクル
+		{
+			engine->SetPipeline(PipelineType::Particle);
 
-            lighting.Bind(kLightRegisterIndex, commandList);
+			lighting.Bind(kLightRegisterIndex, commandList);
 
-            particleManager.Draw(commandList);
-        }
+			particleManager.Draw(commandList);
+		}
 
 		// 2Dオブジェクト
 		{
-            engine->SetPipeline(PipelineType::Object2dOpaque);
+			engine->SetPipeline(PipelineType::Object2dOpaque);
 
-            spriteManager->Update(
-                kClientWidth,
-                kClientHeight);
+			spriteManager->Update(
+				kClientWidth,
+				kClientHeight);
 
-            spriteManager->Draw(commandList);
+			spriteManager->Draw(commandList);
 		}
 
 		engine->EndFrame();
 
 		// ESC
-        if (engine->Input().PushKey(DIK_ESCAPE)) {
-            break;
-        }
+		if (engine->Input().PushKey(DIK_ESCAPE)) {
+			break;
+		}
 	}
 
 	//-------------------------------------------------------------------------
