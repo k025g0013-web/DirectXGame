@@ -370,3 +370,5 @@ FodyWeavers.xsd
 Dumps/
 
 imgui.ini
+
+ !**/Source/Utils/Debug/
