@@ -48,7 +48,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	PrimitiveManager *primitiveManager = engine->GetPrimitiveManager();
 
 	ModelManager *modelManager = engine->GetModelManager();
-
 	SpriteManager *spriteManager = engine->GetSpriteManager();
 	assert(engine != nullptr);
 	assert(spriteManager != nullptr);
