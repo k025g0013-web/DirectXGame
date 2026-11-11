@@ -191,6 +191,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Source\Audio\Audio.cpp" />
     <ClCompile Include="Source\Audio\AudioLoader.cpp" />
     <ClCompile Include="Source\Audio\AudioManager.cpp" />
@@ -220,8 +221,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Source\Input\InputManager.cpp" />
     <ClCompile Include="Source\Input\Keyboard.cpp" />
     <ClCompile Include="Source\Input\Mouse.cpp" />
-    <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Manager\ImGuiManager.cpp" />
+    <ClCompile Include="Source\Math\Collision\Collision.cpp" />
     <ClCompile Include="Source\Object\Particle\BillboardMatrix.cpp" />
     <ClCompile Include="Source\Object\Primitive\Primitive.cpp" />
     <ClCompile Include="Source\RenderCore\Camera\CameraManager.cpp" />
@@ -249,8 +250,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Source\Utils\Debug\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".gitignore" />
-    <None Include="exclusion.dic" />
     <None Include="Resources\Models\axis\axis.blend">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -371,6 +370,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Source\Input\Keyboard.h" />
     <ClInclude Include="Source\Input\Mouse.h" />
     <ClInclude Include="Source\Manager\ImGuiManager.h" />
+    <ClInclude Include="Source\Math\Collision\AABB.h" />
+    <ClInclude Include="Source\Math\Collision\Capsule.h" />
+    <ClInclude Include="Source\Math\Collision\Collision.h" />
+    <ClInclude Include="Source\Math\Collision\Line.h" />
+    <ClInclude Include="Source\Math\Collision\OBB.h" />
+    <ClInclude Include="Source\Math\Collision\Plane.h" />
+    <ClInclude Include="Source\Math\Collision\Ray.h" />
+    <ClInclude Include="Source\Math\Collision\Segment.h" />
+    <ClInclude Include="Source\Math\Collision\Sphere.h" />
+    <ClInclude Include="Source\Math\Collision\Triangle.h" />
     <ClInclude Include="Source\Object\Particle\BillboardMatrix.h" />
     <ClInclude Include="Source\Object\Particle\BillboardMode.h" />
     <ClInclude Include="Source\Object\Primitive\Primitive.h" />
@@ -404,7 +413,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Source\RenderCore\Lighting.h" />
     <ClInclude Include="Source\Utils\ColorHelper.h" />
     <ClInclude Include="Source\Utils\ConvertString.h" />
-    <ClInclude Include="Source\Utils\Debug\AssertHelper.h" />
+    <ClInclude Include="Source\Utils\Debug\AssertHelper.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Source\Utils\Debug\DumpHelper.h" />
     <ClInclude Include="Source\Utils\Debug\Logger.h" />
     <ClInclude Include="Source\Utils\RandomHelper.h" />
