@@ -88,7 +88,13 @@ namespace Tuna {
         for (size_t i = 0; i < particles_.size();) {
             Particle *particle = particles_[i].particle.get();
 
-            particle->Update(deltaTime);
+            const Vector3 &position =
+                particle->GetTransform().translate;
+
+            const ParticleFieldResult fieldResult =
+                fieldManager_.GetEffectsAt(position);
+
+            particle->Update(deltaTime, fieldResult);
 
             if (!particle->IsAlive()) {
                 particles_.erase(particles_.begin() + i);
@@ -234,5 +240,13 @@ namespace Tuna {
 
     void ParticleManager::AddEmitter(const Emitter &emitter) {
         emitters_.push_back(emitter);
+    }
+
+    void ParticleManager::AddField(const ParticleField &field) {
+        fieldManager_.AddField(field);
+    }
+
+    void ParticleManager::ClearFields() {
+        fieldManager_.ClearFields();
     }
 }

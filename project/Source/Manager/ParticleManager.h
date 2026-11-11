@@ -11,12 +11,14 @@
 
 #include "Object/Particle/Particle.h"
 #include "Object/Particle/BillboardMode.h"
+#include "Object/Particle/Field/ParticleFieldManager.h"
 
 #include "Graphics/Resource/Mesh.h"
 #include "Graphics/Resource/StructuredBuffer.h"
 #include "Graphics/Material/Material.h"
 #include "Graphics/Resource/Texture.h"
 #include "Graphics/Resource/TextureLoader.h"
+
 
 #include <format> 
 #include <Windows.h>
@@ -78,6 +80,12 @@ namespace Tuna {
 
         uint32_t GetAliveCount() const;
 
+        // Fieldを登録
+        void AddField(const ParticleField &field);
+
+        // Fieldをすべて削除
+        void ClearFields();
+
     private:
         template<typename T>
         void EmitInternal(
@@ -131,6 +139,8 @@ namespace Tuna {
         std::unique_ptr<StructuredBuffer> transformationBuffer_;
 
         CameraManager *camera_ = nullptr;
+
+        ParticleFieldManager fieldManager_;
 
         static constexpr uint32_t kMaxParticles = 1024;
     };

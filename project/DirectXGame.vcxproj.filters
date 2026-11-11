@@ -109,6 +109,9 @@
     <Filter Include="Source\RenderCore\Camera">
       <UniqueIdentifier>{ef1540e5-6f0e-4146-bc26-3f1951ec2a0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Particle\Field">
+      <UniqueIdentifier>{99eeeef3-0733-4a3b-a5f4-35a1b130535c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
@@ -301,6 +304,12 @@
       <Filter>Source\Math\Collision</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Source\Object\Particle\Field\ParticleField.cpp">
+      <Filter>Source\Object\Particle\Field</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Particle\Field\ParticleFieldManager.cpp">
+      <Filter>Source\Object\Particle\Field</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Models\axis\axis.blend">
@@ -622,6 +631,12 @@
     </ClInclude>
     <ClInclude Include="Source\Math\Collision\Collision.h">
       <Filter>Source\Math\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Particle\Field\ParticleField.h">
+      <Filter>Source\Object\Particle\Field</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Particle\Field\ParticleFieldManager.h">
+      <Filter>Source\Object\Particle\Field</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

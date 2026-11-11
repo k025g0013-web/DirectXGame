@@ -10,6 +10,8 @@
 
 #include "Manager/ParticleManager.h"
 #include "Object/Particle/BillboardMode.h"
+#include "Object/Particle/Field/ParticleField.h"
+#include <vector>
 
 #include "Utils/RandomHelper.h"
 
@@ -54,10 +56,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//-------------------------------------------------------------------------
 	// パーティクル
-	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------	
 	ParticleManager particleManager;
 	particleManager.Initialize(device, commandList,
 		engine->GetDirectXCommon()->GetSRVHeap(), engine->GetTextureManager());
+
+	// エリア効果の管理
+	std::vector<ParticleField> particleFields;
 
 	Vector3 emitterPosition = {};			// 生成座標
 	BillboardMode emitterBillboardMode = BillboardMode::Full;	// ビルボードの種類
@@ -191,11 +196,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 
 		//-------------------------------------------------------------------------
-		// パーティクル更新
-		//-------------------------------------------------------------------------
-		particleManager.Update(deltaTime, &camera);
-
-		//-------------------------------------------------------------------------
 		// ImGui
 		//-------------------------------------------------------------------------
 #ifdef USE_IMGUI
@@ -204,18 +204,20 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		ImGui::Begin("Particle Emitter");
 
+		//=========================================================
+		// エミッター設定
+		//=========================================================
+
 		ImGui::Text(
 			"Particle Count: %d",
 			particleManager.GetAliveCount()
 		);
 
-		// エミッターの有効・無効
 		ImGui::Checkbox(
 			"Emitter Active",
 			&isEmitterActive
 		);
 
-		// 生成位置
 		ImGui::DragFloat3(
 			"Emitter Position",
 			&emitterPosition.x,
@@ -241,11 +243,150 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 				static_cast<BillboardMode>(billboardIndex);
 		}
 
+		//=========================================================
+		// Particle Field設定
+		//=========================================================
+
+		ImGui::Separator();
+		ImGui::Text("Particle Fields");
+
+		// エリア追加
+		if (ImGui::Button("Add Field")) {
+
+			ParticleField field{};
+
+			// エミッター位置を中心とした初期範囲
+			field.area.min = {
+				emitterPosition.x - 1.0f,
+				emitterPosition.y - 1.0f,
+				emitterPosition.z - 1.0f
+			};
+
+			field.area.max = {
+				emitterPosition.x + 1.0f,
+				emitterPosition.y + 1.0f,
+				emitterPosition.z + 1.0f
+			};
+
+			particleFields.push_back(field);
+		}
+
+		// 登録済みエリアの設定
+		for (size_t i = 0; i < particleFields.size();) {
+
+			ParticleField &field = particleFields[i];
+
+			ImGui::PushID(static_cast<int>(i));
+
+			// エリアごとの設定を折りたたみ表示
+			char fieldName[32];
+			sprintf_s(fieldName, "Field %zu", i);
+
+			bool isOpen = ImGui::TreeNode(fieldName);
+
+			// 削除ボタン
+			ImGui::SameLine();
+
+			bool remove = ImGui::SmallButton("Remove");
+
+			if (remove) {
+				if (isOpen) {
+					ImGui::TreePop();
+				}
+
+				ImGui::PopID();
+
+				particleFields.erase(particleFields.begin() + i);
+				continue;
+			}
+
+			if (isOpen) {
+
+				//=================================================
+				// エリアの範囲
+				//=================================================
+
+				ImGui::Text("Area");
+
+				ImGui::DragFloat3(
+					"Min",
+					&field.area.min.x,
+					0.1f
+				);
+
+				ImGui::DragFloat3(
+					"Max",
+					&field.area.max.x,
+					0.1f
+				);
+
+				//=================================================
+				// 加速度
+				//=================================================
+
+				ImGui::Separator();
+				ImGui::Text("Acceleration");
+
+				ImGui::DragFloat3(
+					"Acceleration",
+					&field.acceleration.x,
+					0.1f
+				);
+
+				//=================================================
+				// 抵抗
+				//=================================================
+
+				ImGui::Separator();
+
+				ImGui::DragFloat(
+					"Drag",
+					&field.drag,
+					0.01f,
+					0.0f,
+					100.0f
+				);
+
+				//=================================================
+				// 回転
+				//=================================================
+
+				ImGui::DragFloat3(
+					"Angular Velocity",
+					&field.angularVelocity.x,
+					0.01f
+				);
+
+				ImGui::TreePop();
+			}
+
+			ImGui::PopID();
+
+			++i;
+		}
+
 		ImGui::End();
 
 		ImGuiManager::GetInstance()->EndFrame();
 
+		//=========================================================
+		// ParticleFieldManagerへの反映
+		//=========================================================
+
+		// 現在の登録内容を一度クリア
+		particleManager.ClearFields();
+
+		// ImGuiで設定したエリアを再登録
+		for (const ParticleField &field : particleFields) {
+			particleManager.AddField(field);
+		}
+
 #endif
+
+		//-------------------------------------------------------------------------
+		// パーティクル更新
+		//-------------------------------------------------------------------------
+		particleManager.Update(deltaTime, &camera);
 
 		//-------------------------------------------------------------------------
 		// Lighting
