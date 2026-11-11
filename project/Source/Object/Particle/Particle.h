@@ -2,6 +2,7 @@
 
 #include "Math/Transform.h"
 #include "BillboardMode.h"
+#include "Field/ParticleField.h"
 
 namespace Tuna {
 
@@ -24,6 +25,11 @@ namespace Tuna {
         /// パーティクルを更新する
         /// </summary>
         virtual void Update(float deltaTime);
+
+        /// <summary>
+        /// パーティクルを更新する
+        /// </summary>
+        virtual void Update(float deltaTime, const ParticleFieldResult &fieldResult);
 
         /// <summary>
         /// 生存しているか取得する

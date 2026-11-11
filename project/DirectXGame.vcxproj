@@ -224,6 +224,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Source\Manager\ImGuiManager.cpp" />
     <ClCompile Include="Source\Math\Collision\Collision.cpp" />
     <ClCompile Include="Source\Object\Particle\BillboardMatrix.cpp" />
+    <ClCompile Include="Source\Object\Particle\Field\ParticleField.cpp" />
+    <ClCompile Include="Source\Object\Particle\Field\ParticleFieldManager.cpp" />
     <ClCompile Include="Source\Object\Primitive\Primitive.cpp" />
     <ClCompile Include="Source\RenderCore\Camera\CameraManager.cpp" />
     <ClCompile Include="Source\Scene\GameScene.cpp" />
@@ -382,6 +384,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Source\Math\Collision\Triangle.h" />
     <ClInclude Include="Source\Object\Particle\BillboardMatrix.h" />
     <ClInclude Include="Source\Object\Particle\BillboardMode.h" />
+    <ClInclude Include="Source\Object\Particle\Field\ParticleField.h" />
+    <ClInclude Include="Source\Object\Particle\Field\ParticleFieldManager.h" />
     <ClInclude Include="Source\Object\Primitive\Primitive.h" />
     <ClInclude Include="Source\RenderCore\Camera\CameraManager.h" />
     <ClInclude Include="Source\Scene\GameScene.h" />
