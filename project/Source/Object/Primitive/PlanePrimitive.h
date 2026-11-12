@@ -6,9 +6,9 @@ namespace Tuna {
     /// <summary>
     /// 平面四角形オブジェクト
     /// </summary>
-    class Plane : public Primitive {
+    class PlanePrimitive : public Primitive {
     public:
-        explicit Plane(
+        explicit PlanePrimitive(
             const Vector3 center, const float width, const float depth)
             : center_(center), width_(width), depth_(depth){}
 

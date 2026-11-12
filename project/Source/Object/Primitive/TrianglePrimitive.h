@@ -7,9 +7,9 @@ namespace Tuna {
     /// <summary>
     /// 三角平面オブジェクト
     /// </summary>
-    class Triangle : public Primitive {
+    class TrianglePrimitive : public Primitive {
     public:
-        explicit Triangle(
+        explicit TrianglePrimitive(
             const Vector3 &left,
             const Vector3 &top,
             const Vector3 &right)

@@ -2,8 +2,8 @@
 
 #include <cassert>
 
-#include "Object/Primitive/Triangle.h"
-#include "Object/Primitive/Sphere.h"
+#include "Object/Primitive/TrianglePrimitive.h"
+#include "Object/Primitive/SpherePrimitive.h"
 
 namespace Tuna {
 
@@ -30,7 +30,7 @@ namespace Tuna {
         assert(commandList_);
 
         auto object =
-            std::make_unique<Triangle>(
+            std::make_unique<TrianglePrimitive>(
                 left,
                 top,
                 right);
@@ -63,7 +63,7 @@ namespace Tuna {
         assert(commandList_);
 
         auto object =
-            std::make_unique<Sphere>(
+            std::make_unique<SpherePrimitive>(
                 subdivision);
 
         object->SetTexture(texture);
