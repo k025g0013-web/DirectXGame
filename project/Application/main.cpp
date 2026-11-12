@@ -4,9 +4,9 @@
 #include "Object/Primitive/Primitive.h"
 #include "Manager/ImGuiManager.h"
 
-#include "Object/Primitive/Triangle.h"
-#include "Object/Primitive/Plane.h"
-#include "Object/Primitive/Sphere.h"
+#include "Object/Primitive/TrianglePrimitive.h"
+#include "Object/Primitive/PlanePrimitive.h"
+#include "Object/Primitive/SpherePrimitive.h"
 
 #include "Manager/ParticleManager.h"
 #include "Object/Particle/BillboardMode.h"

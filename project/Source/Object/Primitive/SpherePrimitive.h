@@ -7,9 +7,9 @@ namespace Tuna {
     /// <summary>
     /// 球体オブジェクト
     /// </summary>
-    class Sphere : public Primitive {
+    class SpherePrimitive : public Primitive {
     public:
-        explicit Sphere(uint32_t subdivision = 16)
+        explicit SpherePrimitive(uint32_t subdivision = 16)
             : subdivision_(subdivision) {}
 
         /// <summary>

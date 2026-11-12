@@ -21,5 +21,5 @@ namespace Tuna {
     void WindField(ParticleField &field, const Vector3 &acceleration);
     void GravityField(ParticleField &field, const Vector3 &acceleration);
     void DragField(ParticleField &field, float drag);
-    void RotationField(ParticleField &field, float angularVelocity);
+    void RotationField(ParticleField &field, Vector3 angularVelocity);
 }

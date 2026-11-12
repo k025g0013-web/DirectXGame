@@ -112,6 +112,9 @@
     <Filter Include="Source\Object\Particle\Field">
       <UniqueIdentifier>{99eeeef3-0733-4a3b-a5f4-35a1b130535c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{b9184a39-494c-4400-941f-87fe87db10a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
@@ -222,13 +225,13 @@
     <ClCompile Include="Source\Graphics\Resource\Mesh.cpp">
       <Filter>Source\Graphics\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Primitive\Plane.cpp">
+    <ClCompile Include="Source\Object\Primitive\PlanePrimitive.cpp">
       <Filter>Source\Object\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Primitive\Sphere.cpp">
+    <ClCompile Include="Source\Object\Primitive\SpherePrimitive.cpp">
       <Filter>Source\Object\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Primitive\Triangle.cpp">
+    <ClCompile Include="Source\Object\Primitive\TrianglePrimitive.cpp">
       <Filter>Source\Object\Primitive</Filter>
     </ClCompile>
     <ClCompile Include="Source\Object\Model\Model.cpp">
@@ -303,12 +306,14 @@
     <ClCompile Include="Source\Math\Collision\Collision.cpp">
       <Filter>Source\Math\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Source\Object\Particle\Field\ParticleField.cpp">
       <Filter>Source\Object\Particle\Field</Filter>
     </ClCompile>
     <ClCompile Include="Source\Object\Particle\Field\ParticleFieldManager.cpp">
       <Filter>Source\Object\Particle\Field</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\main.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -512,13 +517,13 @@
     <ClInclude Include="Source\Graphics\Resource\TransformationMatrix.h">
       <Filter>Source\Graphics\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Primitive\Triangle.h">
+    <ClInclude Include="Source\Object\Primitive\TrianglePrimitive.h">
       <Filter>Source\Object\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Primitive\Plane.h">
+    <ClInclude Include="Source\Object\Primitive\PlanePrimitive.h">
       <Filter>Source\Object\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Primitive\Sphere.h">
+    <ClInclude Include="Source\Object\Primitive\SpherePrimitive.h">
       <Filter>Source\Object\Primitive</Filter>
     </ClInclude>
     <ClInclude Include="Source\Object\Model\Model.h">
