@@ -9,43 +9,43 @@
 #include <string>
 
 namespace Tuna {
-	// staticメンバー変数の定義
-	std::ofstream Logger::stream_;
-	std::mutex Logger::mutex_;
+    // staticメンバー変数の定義
+    std::ofstream Logger::stream_;
+    std::mutex Logger::mutex_;
 
-	void Logger::Initialize() {
-		// ログファイルを生成する
-		CreateLogFile();
+    void Logger::Initialize() {
+        // ログファイルを生成する
+        CreateLogFile();
 
-		// クラッシュ時にMiniDumpを生成できるよう例外ハンドラを登録する
-		DumpHelper::Initialize();
-	}
+        // クラッシュ時にMiniDumpを生成できるよう例外ハンドラを登録する
+        DumpHelper::Initialize();
+    }
 
-	void Logger::Finalize() {
-		// ログ出力時の排他制御
-		std::lock_guard<std::mutex> lock(mutex_);
+    void Logger::Finalize() {
+        // ログ出力時の排他制御
+        std::lock_guard<std::mutex> lock(mutex_);
 
-		if (stream_.is_open()) {
-			// ログファイルを閉じる
-			stream_.close();
-		}
-	}
+        if (stream_.is_open()) {
+            // ログファイルを閉じる
+            stream_.close();
+        }
+    }
 
-	void Logger::Log(std::string_view message, LogLevel level) {
-		// ログレベルを含めた出力文字列を作成する
-		std::string logMessage = std::format("[{}] {}\n", GetLogLevelString(level), message);
+    void Logger::Log(std::string_view message, LogLevel level) {
+        // ログレベルを含めた出力文字列を作成する
+        std::string logMessage = std::format("[{}] {}\n", GetLogLevelString(level), message);
 
-		// ログ出力時の排他制御
-		std::lock_guard<std::mutex> lock(mutex_);
+        // ログ出力時の排他制御
+        std::lock_guard<std::mutex> lock(mutex_);
 
-		// ログファイルへ書き込む
-		if (stream_.is_open()) {
-			stream_ << logMessage;
-		}
+        // ログファイルへ書き込む
+        if (stream_.is_open()) {
+            stream_ << logMessage;
+        }
 
-		// デバッグ出力ウィンドウにも表示する
-		OutputDebugStringA(logMessage.c_str());
-	}
+        // デバッグ出力ウィンドウにも表示する
+        OutputDebugStringA(logMessage.c_str());
+    }
 
     void Logger::CreateLogFile() {
         // ログ出力時の排他制御
