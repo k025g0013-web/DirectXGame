@@ -1,162 +1,69 @@
 #include "Sprite.h"
+#include "Math/MatrixFunctions.h"
 
 #include <vector>
 
-#include "Math/MatrixFunctions.h"
-
 namespace Tuna {
-
-    void Sprite::Initialize(
-        ID3D12Device *device,
-        float left,
-        float top,
-        float right,
-        float bottom,
-        uint32_t color) {
-
+    void Sprite::Initialize(ID3D12Device *device, float left, float top, float right, float bottom, uint32_t color) {
         // スプライトの頂点・インデックスを生成する
         std::vector<VertexData> vertices;
         std::vector<uint32_t> indices;
 
-        meshGenerator_.CreateSprite(
-            vertices,
-            indices,
-            left,
-            top,
-            right,
-            bottom
-        );
+        meshGenerator_.CreateSprite(vertices, indices, left, top, right, bottom);
 
         // スプライトのメッシュを生成する
-        mesh_.Create(
-            device,
-            vertices,
-            indices
-        );
+        mesh_.Create(device, vertices, indices);
 
         // 変換行列用定数バッファを生成する
-        // SpriteではRendererを直接使用せず、
-        // ここは今まで通りMeshBufferを直接生成するか、
-        // 後ほど共通化してもよい
-        transformationMatrixBuffer_.InitializeAsConstant(
-            device,
-            sizeof(TransformationMatrix)
-        );
-
-        transformationMatrixData_ =
-            static_cast<TransformationMatrix *>(
-                transformationMatrixBuffer_.Map()
-                );
+        transformationMatrixBuffer_.InitializeAsConstant(device, sizeof(TransformationMatrix));
+        transformationMatrixData_ =static_cast<TransformationMatrix *>(transformationMatrixBuffer_.Map());
 
         assert(transformationMatrixData_ != nullptr);
-
         if (transformationMatrixData_ == nullptr) {
             return;
         }
 
-        transformationMatrixData_->WVP =
-            Math::MakeIdentity<Matrix4x4>();
-
-        transformationMatrixData_->World =
-            Math::MakeIdentity<Matrix4x4>();
+        transformationMatrixData_->WVP = Math::MakeIdentity<Matrix4x4>();
+        transformationMatrixData_->World = Math::MakeIdentity<Matrix4x4>();
 
         // マテリアルを生成する
-        material_.Initialize(
-            device,
-            color,
-            false
-        );
+        material_.Initialize(device, color, false);
     }
 
-    void Sprite::Update(
-        uint32_t width,
-        uint32_t height) {
+    void Sprite::Update(uint32_t width, uint32_t height) {
+        // ワールド行列
+        Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 
-        // スプライトの位置・回転・拡大縮小から
-        // ワールド行列を生成する
-        Matrix4x4 worldMatrix =
-            Math::MakeAffineMatrix(
-                transform_.scale,
-                transform_.rotate,
-                transform_.translate
-            );
+        // 単位行列
+        Matrix4x4 viewMatrix = Math::MakeIdentity<Matrix4x4>();
 
-        // スプライトは画面座標系で描画するため
-        // ビュー行列は単位行列を使用する
-        Matrix4x4 viewMatrix =
-            Math::MakeIdentity<Matrix4x4>();
-
-        // ピクセル座標で描画するため
-        // 正射影行列を生成する
-        Matrix4x4 projectionMatrixSprite =
-            Math::MakeOrthographicMatrix(
-                0.0f,
-                0.0f,
-                static_cast<float>(width),
-                static_cast<float>(height),
-                0.0f,
-                100.0f
-            );
+        // 正射影行列
+        Matrix4x4 projectionMatrixSprite = Math::MakeOrthographicMatrix(
+                0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, 100.0f);
 
         // ワールド → ビュー → 射影
-        Matrix4x4 worldViewProjectionMatrix =
-            Math::Multiply(
-                Math::Multiply(
-                    worldMatrix,
-                    viewMatrix
-                ),
-                projectionMatrixSprite
-            );
+        Matrix4x4 worldViewProjectionMatrix = Math::Multiply(Math::Multiply(worldMatrix, viewMatrix), projectionMatrixSprite);
 
         // GPUへ描画行列を反映する
-        transformationMatrixData_->WVP =
-            worldViewProjectionMatrix;
+        transformationMatrixData_->WVP = worldViewProjectionMatrix;
 
-        transformationMatrixData_->World =
-            worldMatrix;
+        transformationMatrixData_->World = worldMatrix;
 
         // UV変換行列を生成する
         Matrix4x4 uvTransformMatrix{};
-
-        uvTransformMatrix =
-            Math::MakeScaleMatrix(
-                uvTransform_.scale
-            );
-
-        uvTransformMatrix =
-            Math::Multiply(
-                uvTransformMatrix,
-                Math::MakeRotateZMatrix(
-                    uvTransform_.rotate.z
-                )
-            );
-
-        uvTransformMatrix =
-            Math::Multiply(
-                uvTransformMatrix,
-                Math::MakeTranslateMatrix(
-                    uvTransform_.translate
-                )
-            );
+        uvTransformMatrix = Math::MakeScaleMatrix(uvTransform_.scale);
+        uvTransformMatrix = Math::Multiply(uvTransformMatrix, Math::MakeRotateZMatrix(uvTransform_.rotate.z));
+        uvTransformMatrix = Math::Multiply(uvTransformMatrix, Math::MakeTranslateMatrix(uvTransform_.translate));
 
         // UV変換をマテリアルへ反映する
-        material_.GetMaterialData()->uvTransform =
-            uvTransformMatrix;
+        material_.GetMaterialData()->uvTransform = uvTransformMatrix;
     }
 
-    void Sprite::SetTextureRect(
-        float x,
-        float y,
-        float width,
-        float height,
-        const TextureData &texture) {
-
+    void Sprite::SetTextureRect(float x, float y, float width, float height, const TextureData &texture) {
         // テクスチャのサイズを取得
-        const float textureWidth =
-            static_cast<float>(texture.metadata.width);
+        const float textureWidth = static_cast<float>(texture.metadata.width);
 
-        const float textureHeight =
-            static_cast<float>(texture.metadata.height);
+        const float textureHeight = static_cast<float>(texture.metadata.height);
 
         // テクスチャサイズが不正なら処理しない
         if (textureWidth <= 0.0f || textureHeight <= 0.0f) {
@@ -171,27 +78,15 @@ namespace Tuna {
         uvTransform_.scale.y = height / textureHeight;
     }
 
-    void Sprite::Draw(
-        ID3D12GraphicsCommandList *commandList,
-        const TextureData &texture) {
-
+    void Sprite::Draw(ID3D12GraphicsCommandList *commandList, const TextureData &texture) {
         // マテリアル
-        commandList->SetGraphicsRootConstantBufferView(
-            0,
-            material_.GetGPUVirtualAddress()
-        );
+        commandList->SetGraphicsRootConstantBufferView(0, material_.GetGPUVirtualAddress());
 
         // WVP
-        commandList->SetGraphicsRootConstantBufferView(
-            1,
-            transformationMatrixBuffer_.GetGPUVirtualAddress()
-        );
+        commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixBuffer_.GetGPUVirtualAddress());
 
         // テクスチャ
-        commandList->SetGraphicsRootDescriptorTable(
-            2,
-            texture.gpuHandle
-        );
+        commandList->SetGraphicsRootDescriptorTable(2, texture.gpuHandle);
 
         // メッシュを描画
         mesh_.Bind(commandList);
