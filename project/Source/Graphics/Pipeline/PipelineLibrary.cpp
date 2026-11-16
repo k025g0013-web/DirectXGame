@@ -103,7 +103,6 @@ namespace Tuna {
         //====================
         // HLSL読み込み
         //====================
-
         Shader vs, ps;
 
         vs.Compile(

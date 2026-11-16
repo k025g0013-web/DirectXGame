@@ -237,6 +237,8 @@ void Game::EmitParticles(float deltaTime) {
     }
 }
 
+#ifdef USE_IMGUI
+
 void Game::DrawImGui() {
 
     ImGuiManager::GetInstance()->BeginFrame();
@@ -422,6 +424,8 @@ void Game::DrawImGui() {
 
     ImGuiManager::GetInstance()->EndFrame();
 }
+
+#endif
 
 void Game::Draw() {
 
