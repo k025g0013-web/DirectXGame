@@ -315,6 +315,9 @@
     <ClCompile Include="Application\main.cpp">
       <Filter>Application</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\Particle\FireParticle.cpp">
+      <Filter>Source\Object\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Models\axis\axis.blend">
@@ -642,6 +645,9 @@
     </ClInclude>
     <ClInclude Include="Source\Object\Particle\Field\ParticleFieldManager.h">
       <Filter>Source\Object\Particle\Field</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Particle\FireParticle.h">
+      <Filter>Source\Object\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

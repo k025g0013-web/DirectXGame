@@ -11,6 +11,7 @@
 #include "Manager/ParticleManager.h"
 #include "Object/Particle/BillboardMode.h"
 #include "Object/Particle/Field/ParticleField.h"
+#include "Object/Particle/FireParticle.h"
 #include <vector>
 
 #include "Utils/RandomHelper.h"
@@ -70,6 +71,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	constexpr int kEmitCount = 10;			// いくつ生成するか
 	float emitTimer = 0.0f;					// タイマー 
 	bool isEmitterActive = true;			// 生成するか否か
+
+	enum class ParticleType {
+		Normal,
+		Fire,
+	};
+
+	ParticleType emitterParticleType = ParticleType::Normal;
 
 	//-------------------------------------------------------------------------
 	// 初期オブジェクト
@@ -162,16 +170,19 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 			emitTimer += deltaTime;
 
-			// 経過時間が0.5秒以上なら生成
-			// whileにすることで、時間経過が大きくなっても生成漏れを防ぐ
 			while (emitTimer >= kEmitInterval) {
 
 				emitTimer -= kEmitInterval;
 
-				const Vector4 colors[] = {
-					{ 1,0,0,1 }, // 赤
-					{ 0,1,0,1 }, // 緑
-					{ 0,0,1,1 }, // 青
+				const Vector4 normalColors[] = {
+					{ 1, 0, 0, 1 }, // 赤
+					{ 0, 1, 0, 1 }, // 緑
+					{ 0, 0, 1, 1 }, // 青
+				};
+
+				const Vector4 fireColors[] = {
+					{ 1, 0, 0, 1 }, // 赤
+					{ 1, 1, 0, 1 }, // 黄色
 				};
 
 				for (int i = 0; i < kEmitCount; ++i) {
@@ -179,17 +190,34 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 					Transform transform{};
 					transform.translate = emitterPosition;
 
+					// ランダムな速度
+					Vector3 particleVelocity = {
+						RandHelperFloat(-1.0f, 1.0f),
+						RandHelperFloat(-1.0f, 1.0f),
+						RandHelperFloat(-1.0f, 1.0f)
+					};
 
-					for (const Vector4 &color : colors) {
-						Vector3 particleVelocity = {
-							RandHelperFloat(-2.0f, 2.0f),
-							RandHelperFloat(-2.0f, 2.0f),
-							RandHelperFloat(-2.0f, 2.0f)
-						};
+					switch (emitterParticleType) {
 
-						particleManager.Emit("resources/circle.png", 1, transform,
-							particleVelocity, 3.0f, color, emitterBillboardMode
+					case ParticleType::Normal:
+
+						particleManager.Emit(
+							"resources/circle.png", 1, transform,
+							particleVelocity, 3.0f, normalColors[i % 3],
+							emitterBillboardMode
 						);
+
+						break;
+
+					case ParticleType::Fire:
+
+						particleManager.Emit<FireParticle>(
+							"resources/circle.png", 10, {},
+							particleVelocity, 3.0f, fireColors[i % 2],
+							emitterBillboardMode
+						);
+
+						break;
 					}
 				}
 			}
@@ -203,6 +231,24 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		ImGuiManager::GetInstance()->BeginFrame();
 
 		ImGui::Begin("Particle Emitter");
+
+		// パーティクルの種類
+		const char *particleItems[] = {
+			"Normal",
+			"Fire",
+		};
+
+		int particleIndex = static_cast<int>(emitterParticleType);
+
+		if (ImGui::Combo(
+			"Particle Type",
+			&particleIndex,
+			particleItems,
+			IM_ARRAYSIZE(particleItems))) {
+
+			emitterParticleType =
+				static_cast<ParticleType>(particleIndex);
+		}
 
 		//=========================================================
 		// エミッター設定

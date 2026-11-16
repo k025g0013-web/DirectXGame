@@ -142,6 +142,6 @@ namespace Tuna {
 
         ParticleFieldManager fieldManager_;
 
-        static constexpr uint32_t kMaxParticles = 1024;
+        static constexpr uint32_t kMaxParticles = 100000;
     };
 }
