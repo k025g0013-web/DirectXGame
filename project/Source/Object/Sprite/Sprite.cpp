@@ -34,6 +34,8 @@ namespace Tuna {
         // ワールド行列
         Matrix4x4 worldMatrix = Math::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 
+        transformationMatrixData_->WorldInverseTranspose = Math::Transpose(Math::Inverse(worldMatrix));
+
         // 単位行列
         Matrix4x4 viewMatrix = Math::MakeIdentity<Matrix4x4>();
 

@@ -5,6 +5,7 @@ struct TransformationMatrix
     float32_t4x4 WVP;
     float32_t4x4 World;
     float32_t4 color;
+    float32_t4x4 WorldInverseTranspose;
 };
 
 StructuredBuffer<TransformationMatrix> gTransformationMatrix : register(t0);
