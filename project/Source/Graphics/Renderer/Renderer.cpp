@@ -46,9 +46,13 @@ namespace Tuna {
 		data = static_cast<TransformationMatrix *>(constantBuffer.Map());
 
 		// 初期状態では変換を行わないよう単位行列で初期化する
-		data->WVP = Math::MakeIdentity<Matrix4x4>();
-		data->World = Math::MakeIdentity<Matrix4x4>();
+		Matrix4x4 identity = Math::MakeIdentity<Matrix4x4>();
+
+		data->WVP = identity;
+		data->World = identity;
+		data->WorldInverseTranspose = identity;
+		data->color = {
+			1.0f, 1.0f, 1.0f, 1.0f
+		};
 	}
-
-
 }

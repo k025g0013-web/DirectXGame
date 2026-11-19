@@ -54,6 +54,8 @@ namespace Tuna {
                 transform_.rotate,
                 transform_.translate);
 
+        transformationMatrixData_->WorldInverseTranspose = Math::Transpose(Math::Inverse(worldMatrix));
+
         Matrix4x4 wvp =
             Math::Multiply(
                 worldMatrix,

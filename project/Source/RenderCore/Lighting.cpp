@@ -5,22 +5,47 @@
 namespace Tuna {
     void Lighting::Initialize(ID3D12Device *device) {
 
-        // ライト情報を格納する定数バッファを生成する
-        constantBuffer_.InitializeAsConstant(device, sizeof(DirectionalLight));
+        constantBuffer_.InitializeAsConstant(
+            device,
+            sizeof(DirectionalLight)
+        );
 
-        // CPUから更新できるようにバッファをマッピングする
-        lightingData_ = static_cast<DirectionalLight *>(constantBuffer_.Map());
+        lightingData_ = static_cast<DirectionalLight *>(
+            constantBuffer_.Map()
+            );
 
-        // ライトの初期値を設定する
-        lightingData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-        lightingData_->direction = { 0.0f, -1.0f, 0.0f };
+        lightingData_->color = {
+            1.0f, 1.0f, 1.0f, 1.0f
+        };
+
+        lightingData_->direction = {
+            0.0f, -1.0f, 0.0f
+        };
+
         lightingData_->intensity = 1.0f;
 
-        // 初期ライティング方式を設定する
+        // 初期ライティング方式
         currentLightMode_ = LightingMode::None;
         SetLightMode(LightingMode::HalfLambert);
 
-        // ConstantBufferのアライメント調整用
+        // Phong反射モデルの初期設定
+        lightingData_->phong.ambientColor = {
+            1.0f, 1.0f, 1.0f, 1.0f
+        };
+
+        lightingData_->phong.specularColor = {
+            1.0f, 1.0f, 1.0f, 1.0f
+        };
+
+        lightingData_->phong.ambientIntensity = 0.1f;
+        lightingData_->phong.specularIntensity = 0.5f;
+        lightingData_->phong.shininess = 32.0f;
+
+        lightingData_->phong.padding = 0.0f;
+        lightingData_->phong.cameraPosition = {};
+        lightingData_->phong.padding2 = 0.0f;
+
+        // Padding
         lightingData_->padding[0] = 0.0f;
         lightingData_->padding[1] = 0.0f;
         lightingData_->padding[2] = 0.0f;
@@ -50,5 +75,32 @@ namespace Tuna {
             currentLightMode_ = mode;
             lightingData_->lightMode = static_cast<int>(mode);
         }
+    }
+
+    void Lighting::SetAmbientColor(const Vector4 &color) {
+        lightingData_->phong.ambientColor = color;
+    }
+
+    void Lighting::SetAmbientIntensity(float intensity) {
+        lightingData_->phong.ambientIntensity =
+            (std::max)(0.0f, intensity);
+    }
+
+    void Lighting::SetSpecularColor(const Vector4 &color) {
+        lightingData_->phong.specularColor = color;
+    }
+
+    void Lighting::SetSpecularIntensity(float intensity) {
+        lightingData_->phong.specularIntensity =
+            (std::max)(0.0f, intensity);
+    }
+
+    void Lighting::SetShininess(float shininess) {
+        lightingData_->phong.shininess =
+            (std::max)(1.0f, shininess);
+    }
+
+    void Lighting::SetCameraPosition(const Vector3 &position) {
+        lightingData_->phong.cameraPosition = position;
     }
 }

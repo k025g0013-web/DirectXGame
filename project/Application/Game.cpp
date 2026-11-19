@@ -39,10 +39,10 @@ void Game::Initialize(TunaEngine *engine) {
     // モデル
     //=========================================
 
-    modelManager_->CreateModel(
-        engine_->GetCommandList(),
-        "fence"
-    );
+    TextureData textures = engine_->GetTextureManager()->LoadTexture(
+        engine_->GetCommandList(), "resources/monsterBall.png");
+
+    primitiveManager_->CreateSphere(32, textures, 0xFFFFFFFF);
 
     //=========================================
     // ライティング
@@ -158,6 +158,7 @@ void Game::Update() {
     // Lighting
     //=========================================
 
+    lighting_.SetCameraPosition(camera_.GetTransform().translate);
     lighting_.Update();
 
     //=========================================
@@ -420,6 +421,86 @@ void Game::DrawImGui() {
         ++i;
     }
 
+    const char *lightingModes[] = {
+        "None",
+        "Lambert",
+        "Half Lambert",
+        "Phong",
+        "Blinn-Phong"
+    };
+
+    int currentMode = static_cast<int>(lighting_.GetLightMode());
+
+    if (ImGui::Combo("Lighting Mode", &currentMode, lightingModes, IM_ARRAYSIZE(lightingModes))){
+        lighting_.SetLightMode(
+            static_cast<Lighting::LightingMode>(currentMode)
+        );
+    }
+
+    if (ImGui::TreeNode("Phong Reflection")) {
+
+        PhongReflectionModel &phong =
+            lighting_.GetLightingData()->phong;
+
+        ImGui::ColorEdit4(
+            "Ambient Color",
+            &phong.ambientColor.x
+        );
+
+        ImGui::DragFloat(
+            "Ambient Intensity",
+            &phong.ambientIntensity,
+            0.01f,
+            0.0f,
+            2.0f
+        );
+
+        ImGui::ColorEdit4(
+            "Specular Color",
+            &phong.specularColor.x
+        );
+
+        ImGui::DragFloat(
+            "Specular Intensity",
+            &phong.specularIntensity,
+            0.01f,
+            0.0f,
+            5.0f
+        );
+
+        ImGui::DragFloat(
+            "Shininess",
+            &phong.shininess,
+            1.0f,
+            1.0f,
+            256.0f
+        );
+
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Sphere Settings")) {
+
+        auto &transforms = primitiveManager_->GetTransforms();
+
+        if (!transforms.empty()) {
+            Transform &sphereTransform = transforms[0];
+
+            ImGui::DragFloat3(
+                "Sphere Scale",
+                &sphereTransform.scale.x,
+                0.01f,
+                0.01f,
+                10.0f
+            );
+
+            if (ImGui::Button("Reset Scale")) {
+                sphereTransform.scale = { 1.0f, 1.0f, 1.0f };
+            }
+        }
+
+        ImGui::TreePop();
+    }
     ImGui::End();
 
     ImGuiManager::GetInstance()->EndFrame();

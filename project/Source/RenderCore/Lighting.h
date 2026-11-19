@@ -4,12 +4,25 @@
 #include "Math/Vector.h"
 
 namespace Tuna {
-    /// <summary>
-    /// 平行光源の情報を保持する構造体
-    /// </summary>
-    /// <remarks>
-    /// 色・方向・光の強さ・ライティング方式をGPUへ転送する。
-    /// </remarks>
+    struct PhongReflectionModel {
+        Vector4 ambientColor{ 1.0f, 1.0f, 1.0f, 1.0f }; // 環境光の色
+        Vector4 specularColor{ 1.0f, 1.0f, 1.0f, 1.0f };// 鏡面反射の色
+
+        float ambientIntensity = 0.1f;  // 環境光の強さ
+        float specularIntensity = 0.5f; // 鏡面反射の強さ
+
+        float shininess = 32.0f; // 光沢の鋭さ
+
+        // ConstantBufferのアライメント調整用
+        float padding = 0.0f;
+
+        // カメラのワールド座標
+        Vector3 cameraPosition{};
+
+        // ConstantBufferのアライメント調整用
+        float padding2 = 0.0f;
+    };
+
     struct DirectionalLight {
 
         /// 光の色
@@ -26,6 +39,9 @@ namespace Tuna {
 
         /// ConstantBufferのアライメント調整用
         float padding[3];
+
+        // Phong反射モデルの設定
+        PhongReflectionModel phong;
     };
 
     /// <summary>
@@ -45,6 +61,8 @@ namespace Tuna {
             None,
             Lambert,
             HalfLambert,
+            Phong,
+            BlinnPhong,
         };
 
     public:
@@ -58,10 +76,6 @@ namespace Tuna {
         /// <summary>
         /// ライト情報を更新する
         /// </summary>
-        /// <remarks>
-        /// 光の方向ベクトルを正規化し、
-        /// ライティング計算で正しい結果になるよう補正する。
-        /// </remarks>
         void Update();
 
         /// <summary>
@@ -89,6 +103,18 @@ namespace Tuna {
         /// 現在のライティング方式を取得する
         /// </summary>
         LightingMode GetLightMode() const { return currentLightMode_; }
+
+        // Phong反射の設定
+        void SetAmbientColor(const Vector4 &color);
+        void SetAmbientIntensity(float intensity);
+
+        void SetSpecularColor(const Vector4 &color);
+        void SetSpecularIntensity(float intensity);
+
+        void SetShininess(float shininess);
+
+        // カメラの位置
+        void SetCameraPosition(const Vector3 &position);
 
     private:
 
